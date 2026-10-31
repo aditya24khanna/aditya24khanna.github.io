@@ -47,16 +47,12 @@
   ],
   "nav": [
     {
-      "label": "AI",
+      "label": "Tools",
       "href": "#ai"
     },
     {
       "label": "How I work",
       "href": "#principles"
-    },
-    {
-      "label": "Toolbox",
-      "href": "#toolbox"
     }
   ],
   "contact": {
@@ -75,7 +71,7 @@
     "screens": false,
     "experience": false,
     "workedAt": false,
-    "ai": false,
+    "ai": true,
     "toolbox": false
   }
 }

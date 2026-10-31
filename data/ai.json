@@ -1,4 +1,18 @@
 {
   "intro": "Working tools I've built. Each one is live: try it, break it, tell me what you'd change.",
-  "tools": []
+  "tools": [
+    {
+      "title": "Storytime with Papa",
+      "status": "Live",
+      "q": "What if tonight's bedtime story was written for tonight's feeling?",
+      "d": "Writes an original read-aloud picture book for ages 3 to 5 from a feeling and a setting: a small hero, a refrain to chant, three tries and a twist. Comes with illustration notes and a page-by-page reading mode. Runs on Claude, so it needs a Claude sign-in.",
+      "tags": [
+        "Claude",
+        "Prompt design",
+        "Parenting"
+      ],
+      "url": "https://claude.ai/artifact/BWCPi55nwydQtzhuGLewmK",
+      "linkLabel": "Write a story ↗"
+    }
+  ]
 }
