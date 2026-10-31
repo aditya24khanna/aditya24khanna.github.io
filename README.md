@@ -1,63 +1,38 @@
-# Aditya Khanna · Portfolio
+# Hi, I'm Aditya Khanna 👋
 
-"Graph Paper" design: a product leader's working notebook. Static site for GitHub Pages: plain HTML, CSS and one script that renders every section from JSON. No build step.
+Consumer product builder based in Bengaluru, India.
 
-## Structure
+I'm a product leader working at the intersection of **consumer technology, growth, revenue, and AI**.
 
-```
-.
-├── index.html             # Page shell: header, 10 sections, footer, lightbox
-├── ask.html               # Reserved for a future AI chat page
-├── 404.html
-├── robots.txt
-├── .nojekyll
-├── assets/
-│   ├── css/
-│   │   ├── tokens.css     # Colours, fonts, highlighter, light + dark
-│   │   └── main.css       # Layout and components
-│   ├── js/
-│   │   └── main.js        # Loads /data and renders sections, tabs, demo, gallery, theme toggle
-│   └── img/
-│       ├── avatar.png     # Illustrated portrait (from photo)
-│       └── favicon.svg    # AK monogram for the browser tab
-└── data/                  # All content lives here
-    ├── site.json          # Name, role, tagline, hero, stats, worked-at, nav, contact, footer
-    ├── case-studies.json  # Tabs; set "locked": true for confidential ones
-    ├── screens.json       # Shipped-screens gallery (sample phone mockups for now)
-    ├── experience.json    # Roles, newest first
-    ├── ai.json            # Workflow demo + AI project cards
-    ├── principles.json    # Three operating principles
-    ├── toolbox.json       # Four columns; "personal": true styles the last one
-    └── education.json
-```
+I enjoy solving complex consumer problems, turning ideas into products, and exploring how AI can fundamentally change the way we build software.
 
-## Sections
+Outside of work, I experiment with AI tools, build small side projects, and explore interesting ideas.
 
-| # | Section | Anchor | Data |
-|---|---|---|---|
-| 1 | Header (avatar, name, role, links, dark-mode toggle, Contact) | — | `site.json` |
-| 2 | Hero | `#top` | `site.json` → `tagline`, `summary`, `ctas` |
-| 3 | Stats + Worked at | `#impact` | `site.json` → `stats`, `workedAt` |
-| 4 | Case studies | `#work` | `case-studies.json` |
-| 5 | Shipped screens | `#screens` | `screens.json` |
-| 6 | Experience | `#experience` | `experience.json` |
-| 7 | AI work | `#ai` | `ai.json` |
-| 8 | Operating principles | `#principles` | `principles.json` |
-| 9 | Toolbox | `#toolbox` | `toolbox.json` |
-| 10 | Education | `#education` | `education.json` |
-| 11 | Contact | `#contact` | `site.json` → `contact` |
-| 12 | Footer | — | `site.json` → `footer` |
+### What I'm interested in
 
-A section stays hidden until its data has content. `"sample": true` in `site.json` shows the red "sample content" bar; set it to `false` before launch.
+- 🚀 Building and scaling consumer products
+- 📈 Product-led growth, monetisation & business strategy
+- 🤖 AI-powered products, LLMs & autonomous agents
+- 🛠️ Rapid prototyping, automation & vibe coding
+- 💡 Turning interesting ideas into working products
 
-## Preview locally
+### What I'm exploring
 
-```
-python3 -m http.server 8000
-```
+- Generative AI and AI agents
+- Building with LLMs and modern AI development tools
+- AI-assisted product development
+- Small tools and experiments that solve everyday problems
 
-Open http://localhost:8000. (Opening `index.html` directly won't load the JSON.)
+### Background
 
-## Deploying changes
+- 🎓 PGDM, IIM Lucknow
+- 🎓 B.Tech, IIT Kanpur
 
-After editing CSS or JS, bump the `?v=` value on the three asset links in `index.html` (e.g. `20261101a` → `20261101b`) so browsers fetch the new files instead of cached ones. JSON data is fetched with no-cache and needs no bump.
+### Elsewhere
+
+- [LinkedIn]([YOUR_LINKEDIN_URL](https://www.linkedin.com/in/aditya24khanna/))
+- [Personal Website]([YOUR_WEBSITE_URL](https://aditya24khanna.github.io/))
+
+---
+
+*Curious by nature. Product builder by profession. Always experimenting.*
