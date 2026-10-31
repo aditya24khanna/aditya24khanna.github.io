@@ -57,3 +57,7 @@ python3 -m http.server 8000
 ```
 
 Open http://localhost:8000. (Opening `index.html` directly won't load the JSON.)
+
+## Deploying changes
+
+After editing CSS or JS, bump the `?v=` value on the three asset links in `index.html` (e.g. `20261101a` → `20261101b`) so browsers fetch the new files instead of cached ones. JSON data is fetched with no-cache and needs no bump.
