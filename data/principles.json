@@ -1,0 +1,32 @@
+[
+  {
+    "n": "01",
+    "title": "Customers first. The numbers follow.",
+    "body": "Product is the customer's voice inside the company. Solve a real problem and the business metrics follow, usually faster than when you chase them directly.",
+    "tags": [
+      "Discovery",
+      "Customer conversations"
+    ],
+    "note": "the whole site, really"
+  },
+  {
+    "n": "02",
+    "title": "Design for the moment of doubt",
+    "body": "I once assumed fewer clicks would lift conversion in insurance. Experiments and customer calls said otherwise: people wanted help understanding what they were buying. Complex products need help at the moment of decision, not fewer taps.",
+    "tags": [
+      "Assisted journeys",
+      "Experiments"
+    ],
+    "note": "learned the hard way"
+  },
+  {
+    "n": "03",
+    "title": "Charters, not tickets",
+    "body": "Every product manager on my team owns an outcome and a metric they can move. Monthly check-ins run from a written guide, and hard feedback is prepared on paper before the conversation.",
+    "tags": [
+      "Ownership",
+      "Coaching"
+    ],
+    "note": ""
+  }
+]

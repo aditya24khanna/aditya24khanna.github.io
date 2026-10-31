@@ -1,65 +1,58 @@
-# Personal portfolio
+# Aditya Khanna · Portfolio
 
-A static, single-page portfolio for GitHub Pages. No build step and no framework: plain HTML, CSS and a small script that renders each section from a JSON file.
+"Graph Paper" design: a product leader's working notebook. Static site for GitHub Pages: plain HTML, CSS and one script that renders every section from JSON. No build step.
 
 ## Structure
 
 ```
 .
-├── index.html            # Page shell: nav, 8 sections, footer
-├── ask.html              # Reserved for an AI "ask me" page (hidden until enabled)
-├── 404.html              # Not-found page
-├── favicon.svg
+├── index.html             # Page shell: header, 10 sections, footer, lightbox
+├── ask.html               # Reserved for a future AI chat page
+├── 404.html
 ├── robots.txt
-├── .nojekyll             # Tells GitHub Pages to serve files as-is
+├── .nojekyll
 ├── assets/
 │   ├── css/
-│   │   ├── tokens.css    # Colours, fonts, sizes. Restyle the site here.
-│   │   └── main.css      # Layout and components
+│   │   ├── tokens.css     # Colours, fonts, highlighter, light + dark
+│   │   └── main.css       # Layout and components
 │   ├── js/
-│   │   └── main.js       # Loads /data/*.json and renders the sections
-│   ├── img/              # Profile photo, social preview image
-│   └── fonts/            # Self-hosted fonts, if any
-└── data/                 # All content lives here
-    ├── site.json         # Name, role, summary, links, contact, footer
-    ├── metrics.json      # Headline numbers
-    ├── experience.json   # Roles, newest first
-    ├── case-studies.json # Problem → approach → result
-    ├── projects.json     # Side projects and experiments
-    ├── writing.json      # Posts, talks, publications
-    ├── about.json        # Longer bio and education
-    └── _examples/        # The shape of each file
+│   │   └── main.js        # Loads /data and renders sections, tabs, demo, gallery, theme toggle
+│   └── img/
+│       └── avatar.svg     # Illustrated avatar (placeholder until drawn from a real photo)
+└── data/                  # All content lives here
+    ├── site.json          # Name, role, tagline, hero, stats, worked-at, nav, contact, footer
+    ├── case-studies.json  # Tabs; set "locked": true for confidential ones
+    ├── screens.json       # Shipped-screens gallery (sample phone mockups for now)
+    ├── experience.json    # Roles, newest first
+    ├── ai.json            # Workflow demo + AI project cards
+    ├── principles.json    # Three operating principles
+    ├── toolbox.json       # Four columns; "personal": true styles the last one
+    └── education.json
 ```
 
 ## Sections
 
-| # | Section      | Anchor        | Data file           |
-|---|--------------|---------------|---------------------|
-| 1 | Hero         | `#top`        | `site.json`         |
-| 2 | Impact       | `#impact`     | `metrics.json`      |
-| 3 | Experience   | `#experience` | `experience.json`   |
-| 4 | Case studies | `#work`       | `case-studies.json` |
-| 5 | Projects     | `#projects`   | `projects.json`     |
-| 6 | Writing      | `#writing`    | `writing.json`      |
-| 7 | About        | `#about`      | `about.json`        |
-| 8 | Contact      | `#contact`    | `site.json` → `contact` |
+| # | Section | Anchor | Data |
+|---|---|---|---|
+| 1 | Header (avatar, name, role, links, dark-mode toggle, Contact) | — | `site.json` |
+| 2 | Hero | `#top` | `site.json` → `tagline`, `summary`, `ctas` |
+| 3 | Stats + Worked at | `#impact` | `site.json` → `stats`, `workedAt` |
+| 4 | Case studies | `#work` | `case-studies.json` |
+| 5 | Shipped screens | `#screens` | `screens.json` |
+| 6 | Experience | `#experience` | `experience.json` |
+| 7 | AI work | `#ai` | `ai.json` |
+| 8 | Operating principles | `#principles` | `principles.json` |
+| 9 | Toolbox | `#toolbox` | `toolbox.json` |
+| 10 | Education | `#education` | `education.json` |
+| 11 | Contact | `#contact` | `site.json` → `contact` |
+| 12 | Footer | — | `site.json` → `footer` |
 
-A section stays hidden until its data file has content, and the nav only lists visible sections. You can publish the site empty and fill it in one section at a time.
-
-## Edit content
-
-Change the JSON files in `/data`. `data/_examples/README.md` shows the shape of each one. Commit, and GitHub Pages redeploys in about a minute.
+A section stays hidden until its data has content. `"sample": true` in `site.json` shows the red "sample content" bar; set it to `false` before launch.
 
 ## Preview locally
-
-The page loads JSON with `fetch`, which browsers block on `file://`. Run a local server instead:
 
 ```
 python3 -m http.server 8000
 ```
 
-Then open http://localhost:8000.
-
-## Deploy
-
-Settings → Pages → Source: "Deploy from a branch" → `main` / `(root)`.
+Open http://localhost:8000. (Opening `index.html` directly won't load the JSON.)

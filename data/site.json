@@ -1,26 +1,81 @@
 {
-  "name": "",
-  "role": "",
-  "eyebrow": "",
-  "summary": "",
-  "photo": "",
-  "tags": [],
-  "links": [],
-  "updated": "",
-  "sectionTitles": {
-    "metrics": "",
-    "experience": "",
-    "caseStudies": "",
-    "projects": "",
-    "writing": ""
+  "sample": false,
+  "name": "Aditya Khanna",
+  "role": "Product Leader",
+  "avatar": "assets/img/avatar.svg",
+  "badge": "Insurance · Fintech · Applied AI",
+  "tagline": {
+    "lead": "Customers first.",
+    "follow": "The numbers follow."
   },
+  "summary": "11+ years across product, engineering and consulting. Launched and scaled multiple 0→1 products with revenue of ₹500 Cr+. Led a team of 7 high-performing product managers.",
+  "heroNote": "← in that order, every time",
+  "avatarNote": "that's me, illustrated",
+  "ctas": [
+    {
+      "label": "How I work ↓",
+      "href": "#principles",
+      "primary": true
+    },
+    {
+      "label": "Get in touch",
+      "href": "#contact"
+    }
+  ],
+  "stats": [
+    {
+      "value": "₹500 Cr+",
+      "label": "Revenue from 0→1 products"
+    },
+    {
+      "value": "11+",
+      "label": "Years in product, engineering & consulting"
+    },
+    {
+      "value": "7",
+      "label": "Product managers led"
+    },
+    {
+      "value": "10+",
+      "label": "Half-marathons completed"
+    }
+  ],
+  "workedAt": [
+    "Fintech super-app",
+    "Global consulting firm",
+    "Company C"
+  ],
+  "nav": [
+    {
+      "label": "AI",
+      "href": "#ai"
+    },
+    {
+      "label": "How I work",
+      "href": "#principles"
+    },
+    {
+      "label": "Toolbox",
+      "href": "#toolbox"
+    }
+  ],
   "contact": {
-    "heading": "",
-    "note": "",
-    "links": []
+    "heading": "Let's talk about customers. And numbers.",
+    "note": "Happy to walk through any of this work in detail, including the parts that didn't go to plan.",
+    "handNote": "I read every message",
+    "email": "aditya.khanna@iiml.org",
+    "linkedinLabel": "linkedin.com/in/aditya24khanna",
+    "linkedinUrl": "https://www.linkedin.com/in/aditya24khanna/",
+    "calendarLabel": "",
+    "calendarUrl": ""
   },
-  "features": {
-    "ask": false
-  },
-  "footer": ""
+  "footer": "Aditya Khanna · drawn on graph paper",
+  "sections": {
+    "caseStudies": false,
+    "screens": false,
+    "experience": false,
+    "workedAt": false,
+    "ai": false,
+    "toolbox": false
+  }
 }

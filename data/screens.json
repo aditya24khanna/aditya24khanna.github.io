@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Home entry point",
+    "caption": "Sample · where insurance shows up in the app",
+    "tag": "Discover",
+    "ui": "home"
+  },
+  {
+    "title": "Get a quote",
+    "caption": "Sample · three questions, one price",
+    "tag": "Buy",
+    "ui": "quote"
+  },
+  {
+    "title": "Compare plans",
+    "caption": "Sample · what's different, side by side",
+    "tag": "Buy",
+    "ui": "plans"
+  },
+  {
+    "title": "Checkout",
+    "caption": "Sample · one clear call to action",
+    "tag": "Buy",
+    "ui": "checkout"
+  },
+  {
+    "title": "Policy card",
+    "caption": "Sample · everything you own, in one place",
+    "tag": "Own",
+    "ui": "policy"
+  },
+  {
+    "title": "Renewal reminder",
+    "caption": "Sample · 30 days before expiry",
+    "tag": "Own",
+    "ui": "renew"
+  },
+  {
+    "title": "File a claim",
+    "caption": "Sample · start in under a minute",
+    "tag": "Claim",
+    "ui": "claim"
+  },
+  {
+    "title": "Help at the right moment",
+    "caption": "Sample · assistance, not fewer clicks",
+    "tag": "Claim",
+    "ui": "chat"
+  }
+]

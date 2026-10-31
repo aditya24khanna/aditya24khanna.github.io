@@ -1,1 +1,53 @@
-[]
+[
+  {
+    "period": "20XX – Now",
+    "title": "Group Product Manager, General Insurance",
+    "org": "Fintech super-app",
+    "summary": "Sample text. Health, embedded and motor insurance; team of 20+.",
+    "metrics": [
+      "Sample metric",
+      "7 PMs led"
+    ],
+    "highlights": [
+      "Sample highlight about growth.",
+      "Sample highlight about loss ratio and compliance.",
+      "Sample highlight about the team."
+    ]
+  },
+  {
+    "period": "20XX – 20XX",
+    "title": "Product Manager, Investments & Collections",
+    "org": "Fintech super-app",
+    "summary": "Sample text.",
+    "metrics": [
+      "Sample metric",
+      "Sample metric"
+    ],
+    "highlights": [
+      "Sample highlight.",
+      "Sample highlight."
+    ]
+  },
+  {
+    "period": "20XX – 20XX",
+    "title": "Consultant, Digital Transformation",
+    "org": "Global consulting firm",
+    "summary": "Sample text. Fortune 500 standardisation and automation.",
+    "metrics": [
+      "Sample metric"
+    ],
+    "highlights": [
+      "Sample highlight."
+    ]
+  },
+  {
+    "period": "20XX – 20XX",
+    "title": "Engineer",
+    "org": "Company C",
+    "summary": "Sample text.",
+    "metrics": [],
+    "highlights": [
+      "Sample highlight."
+    ]
+  }
+]

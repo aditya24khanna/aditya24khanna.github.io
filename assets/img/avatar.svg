@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Illustrated portrait of Aditya Khanna">
+  <!-- Line-art portrait: side-swept dark hair, rimless glasses, warm smile, navy blazer, light blue shirt. -->
+  <circle cx="60" cy="60" r="58" fill="#F4B740"/>
+  <g stroke="#14213D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- blazer -->
+    <path d="M14 120c2-21 15-33 31-37l15 9 15-9c16 4 29 16 31 37z" fill="#1F2D4D"/>
+    <!-- shirt -->
+    <path d="M45 83l15 6 15-6 3 5-18 32-18-32z" fill="#BFD6F2"/>
+    <!-- neck + open collar V -->
+    <path d="M52 70v12l8 13 8-13V70" fill="#C68B6A"/>
+    <!-- collar points, open -->
+    <path d="M52 80l-7 8 12 6zM68 80l7 8-12 6z" fill="#D7E6F8"/>
+    <!-- lapels -->
+    <path d="M45 84l-6 9 8 6-6 4 19 17M75 84l6 9-8 6 6 4-19 17" fill="none"/>
+    <!-- ears -->
+    <ellipse cx="38.5" cy="54" rx="4" ry="6" fill="#C68B6A"/>
+    <ellipse cx="81.5" cy="54" rx="4" ry="6" fill="#C68B6A"/>
+    <!-- face -->
+    <path d="M39 50c0-15 9-25 21-25s21 10 21 25c0 16-8 28-21 28S39 66 39 50z" fill="#C68B6A"/>
+    <!-- hair: side-swept with volume -->
+    <path d="M39 50C36 30 48 19 63 20c14 1 22 11 19 28-2-8-6-13-12-15-8-2-15 0-22-2-3 4-6 9-7 15z" fill="#1E1918"/>
+    <path d="M48 24v7M50 30c7-4 17-4 25 2" fill="none" stroke="#4A3D38" stroke-width="1.3"/>
+    <!-- brows -->
+    <path d="M45.5 44.5c3-1.6 7-1.8 10-.6M64.5 43.9c3-1.2 7-1 10 .6" fill="none" stroke-width="2.2"/>
+    <!-- nose -->
+    <path d="M60 51v8l-3 1.5" fill="none" stroke-width="1.6"/>
+    <!-- smile with teeth -->
+    <path d="M51 64.5c5 4.5 13 4.5 18 0-5 1.5-13 1.5-18 0z" fill="#FFFFFF" stroke-width="1.8"/>
+  </g>
+  <!-- eyes -->
+  <circle cx="51" cy="50.5" r="1.9" fill="#14213D"/>
+  <circle cx="69" cy="50.5" r="1.9" fill="#14213D"/>
+  <!-- rimless glasses: thin silver lenses, bridge and arms -->
+  <g fill="none" stroke="#8C96A3" stroke-width="1.3" stroke-linecap="round">
+    <rect x="43.5" y="45.5" width="14" height="10" rx="4"/>
+    <rect x="62.5" y="45.5" width="14" height="10" rx="4"/>
+    <path d="M57.5 49c1.5-1 3.5-1 5 0M43.5 48.5l-4.5-1M76.5 48.5l4.5-1"/>
+  </g>
+</svg>

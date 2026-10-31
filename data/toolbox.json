@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Product & growth",
+    "items": [
+      "0→1 launches",
+      "Growth and monetisation",
+      "Attach and conversion",
+      "Experiment design",
+      "Hiring loops and rubrics for PMs"
+    ]
+  },
+  {
+    "title": "Insurance & fintech",
+    "items": [
+      "Health, motor and embedded insurance",
+      "KYC and regulatory compliance",
+      "Claims journeys",
+      "Loss ratio and pricing guardrails"
+    ]
+  },
+  {
+    "title": "AI & building",
+    "items": [
+      "LLM product design",
+      "Agentic workflows",
+      "Prototyping with Claude Code",
+      "Building on the Claude API"
+    ]
+  },
+  {
+    "title": "Life beyond PRDs",
+    "items": [
+      "10+ half-marathons",
+      "Devil's Circuit, this year",
+      "Cooking classes in 3 countries",
+      "Dad to a very active toddler",
+      "Reading the Gita, slowly"
+    ],
+    "personal": true
+  }
+]

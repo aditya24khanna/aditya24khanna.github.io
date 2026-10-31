@@ -1,1 +1,71 @@
-[]
+[
+  {
+    "id": "new-line",
+    "tab": "0→1 launch",
+    "eyebrow": "Launch & growth · sample",
+    "title": "A 0→1 insurance launch, from business case to scale",
+    "summary": "Sample text. Wrote the business case, then built and scaled it.",
+    "locked": false,
+    "metrics": [
+      {
+        "value": "₹XX Cr",
+        "label": "Sample metric"
+      },
+      {
+        "value": "XX%",
+        "label": "Sample metric"
+      }
+    ],
+    "problem": "Sample text. What was broken or missing for customers, and why it mattered to the business.",
+    "research": "Sample text. What the data and customer conversations actually showed.",
+    "did": [
+      "Sample step one: the first decision that shaped the launch.",
+      "Sample step two: how the team found product-market fit.",
+      "Sample step three: what made it scale."
+    ],
+    "owned": "Sample text. Business case, pricing guardrails, launch plan, the team.",
+    "differently": "Sample text. The one thing you'd change if you did it again."
+  },
+  {
+    "id": "assisted",
+    "tab": "Fewer clicks?",
+    "eyebrow": "Conversion · sample",
+    "title": "Insurance is an assisted sale wearing an app's clothes",
+    "summary": "We cut steps from the purchase journey. Conversion barely moved. Customers wanted help deciding.",
+    "locked": false,
+    "metrics": [
+      {
+        "value": "+XX%",
+        "label": "Conversion after assisted flow"
+      },
+      {
+        "value": "−X steps",
+        "label": "Removed first, did little"
+      }
+    ],
+    "problem": "Sample text. Drop-off in the purchase journey on a complex product.",
+    "research": "Sample text. Experiments and customer calls showed confusion, not friction.",
+    "did": [
+      "Sample: designed for the moment of doubt, not the fewest taps.",
+      "Sample: added explanation and assistance at decision points."
+    ],
+    "owned": "Sample text. Hypotheses, experiment design, customer interviews.",
+    "differently": "Sample text. Talk to customers before shaving clicks."
+  },
+  {
+    "id": "embedded",
+    "tab": "Embedded cover",
+    "eyebrow": "Distribution · confidential",
+    "title": "Insurance inside the loan journey",
+    "summary": "Attach-rate work on cover offered at loan disbursal.",
+    "locked": true
+  },
+  {
+    "id": "tab",
+    "tab": "Insurance tab",
+    "eyebrow": "Personalisation · confidential",
+    "title": "An insurance tab that personalises safely",
+    "summary": "A fixed layout with rules first and a learning system later.",
+    "locked": true
+  }
+]
