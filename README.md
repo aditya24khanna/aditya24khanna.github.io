@@ -18,7 +18,8 @@
 │   ├── js/
 │   │   └── main.js        # Loads /data and renders sections, tabs, demo, gallery, theme toggle
 │   └── img/
-│       └── avatar.svg     # Illustrated avatar (placeholder until drawn from a real photo)
+│       ├── avatar.png     # Illustrated portrait (from photo)
+│       └── favicon.svg    # AK monogram for the browser tab
 └── data/                  # All content lives here
     ├── site.json          # Name, role, tagline, hero, stats, worked-at, nav, contact, footer
     ├── case-studies.json  # Tabs; set "locked": true for confidential ones
