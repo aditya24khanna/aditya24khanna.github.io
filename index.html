@@ -44,18 +44,20 @@
     <!-- 1. Hero -->
     <section class="hero wrap" id="top" data-section="hero">
       <span class="badge" data-bind="site.badge"></span>
-      <h1 class="hero-title"><span class="hl" data-bind="site.tagline.lead"></span> <span class="soft" data-bind="site.tagline.follow"></span></h1>
-      <div class="hero-row">
-        <div class="hero-copy">
-          <p class="hero-sum" data-bind="site.summary"></p>
-          <div class="btn-row" id="heroCtas"></div>
-        </div>
+      <div class="hero-top">
+        <h1 class="hero-title"><span class="hl" data-bind="site.tagline.lead"></span> <span class="soft" data-bind="site.tagline.follow"></span></h1>
         <div class="hero-side">
           <span class="pen pen-hero" data-bind="site.heroNote"></span>
           <figure class="hero-avatar">
             <img class="sticker sticker-lg" data-src="site.avatar" alt="Illustrated portrait" width="96" height="96">
             <figcaption class="pen" data-bind="site.avatarNote"></figcaption>
           </figure>
+        </div>
+      </div>
+      <div class="hero-row">
+        <div class="hero-copy">
+          <p class="hero-sum" data-bind="site.summary"></p>
+          <div class="btn-row" id="heroCtas"></div>
         </div>
       </div>
     </section>
