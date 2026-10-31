@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Portfolio</title>
+  <meta name="description" content="">
+  <!-- Open Graph / social preview: filled from data/site.json at runtime, set static values here before launch for crawlers -->
+  <meta property="og:title" content="">
+  <meta property="og:description" content="">
+  <meta property="og:image" content="">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" data-bind="site.name"></a>
+      <nav aria-label="Sections">
+        <ul class="nav-links" id="navLinks"><!-- built from visible sections --></ul>
+      </nav>
+      <a class="nav-cta" href="ask.html" data-show="site.features.ask">Ask me</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 1. Hero: name, role, one-line positioning, links, optional photo -->
+    <section class="section hero" id="top" data-section="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-text">
+          <p class="eyebrow" data-bind="site.eyebrow"></p>
+          <h1 data-bind="site.name"></h1>
+          <p class="hero-role" data-bind="site.role"></p>
+          <p class="hero-summary" data-bind="site.summary"></p>
+          <ul class="chips" id="heroTags"></ul>
+          <div class="hero-links" id="heroLinks"></div>
+        </div>
+        <figure class="hero-photo" data-show="site.photo">
+          <img id="heroPhoto" alt="" width="480" height="600">
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2. Metrics: 3-4 headline numbers -->
+    <section class="section" id="impact" data-section="metrics" data-label="Impact">
+      <div class="wrap">
+        <header class="section-head"><p class="eyebrow">Impact</p><h2 class="section-title"></h2></header>
+        <div class="metrics" id="metrics"></div>
+      </div>
+    </section>
+
+    <!-- 3. Experience: roles, newest first -->
+    <section class="section" id="experience" data-section="experience" data-label="Experience">
+      <div class="wrap">
+        <header class="section-head"><p class="eyebrow">Experience</p><h2 class="section-title"></h2></header>
+        <ol class="timeline" id="experienceList"></ol>
+      </div>
+    </section>
+
+    <!-- 4. Case studies: problem, approach, outcome -->
+    <section class="section" id="work" data-section="caseStudies" data-label="Case studies">
+      <div class="wrap">
+        <header class="section-head"><p class="eyebrow">Case studies</p><h2 class="section-title"></h2></header>
+        <div class="cards" id="caseStudies"></div>
+      </div>
+    </section>
+
+    <!-- 5. Projects: side builds, experiments, AI work -->
+    <section class="section" id="projects" data-section="projects" data-label="Projects">
+      <div class="wrap">
+        <header class="section-head"><p class="eyebrow">Projects</p><h2 class="section-title"></h2></header>
+        <div class="cards" id="projectsList"></div>
+      </div>
+    </section>
+
+    <!-- 6. Writing: posts, talks, publications -->
+    <section class="section" id="writing" data-section="writing" data-label="Writing">
+      <div class="wrap">
+        <header class="section-head"><p class="eyebrow">Writing</p><h2 class="section-title"></h2></header>
+        <ul class="list" id="writingList"></ul>
+      </div>
+    </section>
+
+    <!-- 7. About: longer bio, education, beyond work -->
+    <section class="section" id="about" data-section="about" data-label="About">
+      <div class="wrap about-grid">
+        <header class="section-head"><p class="eyebrow">About</p><h2 class="section-title"></h2></header>
+        <div class="about-body" id="aboutBody"></div>
+        <ul class="list" id="educationList"></ul>
+      </div>
+    </section>
+
+    <!-- 8. Contact -->
+    <section class="section contact" id="contact" data-section="contact" data-label="Contact">
+      <div class="wrap">
+        <header class="section-head"><p class="eyebrow">Contact</p><h2 class="section-title" data-bind="site.contact.heading"></h2></header>
+        <p class="contact-note" data-bind="site.contact.note"></p>
+        <div class="hero-links" id="contactLinks"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span data-bind="site.footer"></span>
+      <span id="updated"></span>
+    </div>
+  </footer>
+</body>
+</html>
