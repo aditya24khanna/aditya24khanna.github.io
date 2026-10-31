@@ -72,7 +72,7 @@ mark, .hl { color: inherit; background: linear-gradient(100deg, transparent 1%, 
 .hero-side { display: grid; justify-items: start; gap: 18px; margin-top: calc(22px + clamp(52px, 10.5vw, 132px) * .62); }
 .pen-hero::before { content: "\2190\00a0"; }
 .hero-avatar { margin: 0 0 0 clamp(10px, 2vw, 34px); display: flex; align-items: center; gap: 12px; }
-.hero-avatar .sticker-lg { width: 96px; height: 96px; transform: rotate(5deg); }
+.hero-avatar .sticker-lg { width: clamp(132px, 13vw, 176px); height: clamp(132px, 13vw, 176px); transform: rotate(5deg); box-shadow: 5px 5px 0 var(--ink); }
 .hero-avatar figcaption { font-size: 19px; max-width: 120px; }
 
 /* stats */
