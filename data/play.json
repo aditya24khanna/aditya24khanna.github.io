@@ -1,0 +1,18 @@
+{
+  "intro": "Small games, built for fun. A new road every day.",
+  "games": [
+    {
+      "title": "Pothole Dash",
+      "status": "New road daily",
+      "q": "How far can you ride before the road wins?",
+      "d": "A one-thumb scooter game on a different Bangalore road each day, starting with MG Road. Dodge potholes, cows, water tankers, BMTC buses and metro pillars, and watch for people stepping off the broken footpath. Three shock absorbers, then it's over. No sign-in, no ads.",
+      "tags": [
+        "Game",
+        "Daily challenge",
+        "Bangalore"
+      ],
+      "url": "play/",
+      "linkLabel": "Ride today's road →"
+    }
+  ]
+}
