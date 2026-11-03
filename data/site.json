@@ -51,6 +51,10 @@
       "href": "#ai"
     },
     {
+      "label": "Play",
+      "href": "#play"
+    },
+    {
       "label": "How I work",
       "href": "#principles"
     }
@@ -72,6 +76,7 @@
     "experience": false,
     "workedAt": false,
     "ai": true,
-    "toolbox": false
+    "toolbox": false,
+    "play": true
   }
 }

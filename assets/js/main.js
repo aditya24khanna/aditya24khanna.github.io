@@ -12,6 +12,7 @@
     screens: "data/screens.json",
     experience: "data/experience.json",
     ai: "data/ai.json",
+    play: "data/play.json",
     principles: "data/principles.json",
     toolbox: "data/toolbox.json",
     education: "data/education.json"
@@ -164,10 +165,13 @@
       });
     },
 
-    ai: function (ai) {
-      if (filled(ai.intro)) $("#aiIntro").textContent = ai.intro;
-      var box = $("#aiTools");
-      (ai.tools || []).forEach(function (t) {
+    ai: function (ai) { render.cards(ai, ai.tools, "#aiIntro", "#aiTools", true); },
+    play: function (p) { render.cards(p, p.games, "#playIntro", "#playGames", false); },
+
+    cards: function (src, items, introSel, boxSel, external) {
+      if (filled(src.intro)) $(introSel).textContent = src.intro;
+      var box = $(boxSel);
+      (items || []).forEach(function (t) {
         var d = el("article", "proj paper"), top = el("div", "top");
         top.appendChild(el("h3", null, t.title));
         if (filled(t.status)) top.appendChild(el("span", "chip", t.status));
@@ -175,7 +179,7 @@
         if (filled(t.q)) d.appendChild(el("span", "q", t.q));
         if (filled(t.d)) d.appendChild(el("p", null, t.d));
         if (filled(t.tags)) { var tg = el("div", "tags"); t.tags.forEach(function (x) { tg.appendChild(el("span", "chip", x)); }); d.appendChild(tg); }
-        if (filled(t.url)) { var a = el("a", "btn btn-ink", t.linkLabel || "Try it ↗"); a.href = t.url; a.target = "_blank"; a.rel = "noopener"; d.appendChild(a); }
+        if (filled(t.url)) { var a = el("a", "btn btn-ink", t.linkLabel || "Try it ↗"); a.href = t.url; if (external) { a.target = "_blank"; a.rel = "noopener"; } d.appendChild(a); }
         box.appendChild(d);
       });
     },
@@ -286,13 +290,14 @@
     applySite(site);
     document.querySelectorAll("[data-section]").forEach(function (s) {
       var key = s.getAttribute("data-section");
-      var data = key === "hero" ? site.tagline : key === "stats" ? site.stats : key === "contact" ? site.contact : key === "ai" ? (d.ai && d.ai.tools) : d[key];
+      var data = key === "hero" ? site.tagline : key === "stats" ? site.stats : key === "contact" ? site.contact : key === "ai" ? (d.ai && d.ai.tools) : key === "play" ? (d.play && d.play.games) : d[key];
       var off = site.sections && site.sections[key] === false;
       s.hidden = off || !filled(data);
       if (s.hidden) return;
       if (key === "stats") render.stats(site);
       else if (key === "contact") render.contact(site);
       else if (key === "ai") render.ai(d.ai);
+      else if (key === "play") render.play(d.play);
       else if (render[key]) render[key](data);
     });
     // hide nav links for hidden sections
