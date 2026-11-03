@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pothole Dash</title>
+<meta name="description" content="Dodge potholes, cows, BMTC buses and metro pillars on a new Bangalore road every day.">
+<meta property="og:title" content="Pothole Dash">
+<meta property="og:description" content="A new Bangalore road every day. Three shock absorbers. Good luck.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif}[hidden]{display:none!important}html{height:100%}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one-screen notebook page — ink stat strip, then a hard-shadow paper card holding a canvas road drawn on graph paper. Tokens follow the portfolio's Graph Paper system, plus Namma Metro purple and rain-tree green. */
+:root{
+  --paper:#FFFFFF; --grid:#DCE5F0; --ink:#14213D; --hl:#F4B740; --red:#C2452D;
+  --road:#F1F4F8; --hole:#26314A; --water:#6FA8D6; --coffee:#7A4B2A; --muted:#5B6884;
+  --metro:#7D4CA8; --leaf:#5E8C4A; --slab:#E6E2D8; --concrete:#C3C8D0;
+  --card:#FFFFFF; --shadow:#14213D; --on-hl:#14213D;
+  --display:'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --hand:'Caveat', 'Segoe Print', 'Comic Sans MS', cursive;
+  --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1626; --grid:#1B2740; --ink:#E6ECF5; --hl:#F4B740; --red:#E46A50;
+    --road:#152038; --hole:#04070D; --water:#3E7FB5; --coffee:#C58B5C; --muted:#93A0B8;
+    --metro:#A77BD0; --leaf:#6FA35A; --slab:#232D42; --concrete:#45506A;
+    --card:#132036; --shadow:#000000; --on-hl:#14213D; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1626; --grid:#1B2740; --ink:#E6ECF5; --hl:#F4B740; --red:#E46A50;
+  --road:#152038; --hole:#04070D; --water:#3E7FB5; --coffee:#C58B5C; --muted:#93A0B8;
+  --metro:#A77BD0; --leaf:#6FA35A; --slab:#232D42; --concrete:#45506A;
+  --card:#132036; --shadow:#000000; --on-hl:#14213D; color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--display)}
+.app{
+  height:100%;box-sizing:border-box;max-width:760px;margin:0 auto;
+  display:flex;flex-direction:column;gap:12px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:12px 18px;
+}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px}
+.brand h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-0.02em;line-height:1;text-wrap:balance}
+.brand h1 mark{background:linear-gradient(transparent 55%, var(--hl) 55%, var(--hl) 92%, transparent 92%);color:inherit;padding:0 2px}
+.home{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.home:hover{color:var(--ink)}
+.brand p{margin:4px 0 0;font-family:var(--hand);font-size:20px;color:var(--red);line-height:1}
+.hud{display:flex;gap:18px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat span{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stat b{font-family:var(--mono);font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.shocks{display:flex;gap:5px;align-items:center;height:20px}
+.shock{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:var(--hl)}
+.shock.gone{background:transparent;border-style:dashed;opacity:.5}
+.stage{
+  position:relative;flex:1;min-height:360px;border:2px solid var(--ink);
+  box-shadow:6px 6px 0 var(--shadow);background:var(--paper);overflow:hidden;
+  touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+}
+canvas{display:block;width:100%;height:100%}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;overflow:auto}
+.card{
+  width:min(350px,100%);box-sizing:border-box;background:var(--card);color:var(--ink);
+  border:2px solid var(--ink);box-shadow:5px 5px 0 var(--shadow);padding:18px 18px 16px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card h2{margin:0;font-size:28px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;text-wrap:balance}
+.card h2 mark{background:linear-gradient(transparent 58%, var(--hl) 58%, var(--hl) 94%, transparent 94%);color:inherit;padding:0 2px}
+.card p{margin:0;font-size:15px;line-height:1.45}
+.note{font-family:var(--hand);font-size:22px;color:var(--red);line-height:1.1}
+.controls{margin:0;font-size:13px;color:var(--muted);line-height:1.4}
+.controls kbd{font-family:var(--mono);font-size:11px;border:1.5px solid var(--muted);padding:0 4px;border-radius:3px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button{
+  font:700 15px var(--display);border:2px solid var(--ink);padding:10px 14px;cursor:pointer;
+  background:var(--card);color:var(--ink);box-shadow:3px 3px 0 var(--shadow);
+}
+button.primary{background:var(--hl);color:var(--on-hl)}
+button.link{border:none;box-shadow:none;background:none;padding:6px 2px;text-decoration:underline;text-underline-offset:3px;font-weight:600;font-size:14px}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+button.link:active{transform:none}
+button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-family:var(--mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.meta b{color:var(--ink);font-weight:700}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-block:1.5px dashed var(--grid);padding-block:10px}
+.grid3 div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.grid3 span{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.grid3 b{font-family:var(--mono);font-size:17px;font-variant-numeric:tabular-nums}
+.trail{font-size:18px;letter-spacing:2px;line-height:1.2;word-break:break-all}
+.newbest{color:var(--red);font-weight:700}
+.copied{font-size:13px;color:var(--muted);min-height:1em}
+textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:6px;resize:none}
+@media (max-width:440px){
+  .hud{gap:12px}
+  .brand h1{font-size:21px}
+  .card h2{font-size:25px}
+}
+@media (prefers-reduced-motion: reduce){ button:active{transform:none} }
+</style>
+</head>
+<body>
+
+
+<div class="app">
+  <header>
+    <div class="brand">
+      <h1>Pothole <mark>Dash</mark></h1>
+      <p id="caption">a Bangalore commute simulator</p>
+      <a class="home" href="../">← Aditya Khanna</a>
+    </div>
+    <div class="hud" aria-live="off">
+      <div class="stat"><span>Distance</span><b id="hDist">0 m</b></div>
+      <div class="stat"><span>Speed</span><b id="hSpeed">0 km/h</b></div>
+      <div class="stat"><span>Shocks</span><div class="shocks" id="hShocks"><i class="shock"></i><i class="shock"></i><i class="shock"></i></div></div>
+      <div class="stat"><span>Best</span><b id="hBest">—</b></div>
+    </div>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="Pothole Dash game road"></canvas>
+
+    <div class="overlay" id="ovStart">
+      <div class="card" role="dialog" aria-labelledby="tStart">
+        <div class="kicker" id="sKicker">Road of the day</div>
+        <h2 id="tStart"><mark>MG Road</mark></h2>
+        <p id="sBlurb"></p>
+        <div class="meta" id="sMeta"></div>
+        <div class="row">
+          <button class="primary" id="bDaily">Ride today’s road</button>
+          <button id="bEndless">Endless commute</button>
+        </div>
+        <p class="controls">Tap the left or right half of the road, or use <kbd>←</kbd> <kbd>→</kbd>. Three shock absorbers. Where the footpath is broken, people walk on the road. Filter coffee adds 50 m.</p>
+      </div>
+    </div>
+
+    <div class="overlay" id="ovPause" hidden>
+      <div class="card" role="dialog" aria-labelledby="tPause">
+        <h2 id="tPause">Paused.</h2>
+        <p>Stuck at a signal. Tap to keep riding.</p>
+        <div class="row"><button class="primary" id="bResume">Keep riding</button></div>
+      </div>
+    </div>
+
+    <div class="overlay" id="ovOver" hidden>
+      <div class="card" role="dialog" aria-labelledby="tOver">
+        <div class="kicker" id="oKicker">Ride over</div>
+        <h2 id="tOver">Out of shock absorbers.</h2>
+        <div class="note" id="oMsg"></div>
+        <div class="grid3">
+          <div><span>Distance</span><b id="oDist">0 m</b></div>
+          <div><span>Dodged</span><b id="oDodged">0</b></div>
+          <div><span>Top speed</span><b id="oTop">0</b></div>
+        </div>
+        <div class="trail" id="oTrail" aria-label="Ride trail: yellow is a clean 200 metres, red is a hit"></div>
+        <div class="meta" id="oMeta"></div>
+        <div class="row">
+          <button class="primary" id="bAgain">Ride again</button>
+          <button id="bCopy">Copy score</button>
+        </div>
+        <button class="link" id="bSwitch">Try the endless commute</button>
+        <div class="copied" id="oCopied" aria-live="polite"></div>
+        <textarea id="oShare" rows="4" readonly hidden></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HAND = "'Caveat', 'Segoe Print', cursive";
+
+  // ---------- roads ----------
+  const ROADS = {
+    mg:      { name:'MG Road', diff:1.0, metro:true, trees:true, haz:{barricade:2, auto:1.4, pillar:4, bus:1.4},
+               blurb:'Metro pillars overhead, barricades below, and autos that stop for no reason.',
+               marks:['Metro pillars overhead','Anil Kumble Circle','Mayo Hall','Brigade Road junction','Church Street turn','Trinity Circle'] },
+    brigade: { name:'Brigade Road', diff:1.0, haz:{pothole:1.2, auto:1.2, bus:0.6},
+               blurb:'Weekend crowds, forty shoe shops and a pothole outside each one.',
+               marks:['Shoe shop #1','Shoe shop #2','Weekend crowd','Church Street','Shoe shop #40'] },
+    cubbon:  { name:'Cubbon Road', diff:0.8, trees:true, haz:{cow:1.6, barricade:0.5, bus:1.3, tanker:0.5},
+               blurb:'The gentle one. Rain trees, morning walkers and the odd cow.',
+               marks:['Cubbon Park','Morning walkers','Rain trees','Bandstand','Vidhana Soudha ahead'] },
+    indira:  { name:'100 Feet Road', diff:1.05, trees:true, haz:{auto:1.4, tanker:1.3},
+               blurb:'Indiranagar. Microbreweries on both sides, potholes in between.',
+               marks:['Microbrewery','Another microbrewery','Brunch queue','12th Main signal','Parking? No.'] },
+    kora:    { name:'80 Feet Road', diff:1.1, haz:{barricade:1.3, auto:1.3, tanker:1.6},
+               blurb:'Koramangala. Cafés, startups and a signal that never turns green.',
+               marks:['“We’re hiring” billboard','Third-wave café','Sony World signal','Startup, 4th floor','Another café'] },
+    orr:     { name:'Outer Ring Road', diff:1.15, rain:true, foam:true, haz:{puddle:1.7, tanker:1.8, bus:1.6},
+               blurb:'Tech parks, lake foam and the 4 p.m. downpour.',
+               marks:['Tech park, Gate 3','Cab pickup zone','Bellandur lake','Foam advisory','Tech park, Gate 7'] },
+    hosur:   { name:'Hosur Road', diff:1.15, metro:true, haz:{barricade:1.6, auto:1.2, pillar:3, tanker:1.5},
+               blurb:'Flyover above, chaos below, Silk Board waiting at the end.',
+               marks:['Electronic City flyover','Toll booth','Madiwala market','Silk Board, 2 km'] },
+    silk:    { name:'Silk Board Junction', diff:1.3, metro:true, haz:{barricade:1.6, auto:1.6, cow:1.2, pillar:3, bus:2, tanker:1.5},
+               blurb:'The final boss. Nobody has ever left.',
+               marks:['Silk Board','Signal: red','Signal: still red','Metro work, level 99','You live here now'] },
+    hebbal:  { name:'Hebbal Flyover', diff:1.1, rain:true, trees:true, haz:{puddle:1.5, auto:1.2, bus:1.4},
+               blurb:'Airport traffic, a lake view and a surprise shower.',
+               marks:['Airport →','Hebbal lake','Flyover loop','Airport traffic'] },
+    old:     { name:'Old Airport Road', diff:1.05, trees:true, haz:{barricade:1.2, pillar:2, bus:1.2},
+               blurb:'Flyovers, a famous bridge and jets overhead.',
+               marks:['Domlur flyover','HAL ←','Jet overhead','Marathahalli bridge'] }
+  };
+  const DAILY_ORDER = ['mg','kora','cubbon','orr','indira','hosur','brigade','hebbal','old','silk'];
+  const ROUTE = ['mg','brigade','indira','kora','orr','hosur','silk'];
+  const STRETCH = 450; // metres per road in the endless commute
+
+  // ---------- day (IST) ----------
+  const IST = 5.5*3600e3, DAYMS = 864e5;
+  const LAUNCH = Math.floor(Date.UTC(2026,10,3) / DAYMS); // 3 Nov 2026 (public launch), IST calendar day
+  const istDay = () => Math.floor((Date.now() + IST) / DAYMS);
+  const DAY = istDay();
+  const DAYNO = DAY - LAUNCH + 1;
+  const todayKey = DAILY_ORDER[((DAY - LAUNCH) % DAILY_ORDER.length + DAILY_ORDER.length) % DAILY_ORDER.length];
+  const TODAY = ROADS[todayKey];
+  const dateLabel = new Date(DAY*DAYMS).toLocaleDateString('en-IN', {day:'numeric', month:'short', timeZone:'UTC'});
+  function untilNext(){
+    const ms = DAYMS - ((Date.now() + IST) % DAYMS);
+    const h = Math.floor(ms/3600e3), m = Math.floor(ms%3600e3/60e3);
+    return h + 'h ' + m + 'm';
+  }
+
+  // ---------- seeded rng ----------
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+  // ---------- theme ----------
+  let T = {};
+  function readTheme(){
+    const cs = getComputedStyle(document.documentElement);
+    const g = n => cs.getPropertyValue(n).trim();
+    T = { paper:g('--paper'), grid:g('--grid'), ink:g('--ink'), hl:g('--hl'), red:g('--red'), road:g('--road'),
+          hole:g('--hole'), water:g('--water'), coffee:g('--coffee'), muted:g('--muted'), metro:g('--metro'), leaf:g('--leaf'),
+          slab:g('--slab'), concrete:g('--concrete') };
+  }
+  readTheme();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTheme);
+  new MutationObserver(readTheme).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+  // ---------- sizing (world unit = one lane width) ----------
+  let W=1, H=1, dpr=1, roadW=300, lw=100, roadX=0, fp=30;
+  function resize(){
+    const r = stage.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    roadW = Math.min(W*0.74, 390); lw = roadW/3; roadX = (W - roadW)/2;
+    fp = Math.max(0, Math.min(36, roadX - 6));
+  }
+  new ResizeObserver(resize).observe(stage);
+  resize();
+  const pY = () => (H - Math.max(70, lw*0.85)) / lw;
+  const sx = x => roadX + x*lw;
+  const sy = y => y*lw;
+
+  // ---------- storage ----------
+  const load = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e) { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} };
+  let bestEndless = +load('pd-best-endless', 0) || 0;
+  let bestToday = +load('pd-daily-' + DAY, 0) || 0;
+  let streak = load('pd-streak', {last:-99, n:0}) || {last:-99, n:0};
+  const fmtDist = m => m < 1000 ? Math.floor(m) + ' m' : (m/1000).toFixed(2) + ' km';
+  const kmh = v => Math.round(v*12.6);
+  const liveStreak = () => (DAY - streak.last <= 2 ? streak.n : 0);
+
+  // ---------- copy ----------
+  const MSG = {
+    pothole: ['THUD.','Spine: compressed.','That one had a postcode.','Pothole 1, you 0.','Suspension says bye.'],
+    deep: ['It was 2 feet deep.','Puddle? Crater in disguise.'],
+    foam: ['Lake foam. Pothole inside.','Foam hid a crater.'],
+    barricade: ['Metro work. Since forever.','Diversion? What diversion.'],
+    cow: ['The cow had right of way.','Cow: unbothered.'],
+    tanker: ['Water tanker. 6,000 litres of right of way.','Tanker wins. Tankers always win.'],
+    bus: ['BMTC bus stopped mid-road.','Bus stop? Anywhere is a bus stop.'],
+    pillar: ['Metro pillar. It was here first.','Pillar 1, scooter 0.'],
+    ped: ['Hard brake! The footpath was broken.','Pedestrian detour. Fair enough.','He had nowhere else to walk.'],
+    auto: ['Auto braked. No indicator.','Auto: “Meter? Extra 20.”','Auto took a U-turn. Mid-road.']
+  };
+  const pickM = a => a[Math.floor(Math.random()*a.length)];
+
+  // ---------- game state ----------
+  let state = 'idle', mode = 'daily', G, lockUntil = 0, rng = Math.random;
+  function newGame(m){
+    mode = m;
+    rng = m === 'daily' ? mulberry32(DAY * 2654435761 >>> 0) : Math.random;
+    G = { lane:1, x:1.5, shocks:3, inv:0, meters:0, bonus:0, scroll:0, v:1.6, top:0, dodged:0,
+          obs:[], deco:[], signs:[], fx:[], spawnAcc:4, decoAcc:0, signAcc:1, markAcc:20, markI:0,
+          t:0, shake:0, holeNo: 1000 + Math.floor(rng()*8000), stretch:-1,
+          callout:null, lastMark:null, hits:[], rain:[],
+          peds:[], gaps:[], pedAcc:1.2, gapAcc:0.6, pillarNo: 100 + Math.floor(rng()*300) };
+  }
+  newGame('daily');
+  const score = () => G.meters + G.bonus;
+  function curRoad(){
+    if (state === 'idle' || mode === 'daily') return TODAY;
+    return ROADS[ROUTE[Math.min(ROUTE.length-1, Math.floor(G.meters/STRETCH))]];
+  }
+
+  function makeObs(type, lane, road){
+    const o = { type, y:-1.2, x:lane+0.5, done:false, counted:false };
+    if (type==='pothole'){
+      o.x += (rng()-0.5)*0.24;
+      o.r = 0.2 + rng()*0.15;
+      o.pts = Array.from({length:13}, () => 0.75 + rng()*0.4);
+      o.cracks = [rng()*6.28, rng()*6.28];
+      o.mark = rng() < 0.3 ? ++G.holeNo : 0;
+      o.hw = o.hh = o.r*0.8;
+    } else if (type==='puddle'){
+      o.rx = 0.36; o.ry = 0.26; o.hidden = rng() < 0.45; o.foam = !!road.foam && rng() < 0.6;
+      o.hw = o.rx*0.8; o.hh = o.ry*0.8;
+    } else if (type==='barricade'){ o.hw = 0.42; o.hh = 0.13; }
+    else if (type==='cow'){ o.hw = 0.2; o.hh = 0.38; o.flip = rng() < 0.5; }
+    else if (type==='auto'){ o.hw = 0.17; o.hh = 0.28; o.slow = 0.9 + rng()*0.6; }
+    else if (type==='tanker'){ o.hw = 0.16; o.hh = 0.5; o.drip = rng(); }
+    else if (type==='bus'){ o.hw = 0.18; o.hh = 0.72; }
+    else if (type==='pillar'){ o.hw = o.hh = 0.22; o.no = ++G.pillarNo; }
+    else { o.hw = o.hh = 0.15; }
+    return o;
+  }
+  function pickType(d, road){
+    const h = road.haz || {};
+    const base = [['pothole',0.5],['puddle',0.11+0.1*d],['barricade',0.11],['cow',0.06+0.04*d],['auto',0.08],['tanker',0.05],['bus',0.05],['pillar',0.025]];
+    const w = base.map(([t,p]) => [t, p*(h[t]||1)*(t==='puddle' && road.rain ? 1.3 : 1)]);
+    let r = rng() * w.reduce((s,x)=>s+x[1],0);
+    for (const [t,p] of w){ if ((r -= p) <= 0) return t; }
+    return 'pothole';
+  }
+  const PICKUP = t => t==='coffee' || t==='repair';
+  function spawnRow(d, road){
+    // lanes still occupied by long or slow vehicles near the spawn line stay counted as blocked
+    const occ = new Set();
+    for (const o of G.obs){ if (!PICKUP(o.type) && o.y - o.hh < -0.25) occ.add(Math.floor(o.x)); }
+    const lanes = [0,1,2].filter(l => !occ.has(l));
+    for (let i=lanes.length-1;i>0;i--){ const j = Math.floor(rng()*(i+1)); [lanes[i],lanes[j]] = [lanes[j],lanes[i]]; }
+    if (lanes.length <= 1) return; // keep the only open lane open
+    const n = Math.min(lanes.length - 1, rng() < 0.12 + 0.33*d ? 2 : 1);
+    for (let i=0;i<n;i++) G.obs.push(makeObs(pickType(d, road), lanes[i], road));
+    const free = lanes[n], p = rng();
+    if (p < 0.12) G.obs.push(makeObs('coffee', free, road));
+    else if (p < 0.155) G.obs.push(makeObs('repair', free, road));
+  }
+  // pedestrians walk the footpath; where a slab is missing they step onto the road edge
+  const pedX = p => {
+    const out = (fp/2 + 3)/lw;
+    return p.side < 0 ? -out + (0.3 + out)*p.off : 3 + out - (0.3 + out)*p.off;
+  };
+
+  function fx(txt, color){ G.fx.push({ x:sx(G.x), y:sy(pY()) - lw*0.45, txt, color, t:0 }); }
+  function damage(msg){
+    G.shocks--; G.inv = 1.2; G.shake = reduce ? 0 : 10;
+    G.hits.push(G.meters);
+    fx(msg, T.red);
+    if (G.shocks <= 0) gameOver();
+  }
+
+  // ---------- update ----------
+  function update(dt){
+    const running = state === 'run';
+    G.t += dt;
+    const road = curRoad();
+    const diff = mode === 'daily' ? TODAY.diff : 1;
+    const d = Math.min(1, G.meters*diff/2600);
+    if (running){ G.v = 3 + 4.6*Math.pow(d, 0.85); G.top = Math.max(G.top, G.v); }
+    const dy = G.v*dt;
+    G.scroll += dy;
+    if (running) G.meters += dy*3.5;
+    for (const o of G.obs) o.y += dy - (o.slow ? o.slow*dt*(running?1:0.5) : 0);
+    for (const s of G.deco) s.y += dy;
+    for (const s of G.signs) s.y += dy;
+    for (const g of G.gaps) g.y += dy;
+    for (const p of G.peds) p.y += dy + p.w*dt*(running ? 1 : 0.6);
+
+    // broken footpath + pedestrians (seeded in the daily road, so everyone gets the same ones)
+    G.gapAcc -= dy;
+    if (G.gapAcc <= 0){ G.gaps.push({ side: rng() < 0.5 ? -1 : 1, y:-1, h: 0.25 + rng()*0.25 }); G.gapAcc = 1.1 + rng()*1.8; }
+    G.pedAcc -= dy;
+    if (G.pedAcc <= 0){
+      G.peds.push({ side: rng() < 0.5 ? -1 : 1, y:-1, w:(rng() < 0.5 ? -1 : 1)*(0.35 + rng()*0.3), off:0, col: Math.floor(rng()*5), ph: rng()*6, hit:false });
+      G.pedAcc = 1.2 + rng()*1.6;
+    }
+    for (const p of G.peds){
+      const ahead = G.gaps.some(g => g.side === p.side &&
+        (p.w < 0 ? (g.y + g.h/2 > p.y - 0.75 && g.y - g.h/2 < p.y + 0.15)
+                 : (g.y - g.h/2 < p.y + 0.75 && g.y + g.h/2 > p.y - 0.15)));
+      const lane = p.side < 0 ? 0 : 2;
+      const clear = !G.obs.some(o => !PICKUP(o.type) && Math.floor(o.x) === lane && Math.abs(o.y - p.y) < 1.4);
+      const tgt = ahead && (clear || p.off > 0.3) ? 1 : 0;
+      p.off += (tgt - p.off) * Math.min(1, dt*5);
+    }
+
+    // endless: entering a new road
+    if (running && mode === 'endless'){
+      const idx = Math.min(ROUTE.length-1, Math.floor(G.meters/STRETCH));
+      if (idx !== G.stretch){
+        G.stretch = idx; G.markI = 0; G.markAcc = 60;
+        if (idx > 0) G.callout = { text:'Now entering ' + ROADS[ROUTE[idx]].name, t:0, big:true };
+      }
+    }
+    // landmarks
+    if (running){
+      G.markAcc -= dy*3.5;
+      if (G.markAcc <= 0){
+        const mk = road.marks[G.markI % road.marks.length]; G.markI++;
+        G.callout = { text:'Passing ' + mk, t:0 }; G.lastMark = mk;
+        if (roadX >= 90) G.signs.push({ y:-1, side: G.markI % 2 ? -1 : 1, text: mk, rot:(Math.random()-0.5)*0.12 });
+        G.markAcc = 120 + Math.random()*40;
+      }
+    }
+    if (G.callout){ G.callout.t += dt; if (G.callout.t > 3) G.callout = null; }
+
+    // spawning
+    G.spawnAcc -= dy;
+    if (G.spawnAcc <= 0){
+      spawnRow(running ? d : 0.15, road);
+      G.spawnAcc = Math.max(1.35, G.v*0.42, 2.7 - 1.2*d) + rng()*0.6;
+    }
+    G.decoAcc -= dy;
+    if (G.decoAcc <= 0){
+      if (roadX >= 22 && road.trees) G.deco.push({ y:-1, side:1, r: 0.6 + Math.random()*0.5 });
+      if (roadX >= 22 && road.trees && Math.random() < 0.4) G.deco.push({ y:-1.6, side:-1, r: 0.6 + Math.random()*0.5 });
+      G.decoAcc = 1.4 + Math.random()*1.4;
+    }
+    // rain
+    if (road.rain && !reduce){
+      while (G.rain.length < 60) G.rain.push({ x:Math.random()*W, y:Math.random()*H, l:8+Math.random()*10 });
+      for (const r of G.rain){ r.y += (520 + G.v*40)*dt; r.x -= 90*dt; if (r.y > H){ r.y = -10; r.x = Math.random()*(W+60); } }
+    } else G.rain.length = 0;
+
+    const py = pY();
+    if (state === 'idle'){
+      const danger = l => G.obs.some(o => !['coffee','repair'].includes(o.type) && Math.abs(o.x-(l+0.5))<0.5 && o.y > py-3 && o.y < py+0.6);
+      if (danger(G.lane)){
+        const opts = [G.lane-1, G.lane+1].filter(l => l>=0 && l<=2 && !danger(l));
+        if (opts.length) G.lane = opts[Math.floor(Math.random()*opts.length)];
+      }
+    }
+    G.x += (G.lane+0.5 - G.x) * Math.min(1, dt*16);
+    if (G.inv > 0) G.inv -= dt;
+    if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
+
+    if (running){
+      const phw = 0.13, phh = 0.26;
+      for (const o of G.obs){
+        if (o.done) continue;
+        const hit = Math.abs(G.x - o.x) < phw + o.hw && Math.abs(py - o.y) < phh + o.hh;
+        if (!hit){
+          if (!o.counted && o.y - o.hh > py + 0.3){
+            o.counted = true;
+            if (o.type==='pothole' || o.type==='puddle') G.dodged++;
+          }
+          continue;
+        }
+        o.done = true;
+        if (o.type==='coffee'){ G.bonus += 50; fx('+50 m · filter coffee', T.ink); }
+        else if (o.type==='repair'){ G.shocks = Math.min(3, G.shocks+1); fx('Road fixed?! Rare sighting.', T.ink); }
+        else if (o.type==='puddle' && !o.hidden){ fx(o.foam ? 'Just foam. Hold your breath.' : 'Just water. This time.', T.muted); }
+        else if (G.inv <= 0){
+          const key = o.type==='puddle' ? (o.foam ? 'foam' : 'deep') : o.type;
+          damage(pickM(MSG[key]));
+          if (state !== 'run') break;
+        }
+      }
+    }
+    if (running && state === 'run'){
+      for (const p of G.peds){
+        if (p.hit || p.off < 0.45) continue;
+        if (Math.abs(G.x - pedX(p)) < 0.13 + 0.1 && Math.abs(py - p.y) < 0.26 + 0.1){
+          p.hit = true;
+          if (G.inv <= 0){ damage(pickM(MSG.ped)); if (state !== 'run') break; }
+        }
+      }
+    }
+    const lim = H/lw + 2;
+    G.gaps = G.gaps.filter(g => g.y < lim);
+    G.peds = G.peds.filter(p => p.y < lim && p.y > -4);
+    G.obs = G.obs.filter(o => o.y < lim && o.y > -6);
+    G.deco = G.deco.filter(s => s.y < lim);
+    G.signs = G.signs.filter(s => s.y < lim);
+    for (const f of G.fx) f.t += dt;
+    G.fx = G.fx.filter(f => f.t < 1.3);
+  }
+
+  // ---------- drawing ----------
+  function rr(x,y,w,h,r){ ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x,y,w,h,r); else ctx.rect(x,y,w,h); }
+  function drawPothole(o){
+    const cx = sx(o.x), cy = sy(o.y), r = o.r*lw, n = o.pts.length;
+    ctx.beginPath();
+    for (let i=0;i<=n;i++){
+      const a = (i%n)/n*Math.PI*2, k = o.pts[i%n];
+      const px = cx + Math.cos(a)*r*k, py = cy + Math.sin(a)*r*k*0.78;
+      i ? ctx.lineTo(px,py) : ctx.moveTo(px,py);
+    }
+    ctx.fillStyle = T.hole; ctx.fill();
+    ctx.strokeStyle = T.ink; ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.globalAlpha = 0.35;
+    ctx.beginPath(); ctx.ellipse(cx - r*0.15, cy - r*0.1, r*0.45, r*0.28, 0, 0, Math.PI*2); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.lineWidth = 1.2;
+    for (const a of o.cracks){
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a)*r*0.95, cy + Math.sin(a)*r*0.75);
+      ctx.lineTo(cx + Math.cos(a+0.2)*r*1.35, cy + Math.sin(a+0.2)*r*1.05);
+      ctx.lineTo(cx + Math.cos(a-0.1)*r*1.6, cy + Math.sin(a-0.1)*r*1.25);
+      ctx.stroke();
+    }
+    if (o.mark){
+      ctx.strokeStyle = T.red; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.ellipse(cx, cy, r*1.5, r*1.2, -0.15, 0.25, Math.PI*2 + 0.45); ctx.stroke();
+      ctx.save(); ctx.translate(cx + r*1.45, cy - r*0.95); ctx.rotate(-0.12);
+      ctx.fillStyle = T.red; ctx.font = '700 15px ' + HAND;
+      ctx.fillText('#' + o.mark.toLocaleString('en-IN'), 0, 0);
+      ctx.restore();
+    }
+  }
+  function drawPuddle(o){
+    const cx = sx(o.x), cy = sy(o.y), rx = o.rx*lw, ry = o.ry*lw;
+    if (o.foam){
+      ctx.fillStyle = T.paper; ctx.strokeStyle = T.muted; ctx.lineWidth = 1.3;
+      const blobs = [[0,0,1],[-0.55,-0.2,0.6],[0.5,0.15,0.7],[0.1,-0.45,0.55],[-0.2,0.4,0.5]];
+      for (const [bx,by,k] of blobs){ ctx.beginPath(); ctx.arc(cx+bx*rx, cy+by*ry, ry*0.7*k, 0, Math.PI*2); ctx.fill(); ctx.stroke(); }
+      return;
+    }
+    ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0.1, 0, Math.PI*2);
+    ctx.globalAlpha = 0.35; ctx.fillStyle = T.water; ctx.fill();
+    ctx.globalAlpha = 0.9; ctx.strokeStyle = T.water; ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.globalAlpha = 0.7; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.ellipse(cx - rx*0.25, cy, rx*0.3, ry*0.25, 0.1, 3.4, 5.6); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(cx + rx*0.3, cy + ry*0.2, rx*0.2, ry*0.18, 0.1, 3.4, 5.8); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  function drawBarricade(o){
+    const w = o.hw*2*lw, h = o.hh*2*lw, x = sx(o.x) - w/2, y = sy(o.y) - h/2;
+    ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+    ctx.fillStyle = T.hl; ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle = '#14213D'; ctx.lineWidth = 6;
+    for (let i=-h; i<w+h; i+=16){ ctx.beginPath(); ctx.moveTo(x+i, y+h); ctx.lineTo(x+i+h, y); ctx.stroke(); }
+    ctx.restore();
+    ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.strokeRect(x,y,w,h);
+    const label = 'METRO WORK';
+    ctx.font = "700 9px 'JetBrains Mono', monospace";
+    const tw = ctx.measureText(label).width + 8;
+    if (tw < w - 6){
+      ctx.fillStyle = T.paper; ctx.fillRect(sx(o.x) - tw/2, sy(o.y) - 7, tw, 14);
+      ctx.strokeStyle = T.ink; ctx.lineWidth = 1; ctx.strokeRect(sx(o.x) - tw/2, sy(o.y) - 7, tw, 14);
+      ctx.fillStyle = T.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(label, sx(o.x), sy(o.y) + 0.5);
+      ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    }
+  }
+  function drawCow(o){
+    ctx.save(); ctx.translate(sx(o.x), sy(o.y)); if (o.flip) ctx.rotate(Math.PI);
+    const rx = o.hw*lw, ry = o.hh*lw*0.78;
+    ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.fillStyle = T.paper;
+    ctx.beginPath(); ctx.moveTo(0, -ry); ctx.quadraticCurveTo(rx*0.6, -ry*1.25, rx*0.2, -ry*1.4); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = T.ink;
+    ctx.beginPath(); ctx.ellipse(-rx*0.35, -ry*0.3, rx*0.35, ry*0.22, 0.4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(rx*0.3, ry*0.25, rx*0.28, ry*0.18, -0.3, 0, Math.PI*2); ctx.fill();
+    const hy = ry + lw*0.06, hr = lw*0.1;
+    ctx.fillStyle = T.paper;
+    ctx.beginPath(); ctx.arc(0, hy, hr, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-hr*0.6, hy - hr*0.5); ctx.lineTo(-hr*1.4, hy - hr*1.1);
+    ctx.moveTo(hr*0.6, hy - hr*0.5); ctx.lineTo(hr*1.4, hy - hr*1.1); ctx.stroke();
+    ctx.restore();
+  }
+  function drawAuto(o){
+    ctx.save(); ctx.translate(sx(o.x), sy(o.y));
+    const w = 0.34*lw, l = 0.56*lw;
+    ctx.fillStyle = T.ink;
+    rr(-0.03*lw, -l/2, 0.06*lw, 0.12*lw, 2); ctx.fill();                 // front wheel
+    rr(-w/2 - 0.03*lw, l/2 - 0.16*lw, 0.06*lw, 0.13*lw, 2); ctx.fill();  // rear wheels
+    rr(w/2 - 0.03*lw, l/2 - 0.16*lw, 0.06*lw, 0.13*lw, 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-w*0.3, -l/2 + 0.08*lw); ctx.lineTo(w*0.3, -l/2 + 0.08*lw);
+    ctx.lineTo(w/2, -l*0.12); ctx.lineTo(-w/2, -l*0.12); ctx.closePath(); ctx.fill();    // nose
+    rr(-w/2, -l*0.14, w, l*0.58, 0.06*lw);
+    ctx.fillStyle = T.hl; ctx.fill(); ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.stroke(); // canopy
+    ctx.lineWidth = 1.2; ctx.globalAlpha = 0.6;
+    ctx.beginPath(); ctx.moveTo(-w*0.35, l*0.02); ctx.lineTo(w*0.35, l*0.02); ctx.moveTo(-w*0.35, l*0.16); ctx.lineTo(w*0.35, l*0.16); ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+  function drawCoffee(o){
+    const cx = sx(o.x), cy = sy(o.y), r = 0.14*lw;
+    ctx.strokeStyle = T.ink; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fillStyle = T.paper; ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, r*0.62, 0, Math.PI*2); ctx.fillStyle = T.coffee; ctx.fill(); ctx.stroke();
+    ctx.globalAlpha = 0.6; ctx.strokeStyle = T.paper; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, r*0.38, 3.6, 4.8); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  function drawRepair(o){
+    const cx = sx(o.x), cy = sy(o.y), r = 0.15*lw;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.fillStyle = T.hl; ctx.fill(); ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = '#14213D'; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(cx - r*0.5, cy); ctx.lineTo(cx + r*0.5, cy); ctx.moveTo(cx, cy - r*0.5); ctx.lineTo(cx, cy + r*0.5); ctx.stroke();
+    ctx.lineCap = 'butt';
+  }
+  function drawScooter(){
+    if (G.inv > 0 && Math.floor(G.inv*12) % 2 === 0) ctx.globalAlpha = 0.35;
+    const tilt = reduce ? 0 : (G.lane + 0.5 - G.x) * 0.55;
+    ctx.save(); ctx.translate(sx(G.x), sy(pY())); ctx.rotate(tilt);
+    const L = 0.56*lw, Wd = 0.2*lw;
+    ctx.fillStyle = T.ink;
+    rr(-0.032*lw, -L/2, 0.064*lw, 0.15*lw, 3); ctx.fill();
+    rr(-0.032*lw, L/2 - 0.15*lw, 0.064*lw, 0.15*lw, 3); ctx.fill();
+    rr(-Wd/2, -L/2 + 0.08*lw, Wd, L - 0.16*lw, 0.07*lw);
+    ctx.fillStyle = T.hl; ctx.fill(); ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.stroke();
+    ctx.lineCap = 'round'; ctx.lineWidth = 3.5;
+    ctx.beginPath(); ctx.moveTo(-0.16*lw, -L/2 + 0.13*lw); ctx.lineTo(0.16*lw, -L/2 + 0.13*lw); ctx.stroke();
+    ctx.lineCap = 'butt';
+    ctx.fillStyle = T.ink;
+    ctx.beginPath(); ctx.ellipse(0, 0.03*lw, 0.14*lw, 0.07*lw, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, -0.04*lw, 0.085*lw, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = T.hl; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(0, -0.04*lw, 0.06*lw, 3.6, 5.8); ctx.stroke();
+    ctx.restore(); ctx.globalAlpha = 1;
+  }
+  function drawTanker(o){
+    ctx.save(); ctx.translate(sx(o.x), sy(o.y));
+    const w = 0.32*lw, l = 1.0*lw;
+    ctx.fillStyle = T.ink;
+    for (const yy of [-l*0.36, -l*0.02, l*0.3]){ ctx.fillRect(-w/2 - 3, yy, 4, l*0.1); ctx.fillRect(w/2 - 1, yy, 4, l*0.1); }
+    rr(-w/2, -l/2, w, l*0.24, 4); ctx.fillStyle = T.paper; ctx.fill(); ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = T.ink; ctx.fillRect(-w/2 + 3, -l/2 + 3, w - 6, l*0.06);
+    rr(-w/2 + 1, -l/2 + l*0.28, w - 2, l*0.7, w*0.4);
+    ctx.fillStyle = T.water; ctx.fill(); ctx.stroke();
+    ctx.lineWidth = 1; ctx.globalAlpha = 0.5;
+    ctx.beginPath(); for (const k of [0.45, 0.62, 0.79]){ ctx.moveTo(-w/2 + 2, -l/2 + l*k); ctx.lineTo(w/2 - 2, -l/2 + l*k); } ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.save(); ctx.translate(0, l*0.14); ctx.rotate(-Math.PI/2);
+    ctx.font = "700 9px 'JetBrains Mono', monospace"; ctx.fillStyle = T.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('WATER', 0, 0); ctx.restore();
+    ctx.fillStyle = T.water; ctx.globalAlpha = 0.7;
+    for (let i=0;i<3;i++){ ctx.beginPath(); ctx.arc((o.drip - 0.5)*w*0.6, l/2 + 6 + i*9, 2.2 - i*0.4, 0, Math.PI*2); ctx.fill(); }
+    ctx.globalAlpha = 1; ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    ctx.restore();
+  }
+  function drawBus(o){
+    ctx.save(); ctx.translate(sx(o.x), sy(o.y));
+    const w = 0.36*lw, l = 1.44*lw;
+    rr(-w/2, -l/2, w, l, 6); ctx.fillStyle = T.paper; ctx.fill(); ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = T.ink; ctx.fillRect(-w/2 + 3, -l/2 + 3, w - 6, l*0.05);
+    ctx.fillStyle = T.red; ctx.fillRect(-w/2 + 2, -l/2 + l*0.1, 3, l*0.85); ctx.fillRect(w/2 - 5, -l/2 + l*0.1, 3, l*0.85);
+    ctx.strokeStyle = T.ink; ctx.lineWidth = 1.2;
+    ctx.strokeRect(-w*0.22, -l*0.3, w*0.44, l*0.1); ctx.strokeRect(-w*0.22, l*0.22, w*0.44, l*0.1);
+    ctx.save(); ctx.rotate(-Math.PI/2);
+    ctx.font = "700 10px 'JetBrains Mono', monospace"; ctx.fillStyle = T.red; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('BMTC', 0, 0); ctx.restore();
+    ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    ctx.restore();
+  }
+  function drawPillar(o){
+    const s = o.hw*2*lw, x = sx(o.x) - s/2, y = sy(o.y) - s/2;
+    ctx.save();
+    ctx.setLineDash([6,6]); ctx.lineWidth = 4;
+    ctx.strokeStyle = T.hl; ctx.strokeRect(x - 7, y - 7, s + 14, s + 14);
+    ctx.lineDashOffset = 6; ctx.strokeStyle = '#14213D'; ctx.strokeRect(x - 7, y - 7, s + 14, s + 14);
+    ctx.restore();
+    ctx.fillStyle = T.concrete; ctx.fillRect(x, y, s, s);
+    ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.strokeRect(x, y, s, s);
+    ctx.globalAlpha = 0.3; ctx.lineWidth = 1; ctx.beginPath();
+    for (let i=6; i<s*2; i+=7){ ctx.moveTo(x + Math.min(i,s), y + Math.max(0,i-s)); ctx.lineTo(x + Math.max(0,i-s), y + Math.min(i,s)); }
+    ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.font = "700 9px 'JetBrains Mono', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = T.paper; const tw = ctx.measureText('P-' + o.no).width + 6;
+    ctx.fillRect(sx(o.x) - tw/2, sy(o.y) - 7, tw, 14);
+    ctx.fillStyle = T.ink; ctx.fillText('P-' + o.no, sx(o.x), sy(o.y) + 0.5);
+    ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+  }
+  function drawFootpaths(scrollPx){
+    if (fp < 6) return;
+    const tile = lw*0.45, off = scrollPx % tile;
+    for (const side of [-1,1]){
+      const x = side < 0 ? roadX - fp - 3 : roadX + roadW + 3;
+      ctx.fillStyle = T.slab; ctx.fillRect(x, -20, fp, H + 40);
+      ctx.strokeStyle = T.ink; ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.3; ctx.beginPath();
+      for (let y = off - tile; y < H + tile; y += tile){ ctx.moveTo(x, y); ctx.lineTo(x + fp, y); }
+      ctx.stroke();
+      ctx.globalAlpha = 0.55; ctx.beginPath();
+      for (let y = off - tile; y < H + tile; y += tile){
+        const id = Math.round((y - scrollPx)/tile);
+        if ((((id*73856093) ^ (side*19349663)) >>> 0) % 4 !== 0) continue;
+        ctx.moveTo(x + fp*0.15, y + tile*0.2); ctx.lineTo(x + fp*0.45, y + tile*0.5);
+        ctx.lineTo(x + fp*0.35, y + tile*0.65); ctx.lineTo(x + fp*0.8, y + tile*0.9);
+      }
+      ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.moveTo(side < 0 ? x : x + fp, -20); ctx.lineTo(side < 0 ? x : x + fp, H + 20); ctx.stroke();
+    }
+    for (const g of G.gaps){
+      const x = g.side < 0 ? roadX - fp - 3 : roadX + roadW + 3, h = g.h*lw, y = sy(g.y) - h/2;
+      ctx.beginPath();
+      ctx.moveTo(x + 2, y + 3); ctx.lineTo(x + fp*0.4, y); ctx.lineTo(x + fp*0.7, y + 4); ctx.lineTo(x + fp - 2, y + 1);
+      ctx.lineTo(x + fp - 3, y + h - 2); ctx.lineTo(x + fp*0.55, y + h + 2); ctx.lineTo(x + fp*0.25, y + h - 3); ctx.lineTo(x + 3, y + h);
+      ctx.closePath(); ctx.fillStyle = T.hole; ctx.fill(); ctx.strokeStyle = T.ink; ctx.lineWidth = 1.4; ctx.stroke();
+      ctx.fillStyle = T.concrete;
+      ctx.fillRect(x + fp*0.3, y + h*0.4, 4, 3); ctx.fillRect(x + fp*0.62, y + h*0.62, 3, 3);
+    }
+  }
+  function drawPeds(){
+    const cols = [T.red, T.metro, T.leaf, T.muted, T.coffee];
+    for (const p of G.peds){
+      if (fp < 6 && p.off < 0.3) continue;
+      const x = sx(pedX(p)) + Math.sin(p.ph + G.t*7)*1.2, y = sy(p.y);
+      const rx = Math.min(lw*0.1, Math.max(6, fp*0.3)), ry = rx*0.55;
+      ctx.lineWidth = 1.6; ctx.strokeStyle = T.ink; ctx.lineCap = 'round';
+      const step = Math.sin(p.ph + G.t*7)*rx*0.5, dir = p.w < 0 ? -1 : 1;
+      ctx.beginPath(); ctx.moveTo(x - rx*0.35, y); ctx.lineTo(x - rx*0.35, y + dir*(rx*0.6 + step));
+      ctx.moveTo(x + rx*0.35, y); ctx.lineTo(x + rx*0.35, y + dir*(rx*0.6 - step)); ctx.stroke();
+      ctx.lineCap = 'butt';
+      ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI*2); ctx.fillStyle = cols[p.col]; ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x, y - dir*1, rx*0.5, 0, Math.PI*2); ctx.fillStyle = T.ink; ctx.fill();
+    }
+  }
+  function drawViaduct(){
+    const x = roadX + lw*1.0, w = lw*0.3;
+    ctx.globalAlpha = 0.13; ctx.fillStyle = T.metro; ctx.fillRect(x - w/2, -20, w, H + 40);
+    ctx.globalAlpha = 0.5; ctx.strokeStyle = T.metro; ctx.lineWidth = 1.5; ctx.setLineDash([10,6]);
+    ctx.beginPath(); ctx.moveTo(x - w/2, -20); ctx.lineTo(x - w/2, H + 20); ctx.moveTo(x + w/2, -20); ctx.lineTo(x + w/2, H + 20); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+  }
+  function drawTree(t){
+    const m = roadX - fp - 4, r = Math.min(m*0.42, t.r*lw*0.3);
+    if (r < 6) return;
+    const cx = t.side > 0 ? W - m/2 : m/2, cy = sy(t.y);
+    ctx.beginPath();
+    for (let i=0;i<=10;i++){ const a = i/10*Math.PI*2, k = i%2 ? 0.82 : 1; i ? ctx.lineTo(cx+Math.cos(a)*r*k, cy+Math.sin(a)*r*k) : ctx.moveTo(cx+r, cy); }
+    ctx.globalAlpha = 0.55; ctx.fillStyle = T.leaf; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.strokeStyle = T.ink; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.fillStyle = T.ink; ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI*2); ctx.fill();
+  }
+  function drawMetro(scrollPx){
+    const w = Math.min(26, roadX - 6);
+    if (w < 8) return;
+    const x = roadX - w - 3;
+    ctx.globalAlpha = 0.28; ctx.fillStyle = T.metro; ctx.fillRect(x, -20, w, H+40); ctx.globalAlpha = 1;
+    ctx.strokeStyle = T.metro; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, -20); ctx.lineTo(x, H+20); ctx.moveTo(x+w, -20); ctx.lineTo(x+w, H+20); ctx.stroke();
+    const gap = lw*2.4, off = scrollPx % gap;
+    ctx.fillStyle = T.ink;
+    for (let y = off - gap; y < H + gap; y += gap){ ctx.fillRect(x + w/2 - 4, y - 4, 8, 8); }
+  }
+  function label(txt, x, y, size, color, alpha){
+    ctx.globalAlpha = alpha == null ? 1 : alpha;
+    ctx.font = '700 ' + size + 'px ' + HAND; ctx.textAlign = 'center';
+    ctx.lineWidth = 5; ctx.strokeStyle = T.road; ctx.lineJoin = 'round'; ctx.strokeText(txt, x, y);
+    ctx.fillStyle = color; ctx.fillText(txt, x, y);
+    ctx.textAlign = 'start'; ctx.globalAlpha = 1;
+  }
+
+  function draw(){
+    const road = curRoad();
+    ctx.save();
+    if (G.shake > 0) ctx.translate((Math.random()-0.5)*G.shake, (Math.random()-0.5)*G.shake);
+    ctx.fillStyle = T.paper; ctx.fillRect(-20, -20, W+40, H+40);
+
+    const cell = 24, scrollPx = G.scroll*lw, off = scrollPx % cell;
+    ctx.strokeStyle = T.grid; ctx.lineWidth = 1; ctx.beginPath();
+    for (let x=0.5; x<W; x+=cell){ ctx.moveTo(x,0); ctx.lineTo(x,H); }
+    for (let y=off-cell+0.5; y<H; y+=cell){ ctx.moveTo(0,y); ctx.lineTo(W,y); }
+    ctx.stroke();
+
+    for (const t of G.deco) drawTree(t);
+
+    ctx.font = '700 18px ' + HAND;
+    for (const s of G.signs){
+      const tw = ctx.measureText(s.text).width, free = roadX - fp - 14;
+      if (tw > free) continue;
+      const x = s.side < 0 ? roadX - fp - 10 - tw : roadX + roadW + fp + 10;
+      ctx.save(); ctx.translate(x, sy(s.y)); ctx.rotate(s.rot); ctx.fillStyle = T.muted; ctx.fillText(s.text, 0, 0); ctx.restore();
+    }
+    drawFootpaths(scrollPx);
+
+    ctx.fillStyle = T.road; ctx.fillRect(roadX, -20, roadW, H+40);
+    ctx.strokeStyle = T.ink; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(roadX, -20); ctx.lineTo(roadX, H+20); ctx.moveTo(roadX+roadW, -20); ctx.lineTo(roadX+roadW, H+20); ctx.stroke();
+    ctx.save();
+    ctx.setLineDash([lw*0.35, lw*0.35]); ctx.lineDashOffset = -(scrollPx % (lw*0.7)); ctx.globalAlpha = 0.5;
+    ctx.beginPath(); for (const k of [1,2]){ ctx.moveTo(roadX + lw*k, -lw); ctx.lineTo(roadX + lw*k, H + lw); }
+    ctx.stroke(); ctx.restore();
+    if (road.metro) drawViaduct();
+
+    for (const o of G.obs){
+      if (o.done && (o.type==='coffee' || o.type==='repair')) continue;
+      if (o.type==='pothole') drawPothole(o);
+      else if (o.type==='puddle') drawPuddle(o);
+      else if (o.type==='barricade') drawBarricade(o);
+      else if (o.type==='cow') drawCow(o);
+      else if (o.type==='auto') drawAuto(o);
+      else if (o.type==='tanker') drawTanker(o);
+      else if (o.type==='bus') drawBus(o);
+      else if (o.type==='pillar') drawPillar(o);
+      else if (o.type==='coffee') drawCoffee(o);
+      else drawRepair(o);
+    }
+    drawPeds();
+    drawScooter();
+
+    if (G.rain.length){
+      ctx.strokeStyle = T.water; ctx.lineWidth = 1.2; ctx.globalAlpha = 0.45; ctx.beginPath();
+      for (const r of G.rain){ ctx.moveTo(r.x, r.y); ctx.lineTo(r.x - r.l*0.25, r.y + r.l); }
+      ctx.stroke(); ctx.globalAlpha = 1;
+    }
+
+    // road name + landmark callout
+    label(road.name + (road.rain ? ' · raining' : ''), W/2, 28, 22, T.red);
+    if (G.callout){
+      const a = Math.min(1, (3 - G.callout.t)*1.5, G.callout.t*4);
+      label(G.callout.text, W/2, G.callout.big ? 60 : 52, G.callout.big ? 24 : 19, G.callout.big ? T.ink : T.muted, a);
+    }
+    if (state === 'run' && G.t < 3.5){
+      ctx.globalAlpha = Math.min(1, 3.5 - G.t);
+      ctx.font = '700 20px ' + HAND; ctx.fillStyle = T.muted; ctx.textAlign = 'center';
+      ctx.fillText('◀ tap left', roadX + roadW*0.22, H - 14);
+      ctx.fillText('tap right ▶', roadX + roadW*0.78, H - 14);
+      ctx.textAlign = 'start'; ctx.globalAlpha = 1;
+    }
+    for (const f of G.fx){
+      const x = Math.min(W - 100, Math.max(100, f.x));
+      label(f.txt, x, f.y - f.t*40, 22, f.color, 1 - f.t/1.3);
+    }
+    ctx.restore();
+  }
+
+  // ---------- HUD ----------
+  const shockEls = [...document.querySelectorAll('#hShocks .shock')];
+  const curBest = () => mode === 'daily' ? bestToday : bestEndless;
+  function hud(){
+    $('hDist').textContent = state === 'idle' ? '0 m' : fmtDist(score());
+    $('hSpeed').textContent = (state === 'run' ? kmh(G.v) : 0) + ' km/h';
+    shockEls.forEach((el,i) => el.classList.toggle('gone', state !== 'idle' && i >= G.shocks));
+    const b = state === 'idle' ? bestToday : curBest();
+    $('hBest').textContent = b ? fmtDist(b) : '—';
+  }
+  function fillStart(){
+    $('sKicker').textContent = 'Road of the day #' + DAYNO + ' · ' + dateLabel;
+    $('tStart').innerHTML = '<mark></mark>'; $('tStart').firstChild.textContent = TODAY.name;
+    $('sBlurb').textContent = TODAY.blurb;
+    const s = liveStreak();
+    $('sMeta').innerHTML = '';
+    const add = (k, v) => { const el = document.createElement('span'); el.append(k + ' '); const b = document.createElement('b'); b.textContent = v; el.append(b); $('sMeta').append(el); };
+    add('Today’s best', bestToday ? fmtDist(bestToday) : '—');
+    add('Streak', s + (s === 1 ? ' day' : ' days'));
+    add('New road in', untilNext());
+  }
+  fillStart();
+
+  // ---------- flow ----------
+  const show = (id, on) => { $(id).hidden = !on; };
+  function start(m){
+    newGame(m); G.v = 3; state = 'run';
+    if (mode === 'daily') G.callout = { text:'Welcome to ' + TODAY.name, t:0, big:true };
+    $('caption').textContent = mode === 'daily' ? 'Road of the day: ' + TODAY.name : 'Endless commute, starting on MG Road';
+    show('ovStart', false); show('ovOver', false); show('ovPause', false);
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  }
+  function pause(){ if (state !== 'run') return; state = 'paused'; show('ovPause', true); $('bResume').focus(); }
+  function resume(){ if (state !== 'paused') return; state = 'run'; show('ovPause', false); last = performance.now(); if (document.activeElement) document.activeElement.blur(); }
+  function trail(){
+    const segs = Math.max(1, Math.min(20, Math.ceil(G.meters/200)));
+    let s = '';
+    for (let i=0;i<segs;i++){ const hit = G.hits.some(m => m >= i*200 && m < (i+1)*200); s += hit ? '🟥' : '🟨'; }
+    return s;
+  }
+  function shareText(){
+    const head = mode === 'daily'
+      ? 'Pothole Dash · Road of the day #' + DAYNO + ' · ' + TODAY.name
+      : 'Pothole Dash · Endless commute · reached ' + curRoad().name;
+    return head + '\n' + trail() + '\n' + fmtDist(score()) + ', dodged ' + G.dodged + ' potholes, top speed ' + kmh(G.top) + ' km/h.';
+  }
+  function gameOver(){
+    state = 'over';
+    const sc = score(), road = curRoad();
+    let isBest = false;
+    if (mode === 'daily'){
+      if (sc > bestToday){ isBest = true; bestToday = sc; save('pd-daily-' + DAY, Math.floor(sc)); }
+      if (streak.last !== DAY){
+        const gap = DAY - streak.last;
+        streak = { last:DAY, n: (gap === 1 || gap === 2) ? streak.n + 1 : 1 };
+        save('pd-streak', streak);
+      }
+    } else if (sc > bestEndless){ isBest = true; bestEndless = sc; save('pd-best-endless', Math.floor(sc)); }
+
+    $('oKicker').textContent = mode === 'daily' ? 'Road of the day #' + DAYNO + ' · ' + TODAY.name : 'Endless commute';
+    $('tOver').textContent = G.lastMark ? 'You made it past ' + G.lastMark.replace(/^“|”$/g,'') + '.' : 'Out of shock absorbers.';
+    if (mode === 'endless' && G.stretch > 0) $('tOver').textContent = 'You made it to ' + road.name + '.';
+    $('oMsg').textContent = sc < 300 ? 'Didn’t make it past the first junction.'
+      : sc < 900 ? 'About as far as an auto will agree to go.'
+      : sc < 1700 ? 'Respectable. Your chiropractor disagrees.'
+      : 'Silk Board survivor. Legend.';
+    $('oDist').textContent = fmtDist(sc);
+    $('oDodged').textContent = G.dodged;
+    $('oTop').textContent = kmh(G.top) + ' km/h';
+    $('oTrail').textContent = trail();
+    const meta = $('oMeta'); meta.innerHTML = '';
+    const add = (k, v, cls) => { const el = document.createElement('span'); if (cls) el.className = cls; el.append(k + ' '); const b = document.createElement('b'); b.textContent = v; el.append(b); meta.append(el); };
+    if (isBest) add('New best', fmtDist(sc), 'newbest'); else add('Best', fmtDist(curBest()));
+    if (mode === 'daily'){ add('Streak', streak.n + (streak.n === 1 ? ' day' : ' days')); add('New road in', untilNext()); }
+    $('bSwitch').textContent = mode === 'daily' ? 'Try the endless commute' : 'Back to today’s road';
+    $('oCopied').textContent = ''; $('oShare').hidden = true;
+    show('ovOver', true);
+    lockUntil = performance.now() + 700;
+    setTimeout(() => { if (state === 'over') $('bAgain').focus({preventScroll:true}); }, 700);
+  }
+  function move(dir){ if (state === 'run') G.lane = Math.max(0, Math.min(2, G.lane + dir)); }
+
+  // ---------- input ----------
+  $('bDaily').addEventListener('click', () => start('daily'));
+  $('bEndless').addEventListener('click', () => start('endless'));
+  $('ovPause').addEventListener('click', resume);
+  $('bResume').addEventListener('click', e => { e.stopPropagation(); resume(); });
+  $('bAgain').addEventListener('click', () => { if (performance.now() >= lockUntil) start(mode); });
+  $('bSwitch').addEventListener('click', () => { if (performance.now() >= lockUntil) start(mode === 'daily' ? 'endless' : 'daily'); });
+  $('bCopy').addEventListener('click', () => {
+    const text = shareText();
+    const fallback = () => { const t = $('oShare'); t.value = text; t.hidden = false; t.focus(); t.select(); $('oCopied').textContent = 'Select and copy the text below.'; };
+    try { navigator.clipboard.writeText(text).then(() => { $('oCopied').textContent = 'Copied. Go make someone jealous.'; }, fallback); }
+    catch(e) { fallback(); }
+  });
+  stage.addEventListener('pointerdown', e => {
+    if (state !== 'run') return;
+    const r = stage.getBoundingClientRect();
+    move(e.clientX - r.left < r.width/2 ? -1 : 1);
+    e.preventDefault();
+  });
+  window.addEventListener('keydown', e => {
+    const k = e.key;
+    const onButton = e.target && e.target.tagName === 'BUTTON';
+    if (k === 'ArrowLeft' || k === 'a' || k === 'A'){ if (state==='run'){ move(-1); e.preventDefault(); } return; }
+    if (k === 'ArrowRight' || k === 'd' || k === 'D'){ if (state==='run'){ move(1); e.preventDefault(); } return; }
+    if (k === 'Escape' || k === 'p' || k === 'P'){ state === 'run' ? pause() : resume(); return; }
+    if ((k === ' ' || k === 'Enter') && !onButton){
+      e.preventDefault();
+      if (state === 'idle') start('daily');
+      else if (state === 'paused') resume();
+      else if (state === 'over' && performance.now() >= lockUntil) start(mode);
+    }
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+  window.addEventListener('blur', pause);
+  setInterval(() => { if (state === 'idle') fillStart(); }, 30000);
+
+  // ---------- loop ----------
+  let last = performance.now();
+  function loop(now){
+    const dt = Math.min(0.033, (now - last)/1000); last = now;
+    if (state === 'run' || state === 'idle') update(dt);
+    else if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
+    draw(); hud();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>
