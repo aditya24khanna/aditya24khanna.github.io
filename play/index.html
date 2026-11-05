@@ -40,7 +40,7 @@
   --metro:#A77BD0; --leaf:#6FA35A; --slab:#232D42; --concrete:#45506A;
   --card:#132036; --shadow:#000000; --on-hl:#14213D; color-scheme:dark;
 }
-html,body{height:100%}
+html,body{height:100%;overscroll-behavior:none}
 body{background:var(--paper);color:var(--ink);font-family:var(--display)}
 .app{
   height:100%;box-sizing:border-box;max-width:760px;margin:0 auto;
@@ -65,10 +65,10 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-be
 .stage{
   position:relative;flex:1;min-height:360px;border:2px solid var(--ink);
   box-shadow:6px 6px 0 var(--shadow);background:var(--paper);overflow:hidden;
-  touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+  touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
 }
 canvas{display:block;width:100%;height:100%}
-.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;overflow:auto}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;overflow:auto;touch-action:pan-y}
 .card{
   width:min(350px,100%);box-sizing:border-box;background:var(--card);color:var(--ink);
   border:2px solid var(--ink);box-shadow:5px 5px 0 var(--shadow);padding:18px 18px 16px;
@@ -866,7 +866,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
       ctx.font = '700 20px ' + HAND; ctx.fillStyle = T.muted; ctx.textAlign = 'center';
       ctx.fillText('◀ tap left', roadX + roadW*0.22, H - 14);
       ctx.fillText('tap right ▶', roadX + roadW*0.78, H - 14);
-      ctx.fillText('swipe ▲ faster · ▼ slower', W/2, H - 38);
+      ctx.fillText('swipe ▲ faster · ▼ slower', W/2, H - Math.max(70, lw*0.85) - lw*0.55);
       ctx.textAlign = 'start'; ctx.globalAlpha = 1;
     }
     for (const f of G.fx){
