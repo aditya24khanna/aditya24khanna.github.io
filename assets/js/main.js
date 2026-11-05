@@ -85,7 +85,7 @@
       var tabs = $("#csTabs"), panel = $("#csPanel");
       function show(i) {
         [].forEach.call(tabs.children, function (t, j) { t.setAttribute("aria-selected", j === i ? "true" : "false"); t.tabIndex = j === i ? 0 : -1; });
-        var c = items[i]; panel.innerHTML = "";
+        var c = items[i], L = c.labels || {}; panel.innerHTML = "";
         panel.appendChild(el("p", "eyebrow", c.eyebrow));
         panel.appendChild(el("h3", null, c.title));
         panel.appendChild(el("p", "cs-sum", c.summary));
@@ -105,7 +105,7 @@
           panel.appendChild(m);
         }
         var blocks = el("div", "cs-blocks");
-        [["The problem", c.problem], ["What research showed", c.research], ["What I did", c.did], ["What I owned", c.owned]].forEach(function (b) {
+        [[L.problem || "The problem", c.problem], [L.research || "What research showed", c.research], [L.did || "What I did", c.did], [L.owned || "What I owned", c.owned]].forEach(function (b) {
           if (!filled(b[1])) return;
           var d = el("div"); d.appendChild(el("h4", null, b[0]));
           if (Array.isArray(b[1])) { var ul = el("ul"); b[1].forEach(function (t) { ul.appendChild(el("li", null, t)); }); d.appendChild(ul); }
@@ -113,7 +113,7 @@
           blocks.appendChild(d);
         });
         panel.appendChild(blocks);
-        if (filled(c.differently)) { var df = el("div", "cs-diff"); df.appendChild(el("b", null, "What I'd do differently")); df.appendChild(el("p", null, c.differently)); panel.appendChild(df); }
+        if (filled(c.differently)) { var df = el("div", "cs-diff"); df.appendChild(el("b", null, L.differently || "What I'd do differently")); df.appendChild(el("p", null, c.differently)); panel.appendChild(df); }
       }
       items.forEach(function (c, i) {
         var b = el("button", "cs-tab"); b.type = "button"; b.setAttribute("role", "tab");

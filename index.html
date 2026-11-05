@@ -13,10 +13,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="assets/css/tokens.css?v=20261103a">
-  <link rel="stylesheet" href="assets/css/main.css?v=20261103a">
+  <link rel="stylesheet" href="assets/css/tokens.css?v=20261105a">
+  <link rel="stylesheet" href="assets/css/main.css?v=20261105a">
   <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
-  <script src="assets/js/main.js?v=20261103a" defer></script>
+  <script src="assets/js/main.js?v=20261105a" defer></script>
   <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -69,21 +69,6 @@
       <div class="worked"><span class="label">Worked at</span><ul id="workedAt"></ul></div>
     </section>
 
-    <!-- 3. Case studies -->
-    <section class="section" id="work" data-section="caseStudies" data-label="Work">
-      <div class="wrap">
-        <header class="section-head">
-          <p class="eyebrow">Case studies</p>
-          <h2>Problems I've owned, <mark>end to end</mark>.</h2>
-          <p class="section-lede">Each one: the problem, what research showed, what I did, what I owned, and what I'd do differently.</p>
-        </header>
-        <div class="cs" id="cs">
-          <div class="cs-tabs" role="tablist" aria-label="Case studies" id="csTabs"></div>
-          <article class="cs-panel paper" id="csPanel" role="tabpanel" aria-live="polite"></article>
-        </div>
-      </div>
-    </section>
-
     <!-- 4. Shipped screens -->
     <section class="section" id="screens" data-section="screens" data-label="Screens">
       <div class="wrap">
@@ -129,6 +114,21 @@
           <p class="section-lede" id="playIntro"></p>
         </header>
         <div class="tools" id="playGames"></div>
+      </div>
+    </section>
+
+    <!-- Build notes (case-studies.json) -->
+    <section class="section" id="work" data-section="caseStudies" data-label="Build notes">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow">Build notes</p>
+          <h2>The product work <mark>behind the prompt</mark>.</h2>
+          <p class="section-lede">Anyone can ask a chatbot for a story or a game. Each note covers who it's for, what a chatbot gets wrong, and the decisions that close the gap.</p>
+        </header>
+        <div class="cs" id="cs">
+          <div class="cs-tabs" role="tablist" aria-label="Build notes" id="csTabs"></div>
+          <article class="cs-panel paper" id="csPanel" role="tabpanel" aria-live="polite"></article>
+        </div>
       </div>
     </section>
 
