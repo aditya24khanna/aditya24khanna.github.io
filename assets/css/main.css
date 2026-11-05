@@ -196,6 +196,14 @@ mark, .hl { color: inherit; background: linear-gradient(100deg, transparent 1%, 
 .tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; }
 .proj .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
 .proj .btn { justify-self: start; margin-top: 8px; }
+.proj-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.proj-actions .btn { margin-top: 0; }
+.note-page { padding-block: 32px 64px; }
+.note-page .cs-panel { margin-top: 16px; }
+.note-page .cs-panel h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; letter-spacing: -.02em; margin-top: 4px; }
+.note-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.note-more { margin-top: 28px; display: grid; gap: 8px; }
+.note-more a { font-weight: 700; color: var(--ink); }
 .proj { padding: 20px; display: grid; gap: 6px; }
 .proj .top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
 .proj h3 { font-size: 21px; }

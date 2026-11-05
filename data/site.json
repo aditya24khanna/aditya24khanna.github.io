@@ -71,7 +71,7 @@
   },
   "footer": "Aditya Khanna · drawn on graph paper",
   "sections": {
-    "caseStudies": true,
+    "caseStudies": false,
     "screens": false,
     "experience": false,
     "workedAt": false,

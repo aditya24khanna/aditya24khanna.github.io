@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Build note · Aditya Khanna</title>
+  <meta name="description" content="How Aditya Khanna's tools were built: who each is for, what a chatbot gets wrong, and the decisions that close the gap.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../assets/css/tokens.css?v=20261105b">
+  <link rel="stylesheet" href="../assets/css/main.css?v=20261105b">
+  <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="me" id="back" href="../"><span><b>← Aditya Khanna</b><span>Back to the site</span></span></a>
+      <div class="nav-actions" style="margin-left:auto">
+        <button type="button" class="icon-btn" id="themeBtn" aria-label="Switch theme">
+          <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+          <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="wrap note-page">
+    <p class="eyebrow">Build notes</p>
+    <article class="cs-panel paper" id="note" aria-live="polite"><p>Loading…</p></article>
+    <nav class="note-more" id="more" aria-label="Other build notes"></nav>
+  </main>
+
+<script>
+(function () {
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function filled(v) { return Array.isArray(v) ? v.length > 0 : !!(v && String(v).trim()); }
+  var root = document.documentElement, btn = document.getElementById("themeBtn");
+  function cur() { return root.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"); }
+  btn.addEventListener("click", function () { var n = cur() === "dark" ? "light" : "dark"; root.setAttribute("data-theme", n); try { localStorage.setItem("theme", n); } catch (e) {} });
+
+  var id = new URLSearchParams(location.search).get("n");
+  var get = function (u) { return fetch(u, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
+  Promise.all([get("../data/case-studies.json"), get("../data/ai.json"), get("../data/play.json")]).then(function (d) {
+    var notes = d[0] || [], cards = ((d[1] && d[1].tools) || []).concat((d[2] && d[2].games) || []);
+    var box = document.getElementById("note"), more = document.getElementById("more");
+    var c = notes.filter(function (x) { return x.id === id; })[0];
+    box.innerHTML = "";
+    if (!c) {
+      box.appendChild(el("h1", null, "Build notes"));
+      box.appendChild(el("p", "cs-sum", "Pick a note:"));
+    } else {
+      document.title = c.tab + " · Build note · Aditya Khanna";
+      if (c.section) document.getElementById("back").href = "../#" + c.section;
+      var L = c.labels || {};
+      box.appendChild(el("p", "eyebrow", c.eyebrow));
+      box.appendChild(el("h1", null, c.title));
+      if (filled(c.summary)) box.appendChild(el("p", "cs-sum", c.summary));
+      var blocks = el("div", "cs-blocks");
+      [[L.problem || "The problem", c.problem], [L.research || "What research showed", c.research], [L.did || "What I did", c.did], [L.owned || "What I owned", c.owned]].forEach(function (b) {
+        if (!filled(b[1])) return;
+        var w = el("div"); w.appendChild(el("h4", null, b[0]));
+        if (Array.isArray(b[1])) { var ul = el("ul"); b[1].forEach(function (t) { ul.appendChild(el("li", null, t)); }); w.appendChild(ul); }
+        else w.appendChild(el("p", null, b[1]));
+        blocks.appendChild(w);
+      });
+      box.appendChild(blocks);
+      if (filled(c.differently)) { var df = el("div", "cs-diff"); df.appendChild(el("b", null, L.differently || "What I'd do differently")); df.appendChild(el("p", null, c.differently)); box.appendChild(df); }
+      var card = cards.filter(function (t) { return t.note === c.id; })[0];
+      if (card && filled(card.url)) {
+        var cta = el("div", "note-cta"), a = el("a", "btn btn-ink", card.linkLabel || "Try it ↗");
+        a.href = /^https?:/.test(card.url) ? card.url : "../" + card.url;
+        if (/^https?:/.test(card.url)) { a.target = "_blank"; a.rel = "noopener"; }
+        cta.appendChild(a); box.appendChild(cta);
+      }
+    }
+    var others = notes.filter(function (x) { return x.id !== id; });
+    if (others.length) {
+      more.appendChild(el("p", "eyebrow", c ? "Other build notes" : "All build notes"));
+      others.forEach(function (x) { var a = el("a", null, x.tab + " →"); a.href = "?n=" + encodeURIComponent(x.id); more.appendChild(a); });
+    }
+  });
+})();
+</script>
+</body>
+</html>

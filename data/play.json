@@ -12,7 +12,8 @@
         "Bangalore"
       ],
       "url": "play/",
-      "linkLabel": "Ride today's road →"
+      "linkLabel": "Ride today's road →",
+      "note": "pothole-dash"
     }
   ]
 }

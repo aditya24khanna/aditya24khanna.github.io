@@ -27,7 +27,8 @@
       "Two shelves, with different privacy. Papa's shelf is public and curated by me; each visitor's stories stay in their own browser. A story with a child's name never goes public automatically.",
       "English or Hinglish (Roman script)."
     ],
-    "owned": "The shelf could hang on \"Opening the shelf…\". Loading no longer waits on the owner check, and an 8-second fallback shows an error code instead of a spinner forever."
+    "owned": "The shelf could hang on \"Opening the shelf…\". Loading no longer waits on the owner check, and an 8-second fallback shows an error code instead of a spinner forever.",
+    "section": "ai"
   },
   {
     "id": "pothole-dash",
@@ -56,6 +57,7 @@
       "Wordle-style sharing (🟨 clean / 🟥 hit per 200 m). The share text is the distribution plan.",
       "Unlimited retries; the share shows the latest run. Generosity over a strict one-attempt rule, for now.",
       "Low floor, high ceiling: speed and hazards ramp up over a run, and each road has its own landmarks and hazard mix."
-    ]
+    ],
+    "section": "play"
   }
 ]

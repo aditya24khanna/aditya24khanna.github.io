@@ -179,7 +179,10 @@
         if (filled(t.q)) d.appendChild(el("span", "q", t.q));
         if (filled(t.d)) d.appendChild(el("p", null, t.d));
         if (filled(t.tags)) { var tg = el("div", "tags"); t.tags.forEach(function (x) { tg.appendChild(el("span", "chip", x)); }); d.appendChild(tg); }
-        if (filled(t.url)) { var a = el("a", "btn btn-ink", t.linkLabel || "Try it ↗"); a.href = t.url; if (external) { a.target = "_blank"; a.rel = "noopener"; } d.appendChild(a); }
+        var act = el("div", "proj-actions");
+        if (filled(t.url)) { var a = el("a", "btn btn-ink", t.linkLabel || "Try it ↗"); a.href = t.url; if (external) { a.target = "_blank"; a.rel = "noopener"; } act.appendChild(a); }
+        if (filled(t.note)) { var n = el("a", "btn", "Build note →"); n.href = "notes/?n=" + encodeURIComponent(t.note); act.appendChild(n); }
+        if (act.children.length) d.appendChild(act);
         box.appendChild(d);
       });
     },
