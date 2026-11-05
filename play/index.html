@@ -141,7 +141,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
           <button class="primary" id="bDaily">Ride today’s road</button>
           <button id="bEndless">Endless commute</button>
         </div>
-        <p class="controls">Tap the left or right half of the road, or use <kbd>←</kbd> <kbd>→</kbd>. Three shock absorbers. Where the footpath is broken, people walk on the road. Filter coffee adds 50 m.</p>
+        <p class="controls">Tap the left or right half of the road to switch lanes; swipe up to speed up, down to slow down. On a keyboard: <kbd>←</kbd> <kbd>→</kbd> to steer, <kbd>↑</kbd> <kbd>↓</kbd> for speed. Faster earns bonus metres; too slow and the bus behind starts honking. Three shock absorbers. Where the footpath is broken, people walk on the road. Filter coffee adds 50 m.</p>
       </div>
     </div>
 
@@ -292,6 +292,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     bus: ['BMTC bus stopped mid-road.','Bus stop? Anywhere is a bus stop.'],
     pillar: ['Metro pillar. It was here first.','Pillar 1, scooter 0.'],
     ped: ['Hard brake! The footpath was broken.','Pedestrian detour. Fair enough.','He had nowhere else to walk.'],
+    honk: ['HONK. The bus behind ran out of patience.','Too slow. A Volvo bus nudged you.','Honked off the road.'],
     auto: ['Auto braked. No indicator.','Auto: “Meter? Extra 20.”','Auto took a U-turn. Mid-road.']
   };
   const pickM = a => a[Math.floor(Math.random()*a.length)];
@@ -304,7 +305,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     G = { lane:1, x:1.5, shocks:3, inv:0, meters:0, bonus:0, scroll:0, v:1.6, top:0, dodged:0,
           obs:[], deco:[], signs:[], fx:[], spawnAcc:4, decoAcc:0, signAcc:1, markAcc:20, markI:0,
           t:0, shake:0, holeNo: 1000 + Math.floor(rng()*8000), stretch:-1,
-          callout:null, lastMark:null, hits:[], rain:[],
+          callout:null, lastMark:null, hits:[], rain:[], gear:0, honk:0,
           peds:[], gaps:[], pedAcc:1.2, gapAcc:0.6, pillarNo: 100 + Math.floor(rng()*300) };
   }
   newGame('daily');
@@ -378,7 +379,22 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     const road = curRoad();
     const diff = mode === 'daily' ? TODAY.diff : 1;
     const d = Math.min(1, G.meters*diff/2600);
-    if (running){ G.v = 3 + 4.6*Math.pow(d, 0.85); G.top = Math.max(G.top, G.v); }
+    if (running){
+      // road sets the cruise speed; the throttle (gear -2..+2) moves you 20% either side of it
+      const cruise = 3 + 4.6*Math.pow(d, 0.85);
+      const target = Math.max(2.2, cruise*(1 + 0.2*G.gear));
+      G.v += (target - G.v) * Math.min(1, dt*(target > G.v ? 2.2 : 3.5));
+      G.top = Math.max(G.top, G.v);
+      // riding fast earns a boost bonus; dawdling fills the honk meter
+      if (G.gear > 0) G.bonus += G.v*dt*3.5*0.15*G.gear;
+      if (G.gear < 0) G.honk += dt*(-G.gear)/12;
+      else G.honk = Math.max(0, G.honk - dt/4);
+      if (G.honk >= 1){
+        G.honk = 0;
+        if (G.inv <= 0) damage(pickM(MSG.honk));
+        else fx('HONK HONK', T.red);
+      }
+    }
     const dy = G.v*dt;
     G.scroll += dy;
     if (running) G.meters += dy*3.5;
@@ -736,6 +752,26 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     ctx.beginPath(); ctx.moveTo(x - w/2, -20); ctx.lineTo(x - w/2, H + 20); ctx.moveTo(x + w/2, -20); ctx.lineTo(x + w/2, H + 20); ctx.stroke();
     ctx.setLineDash([]); ctx.globalAlpha = 1;
   }
+  function drawThrottle(){
+    // five-notch throttle on the right edge of the road, honk meter beside it when filling
+    const x = roadX + roadW - 16, y0 = 78, step = 13;
+    for (let g = 2; g >= -2; g--){
+      const y = y0 + (2 - g)*step, on = g === G.gear;
+      ctx.beginPath(); ctx.rect(x - (on ? 7 : 4), y - (on ? 4 : 2), on ? 14 : 8, on ? 8 : 4);
+      ctx.fillStyle = on ? (g > 0 ? T.hl : g < 0 ? T.red : T.ink) : T.muted;
+      ctx.globalAlpha = on ? 1 : 0.45; ctx.fill(); ctx.globalAlpha = 1;
+      if (on){ ctx.strokeStyle = T.ink; ctx.lineWidth = 1.5; ctx.stroke(); }
+    }
+    ctx.font = "700 9px 'JetBrains Mono', monospace"; ctx.textAlign = 'center'; ctx.fillStyle = T.muted;
+    ctx.fillText(G.gear > 0 ? 'BOOST' : G.gear < 0 ? 'SLOW' : 'CRUISE', x, y0 + 5*step + 6);
+    if (G.honk > 0.02){
+      const hx = x - 22, hh = 4*step + 8, hy = y0 - 4;
+      ctx.strokeStyle = T.ink; ctx.lineWidth = 1.2; ctx.strokeRect(hx - 3, hy, 6, hh);
+      ctx.fillStyle = T.red; ctx.fillRect(hx - 2, hy + hh*(1 - G.honk), 4, hh*G.honk);
+      if (G.honk > 0.6){ ctx.font = '700 16px ' + HAND; ctx.fillStyle = T.red; ctx.textAlign = 'right'; ctx.fillText('honk!', hx - 6, hy + 10); }
+    }
+    ctx.textAlign = 'start';
+  }
   function drawTree(t){
     const m = roadX - fp - 4, r = Math.min(m*0.42, t.r*lw*0.3);
     if (r < 6) return;
@@ -830,12 +866,14 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
       ctx.font = '700 20px ' + HAND; ctx.fillStyle = T.muted; ctx.textAlign = 'center';
       ctx.fillText('◀ tap left', roadX + roadW*0.22, H - 14);
       ctx.fillText('tap right ▶', roadX + roadW*0.78, H - 14);
+      ctx.fillText('swipe ▲ faster · ▼ slower', W/2, H - 38);
       ctx.textAlign = 'start'; ctx.globalAlpha = 1;
     }
     for (const f of G.fx){
       const x = Math.min(W - 100, Math.max(100, f.x));
       label(f.txt, x, f.y - f.t*40, 22, f.color, 1 - f.t/1.3);
     }
+    if (state !== 'idle') drawThrottle();
     ctx.restore();
   }
 
@@ -844,7 +882,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   const curBest = () => mode === 'daily' ? bestToday : bestEndless;
   function hud(){
     $('hDist').textContent = state === 'idle' ? '0 m' : fmtDist(score());
-    $('hSpeed').textContent = (state === 'run' ? kmh(G.v) : 0) + ' km/h';
+    $('hSpeed').textContent = (state === 'run' ? kmh(G.v) : 0) + ' km/h' + (state === 'run' && G.gear ? ' ' + (G.gear > 0 ? '\u25B2' : '\u25BC').repeat(Math.abs(G.gear)) : '');
     shockEls.forEach((el,i) => el.classList.toggle('gone', state !== 'idle' && i >= G.shocks));
     const b = state === 'idle' ? bestToday : curBest();
     $('hBest').textContent = b ? fmtDist(b) : '—';
@@ -934,17 +972,40 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     try { navigator.clipboard.writeText(text).then(() => { $('oCopied').textContent = 'Copied. Go make someone jealous.'; }, fallback); }
     catch(e) { fallback(); }
   });
+  function shift(dir){
+    if (state !== 'run') return;
+    const g = Math.max(-2, Math.min(2, G.gear + dir));
+    if (g === G.gear) return;
+    G.gear = g;
+    fx(g > 0 ? 'Boost +' + g : g < 0 ? 'Easing off' : 'Cruising', g < 0 ? T.muted : T.ink);
+  }
+  // tap = change lane (on release, so a swipe isn't read as a tap); vertical swipe = throttle
+  let touch = null;
   stage.addEventListener('pointerdown', e => {
     if (state !== 'run') return;
-    const r = stage.getBoundingClientRect();
-    move(e.clientX - r.left < r.width/2 ? -1 : 1);
+    touch = { x:e.clientX, y:e.clientY, id:e.pointerId, used:false };
     e.preventDefault();
   });
+  stage.addEventListener('pointermove', e => {
+    if (!touch || touch.used || e.pointerId !== touch.id) return;
+    const dx = e.clientX - touch.x, dy = e.clientY - touch.y;
+    if (Math.abs(dy) > 28 && Math.abs(dy) > Math.abs(dx)*1.3){ touch.used = true; shift(dy < 0 ? 1 : -1); }
+  });
+  stage.addEventListener('pointerup', e => {
+    if (!touch || e.pointerId !== touch.id) return;
+    const t = touch; touch = null;
+    if (t.used || state !== 'run') return;
+    const r = stage.getBoundingClientRect();
+    move(t.x - r.left < r.width/2 ? -1 : 1);
+  });
+  stage.addEventListener('pointercancel', () => { touch = null; });
   window.addEventListener('keydown', e => {
     const k = e.key;
     const onButton = e.target && e.target.tagName === 'BUTTON';
     if (k === 'ArrowLeft' || k === 'a' || k === 'A'){ if (state==='run'){ move(-1); e.preventDefault(); } return; }
     if (k === 'ArrowRight' || k === 'd' || k === 'D'){ if (state==='run'){ move(1); e.preventDefault(); } return; }
+    if (k === 'ArrowUp' || k === 'w' || k === 'W'){ if (state==='run'){ e.preventDefault(); if (!e.repeat) shift(1); } return; }
+    if (k === 'ArrowDown' || k === 's' || k === 'S'){ if (state==='run'){ e.preventDefault(); if (!e.repeat) shift(-1); } return; }
     if (k === 'Escape' || k === 'p' || k === 'P'){ state === 'run' ? pause() : resume(); return; }
     if ((k === ' ' || k === 'Enter') && !onButton){
       e.preventDefault();
