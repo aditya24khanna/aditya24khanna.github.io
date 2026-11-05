@@ -31,6 +31,38 @@
     "section": "ai"
   },
   {
+    "id": "ask-chanakya",
+    "tab": "Ask Chanakya",
+    "eyebrow": "Build note · AI tool",
+    "title": "A strategy tool that has to argue its move, not a chatbot in costume",
+    "summary": "Three rounds of evals turned a pep talk with Sanskrit labels into a note that argues its lever.",
+    "locked": false,
+    "metrics": [],
+    "labels": {
+      "problem": "The user and the job",
+      "research": "What a raw chatbot gets wrong",
+      "did": "Decisions I made",
+      "owned": "What broke, and what changed"
+    },
+    "problem": "Someone stuck on a real call at work (a turf war, a vendor's price hike, a favour asked by a skip-level) who wants one move they can make this week, not a list of considerations.",
+    "research": [
+      "It gives a menu of options instead of one move.",
+      "Persona bots put invented quotes in Chanakya's mouth. Most viral \"Chanakya\" quotes aren't in the Arthashastra at all.",
+      "It cites sources it can't back up.",
+      "It will happily borrow the text's darker tactics: spies, leaks, planted rumours."
+    ],
+    "did": [
+      "Verified sources only: the Arthashastra in Shamasastry's 1915 translation, four Panchatantra books, three Thirukkural chapters, and operator frameworks checked against Lenny's Podcast transcripts. Five claims I couldn't find in the transcripts were cut.",
+      "The model can't write a citation. It returns a short ID; the page maps it from a fixed list and drops anything else, so a made-up reference never reaches the screen.",
+      "One move, and it has to argue its lever: who has to change, how strong they are relative to you, and whether you want the same thing.",
+      "\"Where this tool stops\": the Arthashastra endorses spies and poison. The tool keeps the strategy, refuses those tactics, and says why.",
+      "Two model sizes on the visitor's own Claude account: a fast one asks up to four questions, a stronger one writes the note.",
+      "I narrowed a claim. The subtitle said \"tested against modern operators\"; the eval showed that layer was decoration, so the claim went."
+    ],
+    "owned": "Round 1 of evals (20 situations): 15 of 18 notes picked conciliation, which was generic advice wearing Sanskrit labels, and all 18 \"your ground\" sections cited the identical set of sources, copied from the example in my own prompt. Round 2 fixed both, then overcorrected: the tool started labelling the visitor's own team and a supportive manager as rivals. Round 3 fixed the labels and brought the fables back where they fit. What's still open is listed on the tool as known limits, and the next round adds external, adversarial cases.",
+    "section": "ai"
+  },
+  {
     "id": "pothole-dash",
     "tab": "Pothole Dash",
     "eyebrow": "Build note · Play",

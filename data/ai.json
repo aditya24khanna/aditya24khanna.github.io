@@ -26,7 +26,8 @@
         "Claude artifact"
       ],
       "url": "https://claude.ai/artifact/7cSFRLAD8AuGTi8xQiZQt8",
-      "linkLabel": "Open the tool ↗"
+      "linkLabel": "Open the tool ↗",
+      "note": "ask-chanakya"
     }
   ]
 }
