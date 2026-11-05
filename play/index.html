@@ -68,6 +68,14 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-be
   touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
 }
 canvas{display:block;width:100%;height:100%}
+.horn{
+  position:absolute;right:calc(10px + env(safe-area-inset-right, 0px));bottom:calc(12px + env(safe-area-inset-bottom, 0px));
+  width:58px;height:58px;border-radius:50%;padding:0;display:grid;place-items:center;
+  font:800 11px var(--mono);letter-spacing:.06em;background:var(--hl);color:var(--on-hl);
+  touch-action:none;z-index:2;
+}
+.horn svg{width:22px;height:22px;display:block;margin-bottom:-2px}
+.horn.cool{opacity:.55}
 .overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;overflow:auto;touch-action:pan-y}
 .card{
   width:min(350px,100%);box-sizing:border-box;background:var(--card);color:var(--ink);
@@ -130,6 +138,9 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
 
   <div class="stage" id="stage">
     <canvas id="cv" aria-label="Pothole Dash game road"></canvas>
+    <button class="horn" id="bHorn" type="button" aria-label="Horn" hidden>
+      <span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 10v4h3l6 4V6L6 10H3z" fill="currentColor"/><path d="M16 9c1.2 1.6 1.2 4.4 0 6M19 6.5c2.4 3 2.4 8 0 11"/></svg>HORN</span>
+    </button>
 
     <div class="overlay" id="ovStart">
       <div class="card" role="dialog" aria-labelledby="tStart">
@@ -141,7 +152,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
           <button class="primary" id="bDaily">Ride today’s road</button>
           <button id="bEndless">Endless commute</button>
         </div>
-        <p class="controls">Tap the left or right half of the road to switch lanes; swipe up to speed up, down to slow down. On a keyboard: <kbd>←</kbd> <kbd>→</kbd> to steer, <kbd>↑</kbd> <kbd>↓</kbd> for speed. Faster earns bonus metres; too slow and the bus behind starts honking. Three shock absorbers. Where the footpath is broken, people walk on the road. Filter coffee adds 50 m.</p>
+        <p class="controls">Tap the left or right half of the road to switch lanes; swipe up to speed up, down to slow down. On a keyboard: <kbd>←</kbd> <kbd>→</kbd> to steer, <kbd>↑</kbd> <kbd>↓</kbd> for speed. Faster earns bonus metres; too slow and the bus behind starts honking. Use the horn (or <kbd>H</kbd> / <kbd>Space</kbd>) to make vehicles move, though nobody promises they'll move the right way. Three shock absorbers. Where the footpath is broken, people walk on the road. Filter coffee adds 50 m.</p>
       </div>
     </div>
 
@@ -305,7 +316,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     G = { lane:1, x:1.5, shocks:3, inv:0, meters:0, bonus:0, scroll:0, v:1.6, top:0, dodged:0,
           obs:[], deco:[], signs:[], fx:[], spawnAcc:4, decoAcc:0, signAcc:1, markAcc:20, markI:0,
           t:0, shake:0, holeNo: 1000 + Math.floor(rng()*8000), stretch:-1,
-          callout:null, lastMark:null, hits:[], rain:[], gear:0, honk:0,
+          callout:null, lastMark:null, hits:[], rain:[], gear:0, honk:0, hornCd:0, horns:[],
           peds:[], gaps:[], pedAcc:1.2, gapAcc:0.6, pillarNo: 100 + Math.floor(rng()*300) };
   }
   newGame('daily');
@@ -398,7 +409,14 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     const dy = G.v*dt;
     G.scroll += dy;
     if (running) G.meters += dy*3.5;
-    for (const o of G.obs) o.y += dy - (o.slow ? o.slow*dt*(running?1:0.5) : 0);
+    for (const o of G.obs){
+      o.y += dy - (o.slow ? o.slow*dt*(running?1:0.5) : 0);
+      if (o.tx != null){ const k = Math.min(1, dt*3.2); o.x += (o.tx - o.x)*k; if (Math.abs(o.tx - o.x) < 0.01){ o.x = o.tx; o.tx = null; } }
+      if (o.say){ o.say.t += dt; if (o.say.t > 1.2) o.say = null; }
+    }
+    if (G.hornCd > 0) G.hornCd -= dt;
+    for (const h of G.horns) h.t += dt;
+    G.horns = G.horns.filter(h => h.t < 0.6);
     for (const s of G.deco) s.y += dy;
     for (const s of G.signs) s.y += dy;
     for (const g of G.gaps) g.y += dy;
@@ -847,6 +865,17 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
       else drawRepair(o);
     }
     drawPeds();
+    for (const h of G.horns){
+      const cx = sx(G.x), cy = sy(pY()) - lw*0.3;
+      ctx.strokeStyle = T.ink; ctx.lineWidth = 2; ctx.globalAlpha = 1 - h.t/0.6;
+      for (let i=0;i<3;i++){ const r = lw*(0.3 + h.t*1.6 + i*0.18); ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI*0.75, -Math.PI*0.25); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+    }
+    for (const o of G.obs){
+      if (!o.say) continue;
+      const a = Math.min(1, (1.2 - o.say.t)*3);
+      label(o.say.text, Math.min(W - 80, Math.max(80, sx(o.x))), sy(o.y) - o.hh*lw - 8 - o.say.t*12, 18, o.say.bad ? T.red : T.ink, a);
+    }
     drawScooter();
 
     if (G.rain.length){
@@ -906,11 +935,11 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     newGame(m); G.v = 3; state = 'run';
     if (mode === 'daily') G.callout = { text:'Welcome to ' + TODAY.name, t:0, big:true };
     $('caption').textContent = mode === 'daily' ? 'Road of the day: ' + TODAY.name : 'Endless commute, starting on MG Road';
-    show('ovStart', false); show('ovOver', false); show('ovPause', false);
+    show('ovStart', false); show('ovOver', false); show('ovPause', false); $('bHorn').hidden = false;
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   }
-  function pause(){ if (state !== 'run') return; state = 'paused'; show('ovPause', true); $('bResume').focus(); }
-  function resume(){ if (state !== 'paused') return; state = 'run'; show('ovPause', false); last = performance.now(); if (document.activeElement) document.activeElement.blur(); }
+  function pause(){ if (state !== 'run') return; state = 'paused'; show('ovPause', true); $('bHorn').hidden = true; $('bResume').focus(); }
+  function resume(){ if (state !== 'paused') return; state = 'run'; show('ovPause', false); $('bHorn').hidden = false; last = performance.now(); if (document.activeElement) document.activeElement.blur(); }
   function trail(){
     const segs = Math.max(1, Math.min(20, Math.ceil(G.meters/200)));
     let s = '';
@@ -924,7 +953,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     return head + '\n' + trail() + '\n' + fmtDist(score()) + ', dodged ' + G.dodged + ' potholes, top speed ' + kmh(G.top) + ' km/h.';
   }
   function gameOver(){
-    state = 'over';
+    state = 'over'; $('bHorn').hidden = true;
     const sc = score(), road = curRoad();
     let isBest = false;
     if (mode === 'daily'){
@@ -972,6 +1001,61 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     try { navigator.clipboard.writeText(text).then(() => { $('oCopied').textContent = 'Copied. Go make someone jealous.'; }, fallback); }
     catch(e) { fallback(); }
   });
+  // ---------- horn ----------
+  // Each vehicle ahead reacts at random. Odds per type; a move never seals all three lanes.
+  const HORN = {
+    auto:   { move:0.55, brake:0.2,  moved:['Fine, fine','Moved. Grudgingly.'], ignored:['Auto: no.','Pretends not to hear'], braked:'Stopped dead' },
+    cow:    { move:0.3,  brake:0,    moved:['Moo. Moved.','Cow shifts, slowly'], ignored:['Unbothered','Cow: not today'] },
+    bus:    { move:0.22, brake:0,    moved:['BMTC obliges?!'], ignored:['BMTC doesn’t care','Bus ignores you'] },
+    tanker: { move:0.15, brake:0,    moved:['Tanker shifts'], ignored:['Tanker: lol','6,000 litres say no'] }
+  };
+  let audio = null;
+  function beep(){
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      const t = audio.currentTime, g = audio.createGain();
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + 0.02);
+      g.gain.setValueAtTime(0.09, t + 0.24); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+      g.connect(audio.destination);
+      for (const f of [392, 494]){ const o = audio.createOscillator(); o.type = 'square'; o.frequency.value = f; o.connect(g); o.start(t); o.stop(t + 0.34); }
+    } catch(e) {}
+  }
+  function laneBlocked(lane, o, skip){
+    return G.obs.some(q => q !== skip && !PICKUP(q.type) && Math.round(q.tx != null ? q.tx - 0.5 : q.x - 0.5) === lane &&
+      Math.abs(q.y - o.y) < q.hh + o.hh + 0.7);
+  }
+  function horn(){
+    if (state !== 'run' || G.hornCd > 0) return;
+    G.hornCd = 1.1;
+    G.horns.push({ t:0 });
+    beep();
+    const py = pY();
+    let reacted = 0;
+    for (const o of G.obs){
+      const rule = HORN[o.type];
+      if (!rule || o.done || o.tx != null) continue;
+      const ahead = py - o.y;
+      if (ahead < 0.2 || ahead > 4.2) continue;           // only vehicles in front, within earshot
+      const r = Math.random(), lane = Math.round(o.x - 0.5);
+      if (r < rule.move){
+        const opts = [lane - 1, lane + 1].filter(l => l >= 0 && l <= 2 && !laneBlocked(l, o, o));
+        // after the move, at least one lane must stay open around this vehicle
+        const safe = opts.filter(l => [0,1,2].some(k => k === lane ? !laneBlocked(lane, o, o) : k !== l && !laneBlocked(k, o, o)));
+        if (safe.length){
+          const to = safe[Math.floor(Math.random()*safe.length)];
+          o.tx = to + 0.5;
+          o.say = { text: to === G.lane ? 'Swerved into you!' : pickM(rule.moved), t:0, bad: to === G.lane };
+          reacted++;
+          continue;
+        }
+      } else if (r < rule.move + rule.brake && o.slow){
+        o.slow += 1.4; o.say = { text: rule.braked, t:0, bad:true }; continue;
+      }
+      o.say = { text: pickM(rule.ignored), t:0 };
+    }
+    if (!reacted) fx('HONK', T.ink);
+  }
+
   function shift(dir){
     if (state !== 'run') return;
     const g = Math.max(-2, Math.min(2, G.gear + dir));
@@ -999,11 +1083,16 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     move(t.x - r.left < r.width/2 ? -1 : 1);
   });
   stage.addEventListener('pointercancel', () => { touch = null; });
+  const hb = $('bHorn');
+  hb.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); horn(); });
+  hb.addEventListener('pointerup', e => e.stopPropagation());
+  hb.addEventListener('click', e => { e.stopPropagation(); if (e.detail === 0) horn(); });
   window.addEventListener('keydown', e => {
     const k = e.key;
     const onButton = e.target && e.target.tagName === 'BUTTON';
     if (k === 'ArrowLeft' || k === 'a' || k === 'A'){ if (state==='run'){ move(-1); e.preventDefault(); } return; }
     if (k === 'ArrowRight' || k === 'd' || k === 'D'){ if (state==='run'){ move(1); e.preventDefault(); } return; }
+    if ((k === 'h' || k === 'H' || k === ' ') && state === 'run'){ e.preventDefault(); if (!e.repeat) horn(); return; }
     if (k === 'ArrowUp' || k === 'w' || k === 'W'){ if (state==='run'){ e.preventDefault(); if (!e.repeat) shift(1); } return; }
     if (k === 'ArrowDown' || k === 's' || k === 'S'){ if (state==='run'){ e.preventDefault(); if (!e.repeat) shift(-1); } return; }
     if (k === 'Escape' || k === 'p' || k === 'P'){ state === 'run' ? pause() : resume(); return; }
@@ -1024,7 +1113,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     const dt = Math.min(0.033, (now - last)/1000); last = now;
     if (state === 'run' || state === 'idle') update(dt);
     else if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
-    draw(); hud();
+    draw(); hud(); $('bHorn').classList.toggle('cool', G.hornCd > 0);
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
