@@ -19,7 +19,7 @@
       "title": "Ask Chanakya",
       "status": "Live",
       "q": "Stuck on a real strategic call at work?",
-      "d": "Describe a work situation. It asks up to four questions, then returns a one-page note: the players mapped, one move, a pre-mortem and a closing verdict. Built on the Arthashastra, the Panchatantra, the Thirukkural and operator frameworks from Lenny's Podcast, cited.",
+      "d": "Describe a work situation. It asks up to four questions, then returns a one-page note: the players mapped, one move, a pre-mortem and a closing verdict. Built on the Arthashastra, the Panchatantra, the Thirukkural and operator frameworks from Lenny's Podcast, cited. Runs on Claude, so it needs a Claude sign-in.",
       "tags": [
         "Arthashastra",
         "Strategy",
