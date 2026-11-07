@@ -478,6 +478,9 @@ const camera = (() => {
   let stream = null, facing = 'environment', recorder = null, chunks = [], recStart = 0, recTimer = null, holdTimer = null;
   let pressed = false, recThumb = null;
   let track = null, caps = {}, zoom = 1, torchOn = false;
+  let rec2 = null; // canvas pipeline for recording with digital zoom
+  const DIGITAL_MAX = 4;
+  const digital = () => !caps.zoom; // no hardware zoom: crop in software instead
   const vf = $('#viewfinder');
   const ring = $('#ring-prog');
   const RING = 283;
@@ -500,7 +503,6 @@ const camera = (() => {
     if (!$('#camera').classList.contains('active')) return stop();
     localStorage.setItem('moments.camOK', '1');
     vf.srcObject = stream;
-    vf.classList.toggle('mirror', facing === 'user');
     try { await vf.play(); } catch (_) {}
     setupTrack();
   }
@@ -508,20 +510,30 @@ const camera = (() => {
     track = stream && stream.getVideoTracks()[0];
     caps = (track && track.getCapabilities) ? track.getCapabilities() : {};
     zoom = (track && track.getSettings && track.getSettings().zoom) || 1;
+    if (digital()) zoom = 1;
+    applyPreview();
     torchOn = false;
     const tb = $('#cam-torch');
     tb.hidden = !caps.torch;
     tb.setAttribute('aria-pressed', 'false');
     $('#cam-spacer').hidden = !!caps.torch;
-    $('#cam-hint').textContent = caps.zoom ? 'Tap for photo \u00b7 hold for video \u00b7 pinch to zoom' : 'Tap for photo \u00b7 hold for video';
+    $('#cam-hint').textContent = 'Tap for photo \u00b7 hold for video \u00b7 pinch to zoom';
+  }
+  // Preview transform: mirror for the front camera, plus scale when zoom is digital.
+  function applyPreview() {
+    const sc = digital() ? zoom : 1;
+    vf.classList.remove('mirror');
+    vf.style.transform = `${facing === 'user' ? 'scaleX(-1) ' : ''}scale(${sc})`;
   }
   async function setZoom(z) {
-    if (!caps.zoom || !track) return;
-    z = Math.min(caps.zoom.max, Math.max(caps.zoom.min, z));
+    if (!track) return;
+    const lo = caps.zoom ? caps.zoom.min : 1, hi = caps.zoom ? caps.zoom.max : DIGITAL_MAX;
+    z = Math.min(hi, Math.max(lo, z));
     zoom = z;
     const zl = $('#zoom-label');
     zl.hidden = false; zl.textContent = (Math.round(z * 10) / 10) + '\u00d7';
     clearTimeout(setZoom.t); setZoom.t = setTimeout(() => { zl.hidden = true; }, 900);
+    if (digital()) { applyPreview(); return; }
     try { await track.applyConstraints({ advanced: [{ zoom: z }] }); } catch (_) {}
   }
   async function focusAt(x, y, px, py) {
@@ -545,12 +557,52 @@ const camera = (() => {
     if (recorder && recorder.state === 'recording') { recorder.onstop = null; recorder.stop(); }
     recorder = null; resetRecUI();
     if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
-    track = null; caps = {}; torchOn = false;
+    stopRec2();
+    track = null; caps = {}; torchOn = false; zoom = 1;
+    vf.style.transform = '';
     vf.srcObject = null;
   }
-  async function frameCanvas(max) {
-    return drawScaled(vf, vf.videoWidth, vf.videoHeight, max, facing === 'user');
+  // Crop of the sensor frame that matches what the preview shows at the current zoom.
+  function cropRect() {
+    const vw = vf.videoWidth, vh = vf.videoHeight;
+    const z = digital() ? zoom : 1;
+    const cw = vw / z, ch = vh / z;
+    return { sx: (vw - cw) / 2, sy: (vh - ch) / 2, cw, ch };
   }
+  async function frameCanvas(max) {
+    const { sx, sy, cw, ch } = cropRect();
+    const [w, h] = fit(cw, ch, max);
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    if (facing === 'user') { ctx.translate(w, 0); ctx.scale(-1, 1); }
+    ctx.drawImage(vf, sx, sy, cw, ch, 0, 0, w, h);
+    return c;
+  }
+  // When zoom is digital, record from a canvas that draws the cropped frame.
+  function zoomedStream() {
+    const { cw, ch } = cropRect();
+    const [w, h] = fit(cw, ch, 1280);
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    const mirror = facing === 'user';
+    let raf;
+    const draw = () => {
+      const r = cropRect(); // follows pinch changes during recording
+      ctx.save();
+      if (mirror) { ctx.translate(w, 0); ctx.scale(-1, 1); }
+      ctx.drawImage(vf, r.sx, r.sy, r.cw, r.ch, 0, 0, w, h);
+      ctx.restore();
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+    const out = c.captureStream(30);
+    stream.getAudioTracks().forEach((t) => out.addTrack(t));
+    rec2 = { stop: () => { cancelAnimationFrame(raf); out.getVideoTracks().forEach((t) => t.stop()); }, w, h };
+    return out;
+  }
+  function stopRec2() { if (rec2) { rec2.stop(); rec2 = null; } }
   async function takePhoto() {
     if (!stream || !vf.videoWidth) return;
     haptic(15);
@@ -574,8 +626,9 @@ const camera = (() => {
     recThumb = await canvasToBlob(await frameCanvas(THUMB_EDGE), 'image/jpeg', 0.78);
     const mime = pickMime();
     chunks = [];
-    try { recorder = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 2_500_000 } : undefined); }
-    catch (_) { recorder = new MediaRecorder(stream); }
+    const src = digital() && zoom > 1.05 && HTMLCanvasElement.prototype.captureStream ? zoomedStream() : stream;
+    try { recorder = new MediaRecorder(src, mime ? { mimeType: mime, videoBitsPerSecond: 2_500_000 } : undefined); }
+    catch (_) { recorder = new MediaRecorder(src); }
     recorder.ondataavailable = (e) => e.data && e.data.size && chunks.push(e.data);
     recorder.onstop = finishRec;
     recorder.start(250);
@@ -605,13 +658,15 @@ const camera = (() => {
   function finishRec() {
     const dur = (performance.now() - recStart) / 1000;
     const type = (recorder && recorder.mimeType) || chunks[0]?.type || 'video/webm';
+    const dims = rec2 ? { width: rec2.w, height: rec2.h } : { width: vf.videoWidth, height: vf.videoHeight };
+    stopRec2();
     resetRecUI();
     haptic(15);
     if (dur < 0.6) { toast('Hold a little longer for video.'); return; }
     const blob = new Blob(chunks, { type: type.split(';')[0] });
     openCompose({
       type: 'video', mime: blob.type, blob, thumb: recThumb,
-      width: vf.videoWidth, height: vf.videoHeight, durationSec: Math.round(dur),
+      ...dims, durationSec: Math.round(dur),
       createdAt: new Date(Date.now() - dur * 1000).toISOString(),
     });
   }
@@ -661,6 +716,9 @@ const camera = (() => {
       t0 = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
     }
   }, { passive: true });
+  // Stop the browser zooming the whole page (which pushes the shutter off screen).
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach((ev) => cam.addEventListener(ev, (e) => e.preventDefault(), { passive: false }));
+  cam.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
   cam.addEventListener('touchmove', (e) => {
     if (pinch && e.touches.length === 2) {
       const [a, b] = e.touches;
@@ -683,7 +741,7 @@ const camera = (() => {
     tapTimer = setTimeout(() => focusAt(p.clientX / rect.width, p.clientY / rect.height, p.clientX, p.clientY), 280);
   }, { passive: true });
   // Mouse wheel zoom on desktop
-  cam.addEventListener('wheel', (e) => { if (caps.zoom) setZoom(zoom * (e.deltaY < 0 ? 1.1 : 0.9)); }, { passive: true });
+  cam.addEventListener('wheel', (e) => { setZoom(zoom * (e.deltaY < 0 ? 1.1 : 0.9)); }, { passive: true });
   $('#cam-close').onclick = () => show('feed');
   $('#cam-gallery').onclick = () => $('#file-pick').click();
   $('#cam-fallback-gallery').onclick = () => $('#file-pick').click();
