@@ -28,6 +28,19 @@
       "url": "https://claude.ai/artifact/7cSFRLAD8AuGTi8xQiZQt8",
       "linkLabel": "Open the tool ↗",
       "note": "ask-chanakya"
+    },
+    {
+      "title": "Moments",
+      "status": "Live",
+      "q": "What if saving a memory took ten seconds?",
+      "d": "A private photo and video log for your phone. Tap for a photo, hold for a video, then type or say a line about it. Day-by-day feed, \"On this day\", search and a one-file backup. Installs to your home screen, works offline, and your moments never leave your phone. No sign-in.",
+      "tags": [
+        "Installable app",
+        "Voice to text",
+        "Private by design"
+      ],
+      "url": "moments/",
+      "linkLabel": "Open Moments ↗"
     }
   ]
 }
