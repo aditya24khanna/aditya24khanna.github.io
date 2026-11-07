@@ -1,6 +1,9 @@
 /* Moments — a private photo/video memory log. No backend; IndexedDB only. */
 'use strict';
 
+// Set after the reminder worker is deployed (see moments-push/README.md). Empty = reminders hidden.
+const CONFIG = { pushURL: '' };
+
 const $ = (s) => document.querySelector(s);
 const MAX_VIDEO_SEC = 30;
 const MAX_PHOTO_EDGE = 2048;
@@ -176,9 +179,11 @@ const metrics = (() => {
 /* =========================================================
    NAV
    ========================================================= */
-const screens = ['feed', 'camera', 'compose', 'viewer'];
+const screens = ['feed', 'camera', 'compose', 'viewer', 'story'];
 function show(name) {
   for (const s of screens) $('#' + s).classList.toggle('active', s === name);
+  document.body.classList.toggle('on-feed', name === 'feed');
+  if (name !== 'story' && typeof player !== 'undefined') player.halt();
   if (name !== 'camera') camera.stop();
   if (name !== 'compose') speech.stop();
   if (name !== 'viewer') { const v = $('#viewer-stage video'); if (v) v.pause(); $('#viewer-menu').hidden = true; }
@@ -228,6 +233,7 @@ function agoLabel(d) {
    FEED
    ========================================================= */
 const ICON_PLAY = '<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';
+const ICON_HEART = '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
 const ICON_MIC = '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/></svg>';
 
 function escapeHTML(s) { return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
@@ -256,7 +262,7 @@ function cardEl(m) {
     </div>
     <div class="card-body">
       <p class="card-caption ${m.caption ? '' : 'none'}">${m.caption ? highlight(m.caption, state.query.trim()) : 'No caption'}</p>
-      <div class="card-time">${timeLabel(d)}${voice ? `<span class="voice">· ${ICON_MIC}said</span>` : ''}</div>
+      <div class="card-time">${timeLabel(d)}${voice ? `<span class="voice">· ${ICON_MIC}said</span>` : ''}${m.favorite ? `<span class="fav">${ICON_HEART}</span>` : ''}</div>
     </div>`;
   el.addEventListener('click', () => openViewer(m.id));
   lazy.observe(el);
@@ -369,29 +375,10 @@ function renderFeed() {
     group.appendChild(cardEl(m));
   }
   list.appendChild(frag);
-  renderOnThisDay();
+  renderRail();
+  updateRing();
+  if (state.tab === 'calendar') renderCalendar();
   updateBanner();
-}
-
-async function renderOnThisDay() {
-  const box = $('#onthisday');
-  const now = new Date();
-  const hits = state.query ? [] : state.memories.filter((m) => {
-    const d = new Date(m.createdAt);
-    return d.getDate() === now.getDate() && (d.getFullYear() < now.getFullYear() || d.getMonth() < now.getMonth()) && d < now && dayKey(d) !== dayKey(now);
-  });
-  if (!hits.length) { box.hidden = true; box.innerHTML = ''; return; }
-  box.hidden = false;
-  box.innerHTML = '<h3 class="otd-title">On this day</h3><div class="otd-strip"></div>';
-  const strip = box.querySelector('.otd-strip');
-  for (const m of hits.slice(0, 12)) {
-    const b = document.createElement('button');
-    b.className = 'otd-item';
-    b.innerHTML = `<img alt=""><span>${agoLabel(new Date(m.createdAt))}</span>`;
-    b.onclick = () => openViewer(m.id);
-    strip.appendChild(b);
-    b.querySelector('img').src = await mediaURL(m.id, true);
-  }
 }
 
 async function reload() {
@@ -971,6 +958,7 @@ $('#compose-save').onclick = async () => {
         ...(d.durationSec ? { durationSec: d.durationSec } : {}),
         syncState: 'local',
       };
+      const daysBefore = captureDaysInWeek(startOfWeek()).size;
       // Optimistic: show in the feed straight away.
       state.memories.unshift(m);
       state.memories.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -986,7 +974,12 @@ $('#compose-save').onclick = async () => {
       state.captureStart = null;
       try {
         await store.put(m, { blob, thumb });
-        toast('Saved');
+        const daysAfter = captureDaysInWeek(startOfWeek()).size;
+        if (daysBefore < WEEK_GOAL && daysAfter >= WEEK_GOAL && new Date(m.createdAt) >= startOfWeek()) {
+          toast(`Week filled: ${WEEK_GOAL} days of moments`, null, 3200);
+          haptic([20, 50, 20]);
+          metrics.event('week_filled');
+        } else toast('Saved');
         metrics.saved(m, secs);
         maybeAskPersist();
         updateBanner();
@@ -1050,6 +1043,7 @@ async function paintViewer(dir) {
   if (dir) requestAnimationFrame(() => { el.style.opacity = 1; el.style.transform = 'none'; });
   if (m.type === 'video') el.play().catch(() => {});
   $('#viewer-when').textContent = fullLabel(new Date(m.createdAt));
+  $('#viewer-fav').setAttribute('aria-pressed', String(!!m.favorite));
   const cap = $('#viewer-caption');
   cap.textContent = m.caption;
   cap.hidden = !m.caption;
@@ -1070,6 +1064,12 @@ function step(dir) {
     if (x0 === null) return;
     const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
     x0 = null;
+    if (Math.abs(dx) < 12 && Math.abs(dy) < 12) { // double-tap = favourite
+      const now = Date.now();
+      if (now - (stage._lastTap || 0) < 300) { stage._lastTap = 0; const m = visibleMemories()[state.viewerIndex]; if (m) toggleFav(m.id); }
+      else stage._lastTap = now;
+      return;
+    }
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) step(dx < 0 ? 1 : -1);
     else if (dy > 90 && Math.abs(dy) > Math.abs(dx) && Date.now() - t0 < 600) show('feed'); // swipe down to close
   }, { passive: true });
@@ -1081,6 +1081,8 @@ function step(dir) {
   });
 })();
 $('#viewer-close').onclick = () => show('feed');
+$('#viewer-fav').onclick = () => { const m = visibleMemories()[state.viewerIndex]; if (m) toggleFav(m.id); };
+$('#viewer-stage').addEventListener('dblclick', () => { const m = visibleMemories()[state.viewerIndex]; if (m) toggleFav(m.id); });
 $('#viewer-more').onclick = (e) => { e.stopPropagation(); $('#viewer-menu').hidden = !$('#viewer-menu').hidden; };
 $('#viewer').addEventListener('click', (e) => { if (!e.target.closest('#viewer-menu, #viewer-more')) $('#viewer-menu').hidden = true; });
 $('#viewer-edit').onclick = () => {
@@ -1340,6 +1342,7 @@ async function doInstall() {
    ========================================================= */
 const fmtBytes = (b) => b > 1e9 ? (b / 1e9).toFixed(1) + ' GB' : b > 1e6 ? Math.round(b / 1e6) + ' MB' : Math.round(b / 1e3) + ' KB';
 async function openSheet() {
+  reminders.initUI();
   $('#scrim').hidden = false; $('#sheet').hidden = false;
   $('#opt-camfirst').checked = localStorage.getItem('moments.camFirst') !== '0';
   if (navigator.storage && navigator.storage.estimate) {
@@ -1450,6 +1453,538 @@ $('#q').addEventListener('input', (e) => {
 for (const id of ['#file-pick', '#file-capture']) {
   $(id).onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f && !state.captureStart) state.captureStart = performance.now(); fileToDraft(f); };
 }
+
+/* =========================================================
+   WEEKLY RING — 3 capture days a week; skipping a day costs nothing
+   ========================================================= */
+const WEEK_GOAL = 3;
+function startOfWeek(d = new Date()) {
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+  return x;
+}
+function captureDaysInWeek(ws) {
+  const we = new Date(ws); we.setDate(ws.getDate() + 7);
+  const set = new Set();
+  for (const m of state.memories) { const d = new Date(m.createdAt); if (d >= ws && d < we) set.add((d.getDay() + 6) % 7); }
+  return set;
+}
+function updateRing() {
+  const days = captureDaysInWeek(startOfWeek());
+  const n = Math.min(days.size, WEEK_GOAL);
+  const C = 2 * Math.PI * 15;
+  const fg = $('#rm-fg');
+  fg.style.strokeDasharray = C;
+  fg.style.strokeDashoffset = C * (1 - n / WEEK_GOAL);
+  $('#rm-text').textContent = `${days.size}/${WEEK_GOAL}`;
+  const rm = $('#ring-mini');
+  rm.classList.toggle('full', days.size >= WEEK_GOAL);
+  rm.hidden = state.memories.length === 0;
+  rm.setAttribute('aria-label', `${days.size} of ${WEEK_GOAL} days this week`);
+}
+$('#ring-mini').onclick = () => setTab('calendar');
+
+/* =========================================================
+   STORIES — what to relive, grouped
+   ========================================================= */
+const asc = (a) => [...a].sort((x, y) => x.createdAt.localeCompare(y.createdAt));
+function storyGroups() {
+  const now = new Date(), tk = dayKey(now);
+  const ms = state.memories;
+  const ws = startOfWeek();
+  const today = ms.filter((m) => dayKey(new Date(m.createdAt)) === tk);
+  const week = ms.filter((m) => new Date(m.createdAt) >= ws);
+  const otd = ms.filter((m) => { const d = new Date(m.createdAt); return d.getDate() === now.getDate() && dayKey(d) !== tk && d < now; });
+  const ya = new Date(now); ya.setFullYear(now.getFullYear() - 1);
+  const yearAgo = ms.filter((m) => Math.abs(new Date(m.createdAt) - ya) <= 3 * 864e5 && !otd.includes(m));
+  const favs = ms.filter((m) => m.favorite).slice(0, 30);
+  const groups = [
+    { key: 'today', title: 'Today', items: asc(today) },
+    { key: 'week', title: now.getDay() === 0 ? 'Your week' : 'This week', items: asc(week), reel: true },
+    { key: 'otd', title: 'On this day', items: asc(otd) },
+    { key: 'yearago', title: 'A year ago', items: asc(yearAgo) },
+    { key: 'favs', title: 'Favourites', items: favs, reel: true },
+  ];
+  return groups.filter((g) => g.items.length && !(g.key === 'week' && g.items.length === today.length && now.getDay() !== 0));
+}
+const sigOf = (g) => g.items.length + ':' + (g.items[g.items.length - 1] || {}).id;
+function seenMap() { try { return JSON.parse(localStorage.getItem('moments.seen')) || {}; } catch (_) { return {}; } }
+function markSeen(g) { const m = seenMap(); m[g.key] = sigOf(g); try { localStorage.setItem('moments.seen', JSON.stringify(m)); } catch (_) {} }
+
+async function renderRail() {
+  const rail = $('#rail');
+  rail.innerHTML = '';
+  if (state.query || !state.memories.length) return;
+  const groups = storyGroups();
+  const seen = seenMap();
+  if (!groups.find((g) => g.key === 'today')) {
+    const b = document.createElement('button');
+    b.className = 'bubble';
+    b.innerHTML = '<div class="bubble-ring"><div class="bubble-plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></div><span>Add today</span>';
+    b.onclick = () => { haptic(); state.captureStart = performance.now(); openCamera(); };
+    rail.appendChild(b);
+  }
+  for (const g of groups) {
+    const b = document.createElement('button');
+    b.className = 'bubble' + (seen[g.key] === sigOf(g) ? '' : ' unseen');
+    b.setAttribute('aria-label', `${g.title}: ${g.items.length} moment${g.items.length > 1 ? 's' : ''}`);
+    b.innerHTML = `<div class="bubble-ring"><img alt=""></div><span>${g.title}</span>`;
+    b.onclick = () => player.open(g);
+    rail.appendChild(b);
+    const cover = g.key === 'favs' ? g.items[0] : g.items[g.items.length - 1];
+    mediaURL(cover.id, true).then((u) => { b.querySelector('img').src = u; });
+  }
+}
+
+/* =========================================================
+   STORY PLAYER — tap to advance, hold to pause, double-tap to favourite
+   ========================================================= */
+const player = (() => {
+  let g = null, i = 0, raf = 0, start = 0, elapsed = 0, dur = 5000, paused = false, vid = null, token = 0;
+  const stage = $('#story-stage');
+  const PHOTO_MS = 5000, MAX_VIDEO_MS = 15000;
+
+  async function open(group, startIndex = 0) {
+    g = group; i = startIndex;
+    markSeen(group);
+    $('#story-title').textContent = group.title;
+    $('#story-reel').hidden = !(group.reel && group.items.length >= 3 && window.MediaRecorder && HTMLCanvasElement.prototype.captureStream);
+    $('#story-bars').innerHTML = group.items.map(() => '<i><b></b></i>').join('');
+    show('story');
+    metrics.event('story_opened');
+    await play();
+  }
+  function bars() {
+    const bs = $('#story-bars').children;
+    for (let k = 0; k < bs.length; k++) bs[k].firstChild.style.width = k < i ? '100%' : '0';
+  }
+  async function play() {
+    cancelAnimationFrame(raf);
+    const my = ++token;
+    if (vid) { vid.pause(); vid = null; }
+    const m = g && g.items[i];
+    if (!m) return close();
+    bars();
+    if (Date.now() - new Date(m.createdAt).getTime() > 864e5 && !relivedThisSession.has(m.id)) { relivedThisSession.add(m.id); metrics.relived(); }
+    $('#story-when').textContent = fullLabel(new Date(m.createdAt));
+    $('#story-caption').textContent = m.caption || '';
+    const src = await mediaURL(m.id, false);
+    if (my !== token) return;
+    stage.innerHTML = '';
+    if (m.type === 'video') {
+      const v = document.createElement('video');
+      v.playsInline = true; v.setAttribute('playsinline', ''); v.src = src;
+      v.poster = await mediaURL(m.id, true);
+      stage.appendChild(v);
+      vid = v;
+      v.muted = false;
+      try { await v.play(); } catch (_) { v.muted = true; v.play().catch(() => {}); }
+      dur = Math.min((m.durationSec || 10) * 1000, MAX_VIDEO_MS);
+      v.onended = () => { if (my === token) next(); };
+    } else {
+      const img = document.createElement('img'); img.alt = m.caption || 'Moment'; img.src = src;
+      stage.appendChild(img);
+      try { await img.decode(); } catch (_) {}
+      dur = PHOTO_MS;
+    }
+    if (my !== token) return;
+    elapsed = 0; start = performance.now(); paused = false;
+    tick();
+    const n = g.items[i + 1]; if (n) mediaURL(n.id, n.type === 'video'); // warm the next one
+  }
+  function tick() {
+    if (!g) return;
+    if (!paused) {
+      const t = elapsed + (performance.now() - start);
+      const bar = $('#story-bars').children[i];
+      if (bar) bar.firstChild.style.width = Math.min(t / dur, 1) * 100 + '%';
+      if (t >= dur) return next();
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  function pause() { if (paused || !g) return; elapsed += performance.now() - start; paused = true; if (vid) vid.pause(); }
+  function resume() { if (!paused || !g) return; start = performance.now(); paused = false; if (vid) vid.play().catch(() => {}); }
+  function next() { if (!g) return; if (i < g.items.length - 1) { i++; play(); } else close(); }
+  function prev() { if (!g) return; if (i > 0) i--; play(); }
+  function halt() { cancelAnimationFrame(raf); token++; if (vid) { vid.pause(); vid = null; } stage.innerHTML = ''; g = null; }
+  function close() { halt(); show('feed'); renderRail(); }
+
+  // Gestures
+  let down = null, holdT = null, holding = false, lastTap = 0, tapT = null;
+  stage.addEventListener('pointerdown', (e) => {
+    down = { x: e.clientX, y: e.clientY, t: Date.now() };
+    holding = false;
+    holdT = setTimeout(() => { holding = true; pause(); }, 200);
+  });
+  stage.addEventListener('pointerup', (e) => {
+    clearTimeout(holdT);
+    if (!down) return;
+    const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    down = null;
+    if (holding) { holding = false; resume(); return; }
+    if (dy > 90 && Math.abs(dy) > Math.abs(dx)) { close(); return; }
+    if (Math.abs(dx) > 60) { dx < 0 ? next() : prev(); return; }
+    const now = Date.now();
+    if (now - lastTap < 260) {
+      clearTimeout(tapT); lastTap = 0;
+      const m = g && g.items[i]; if (m) toggleFav(m.id, true);
+      return;
+    }
+    lastTap = now;
+    const x = e.clientX / stage.clientWidth;
+    tapT = setTimeout(() => (x < 0.33 ? prev() : next()), 260);
+  });
+  stage.addEventListener('pointercancel', () => { clearTimeout(holdT); if (holding) { holding = false; resume(); } down = null; });
+  stage.addEventListener('contextmenu', (e) => e.preventDefault());
+  $('#story-close').onclick = close;
+  $('#story-reel').onclick = () => { if (g) { pause(); makeReel(g).finally(() => resume()); } };
+  document.addEventListener('keydown', (e) => {
+    if (!g) return;
+    if (e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowLeft') prev();
+    if (e.key === 'Escape') close();
+    if (e.key === ' ') { e.preventDefault(); paused ? resume() : pause(); }
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+  return { open, close, halt, pause, resume, isOpen: () => !!g };
+})();
+
+/* =========================================================
+   FAVOURITES
+   ========================================================= */
+async function toggleFav(id, burst = false) {
+  const m = state.memories.find((x) => x.id === id);
+  if (!m) return;
+  m.favorite = !m.favorite;
+  m.updatedAt = new Date().toISOString();
+  m.syncState = 'local';
+  haptic(m.favorite ? 20 : 8);
+  if (m.favorite && (burst || $('#viewer').classList.contains('active'))) {
+    const hb = $('#story').classList.contains('active') ? $('#heart-burst') : null;
+    if (hb) { hb.classList.remove('go'); void hb.offsetWidth; hb.classList.add('go'); }
+  }
+  $('#viewer-fav').setAttribute('aria-pressed', String(m.favorite));
+  const t = document.querySelector(`.card[data-id="${CSS.escape(id)}"] .card-time`);
+  if (t) { const f = t.querySelector('.fav'); if (m.favorite && !f) t.insertAdjacentHTML('beforeend', `<span class="fav">${ICON_HEART}</span>`); if (!m.favorite && f) f.remove(); }
+  if (m.favorite) metrics.event('favourite');
+  try { await store.put(m); } catch (_) { toast("Couldn't save that."); }
+}
+
+/* =========================================================
+   TABS + CALENDAR
+   ========================================================= */
+state.tab = 'home';
+state.calMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+function setTab(t) {
+  if (t === 'calendar' && !$('#searchbar').hidden) $('#search-cancel').click();
+  state.tab = t;
+  $('#home-view').hidden = t !== 'home';
+  $('#cal-view').hidden = t !== 'calendar';
+  document.body.classList.toggle('on-cal', t === 'calendar');
+  for (const b of document.querySelectorAll('.tab')) b.classList.toggle('active', b.dataset.tab === t);
+  $('#feed').scrollTo({ top: 0 });
+  if (t === 'calendar') { renderCalendar(); metrics.event('calendar_opened'); }
+}
+for (const b of document.querySelectorAll('.tab')) b.onclick = () => { haptic(6); setTab(b.dataset.tab); };
+
+function byDay() {
+  const map = new Map();
+  for (const m of state.memories) {
+    const k = dayKey(new Date(m.createdAt));
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(m);
+  }
+  return map;
+}
+function openDay(date, items) {
+  player.open({ key: 'day:' + dayKey(date), title: dayLabel(date), items: asc(items) });
+}
+function renderCalendar() {
+  const now = new Date();
+  const map = byDay();
+  // week card
+  const ws = startOfWeek();
+  const days = captureDaysInWeek(ws);
+  const n = days.size;
+  const C = 2 * Math.PI * 50;
+  const fg = $('#rb-fg');
+  fg.style.strokeDasharray = C;
+  fg.style.strokeDashoffset = C * (1 - Math.min(n, WEEK_GOAL) / WEEK_GOAL);
+  $('.week-card').classList.toggle('full', n >= WEEK_GOAL);
+  $('#week-num').textContent = n >= WEEK_GOAL ? `${n} days · week filled` : `${n} of ${WEEK_GOAL} days`;
+  $('#week-sub').textContent = n === 0 ? `Capture a moment on ${WEEK_GOAL} days this week.`
+    : n < WEEK_GOAL ? `${WEEK_GOAL - n} more day${WEEK_GOAL - n > 1 ? 's' : ''} to fill your week.`
+    : 'Anything more this week is a bonus.';
+  const todayIdx = (now.getDay() + 6) % 7;
+  $('#week-dots').innerHTML = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+    .map((l, k) => `<i class="${days.has(k) ? 'on' : ''}${k === todayIdx ? ' today' : ''}">${l}</i>`).join('');
+
+  // month grid
+  const first = state.calMonth;
+  const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const oldest = state.memories.length ? new Date(state.memories[state.memories.length - 1].createdAt) : now;
+  const minMonth = new Date(oldest.getFullYear(), oldest.getMonth(), 1);
+  $('#cal-title').textContent = first.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  $('#cal-next').disabled = first >= thisMonth;
+  $('#cal-prev').disabled = first <= minMonth;
+  const grid = $('#cal-grid');
+  grid.innerHTML = '';
+  const lead = (first.getDay() + 6) % 7;
+  for (let k = 0; k < lead; k++) { const e = document.createElement('div'); e.className = 'cal-day blank'; grid.appendChild(e); }
+  const dim = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+  for (let day = 1; day <= dim; day++) {
+    const date = new Date(first.getFullYear(), first.getMonth(), day);
+    const items = map.get(dayKey(date));
+    const cell = document.createElement(items ? 'button' : 'div');
+    cell.className = 'cal-day' + (items ? ' has' : '') + (date > now ? ' future' : '') + (dayKey(date) === dayKey(now) ? ' today' : '');
+    cell.innerHTML = `<span>${day}</span>` + (items && items.length > 1 ? `<span class="n">${items.length}</span>` : '');
+    if (items) {
+      cell.setAttribute('aria-label', `${dayLabel(date)}: ${items.length} moment${items.length > 1 ? 's' : ''}`);
+      const img = document.createElement('img'); img.alt = '';
+      cell.prepend(img);
+      const cover = asc(items)[0];
+      mediaURL(cover.id, true).then((u) => { img.src = u; });
+      cell.onclick = () => openDay(date, items);
+    }
+    grid.appendChild(cell);
+  }
+
+  // last 12 months heatmap (53 weeks, Monday rows)
+  const heat = $('#heat');
+  heat.innerHTML = '';
+  const start = startOfWeek(); start.setDate(start.getDate() - 52 * 7);
+  const frag = document.createDocumentFragment();
+  for (let w = 0; w < 53; w++) {
+    for (let d = 0; d < 7; d++) {
+      const date = new Date(start); date.setDate(start.getDate() + w * 7 + d);
+      const i = document.createElement('i');
+      if (date > now) { i.className = 'pad'; frag.appendChild(i); continue; }
+      const items = map.get(dayKey(date));
+      const c = items ? items.length : 0;
+      i.className = 'l' + Math.min(c, 3) + (dayKey(date) === dayKey(now) ? ' today' : '');
+      i.title = `${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}: ${c}`;
+      if (items) i.onclick = () => openDay(date, items);
+      frag.appendChild(i);
+    }
+  }
+  heat.appendChild(frag);
+  const wrap = heat.parentElement; wrap.scrollLeft = wrap.scrollWidth;
+}
+$('#cal-prev').onclick = () => { state.calMonth = new Date(state.calMonth.getFullYear(), state.calMonth.getMonth() - 1, 1); renderCalendar(); };
+$('#cal-next').onclick = () => { state.calMonth = new Date(state.calMonth.getFullYear(), state.calMonth.getMonth() + 1, 1); renderCalendar(); };
+
+/* =========================================================
+   REEL — a story turned into a shareable video, made on this phone
+   ========================================================= */
+function pickRecMime() {
+  const opts = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a', 'video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+  return opts.find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || '';
+}
+let reelCancel = false;
+$('#reel-cancel').onclick = () => { reelCancel = true; };
+async function makeReel(group) {
+  let items = group.items;
+  if (items.length > 24) { const step = items.length / 24; items = Array.from({ length: 24 }, (_, k) => items[Math.floor(k * step)]); }
+  const ov = $('#reel-overlay');
+  ov.hidden = false; reelCancel = false;
+  $('#reel-msg').textContent = group.key === 'week' ? 'Making your week…' : 'Making your video…';
+  const c = $('#reel-canvas'), ctx = c.getContext('2d'), W = c.width, H = c.height;
+  const ink = '#14213D', hl = '#F4B740', font = getComputedStyle(document.body).fontFamily;
+
+  // Load media first so the recording has no stalls
+  const assets = [];
+  for (const m of items) {
+    const src = await mediaURL(m.id, false);
+    if (m.type === 'video') {
+      const v = document.createElement('video');
+      v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = src;
+      await new Promise((res) => { v.onloadeddata = res; v.onerror = res; setTimeout(res, 3000); });
+      assets.push({ m, v });
+    } else {
+      const img = new Image(); img.src = src;
+      try { await img.decode(); } catch (_) {}
+      assets.push({ m, img });
+    }
+  }
+  const first = new Date(items[0].createdAt), last = new Date(items[items.length - 1].createdAt);
+  const fmtD = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const range = dayKey(first) === dayKey(last) ? fmtD(first) : `${fmtD(first)} – ${fmtD(last)}`;
+  const segs = [{ kind: 'title', d: 1800 }, ...assets.map((a) => ({ kind: a.v ? 'video' : 'photo', a, d: a.v ? Math.min((a.m.durationSec || 3) * 1000, 3500) : 2600 })), { kind: 'end', d: 1600 }];
+  const total = segs.reduce((x, s) => x + s.d, 0);
+
+  const mime = pickRecMime();
+  const stream = c.captureStream(30);
+  const chunks = [];
+  let rec;
+  try { rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 3_000_000 } : undefined); }
+  catch (_) { rec = new MediaRecorder(stream); }
+  rec.ondataavailable = (e) => e.data && e.data.size && chunks.push(e.data);
+  const stopped = new Promise((res) => { rec.onstop = res; });
+
+  function cover(src, sw, sh, scale = 1) {
+    if (!sw || !sh) return;
+    const s = Math.max(W / sw, H / sh) * scale;
+    const w = sw * s, h = sh * s;
+    ctx.drawImage(src, (W - w) / 2, (H - h) / 2, w, h);
+  }
+  function wrap(text, maxW, maxLines) {
+    const words = text.split(/\s+/); const lines = []; let line = '';
+    for (const w of words) {
+      const t = line ? line + ' ' + w : w;
+      if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; if (lines.length === maxLines) break; }
+      else line = t;
+    }
+    if (lines.length < maxLines && line) lines.push(line);
+    if (lines.length === maxLines && words.join(' ').length > lines.join(' ').length) lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, '…');
+    return lines;
+  }
+  function overlay(m) {
+    const g = ctx.createLinearGradient(0, H * 0.55, 0, H);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.72)');
+    ctx.fillStyle = g; ctx.fillRect(0, H * 0.55, W, H * 0.45);
+    ctx.fillStyle = '#fff'; ctx.textBaseline = 'alphabetic';
+    if (m.caption) {
+      ctx.font = `600 40px ${font}`;
+      const lines = wrap(m.caption, W - 96, 4);
+      lines.forEach((l, k) => ctx.fillText(l, 48, H - 120 - (lines.length - 1 - k) * 52));
+    }
+    ctx.font = `700 26px ${font}`; ctx.globalAlpha = 0.85;
+    ctx.fillText(new Date(m.createdAt).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }), 48, H - 64);
+    ctx.globalAlpha = 1;
+  }
+  function card(big, small) {
+    ctx.fillStyle = ink; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = hl; ctx.fillRect(48, H / 2 + 20, 140, 14);
+    ctx.fillStyle = '#fff'; ctx.font = `800 76px ${font}`; ctx.fillText(big, 48, H / 2);
+    ctx.font = `600 34px ${font}`; ctx.globalAlpha = 0.85; ctx.fillText(small, 48, H / 2 + 90); ctx.globalAlpha = 1;
+  }
+
+  rec.start(500);
+  let k = 0, segStart = performance.now(), doneBefore = 0;
+  const begin = (s) => { if (s && s.kind === 'video') { s.a.v.currentTime = 0; s.a.v.play().catch(() => {}); } };
+  begin(segs[0]);
+  await new Promise((resolve) => {
+    function frame() {
+      if (reelCancel) return resolve();
+      const s = segs[k];
+      const t = performance.now() - segStart;
+      if (s.kind === 'title') card(group.title, range);
+      else if (s.kind === 'end') card('Moments', `${items.length} moment${items.length > 1 ? 's' : ''} · ${range}`);
+      else {
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+        ctx.globalAlpha = Math.min(1, t / 250);
+        if (s.kind === 'photo') cover(s.a.img, s.a.img.naturalWidth, s.a.img.naturalHeight, 1 + 0.08 * (t / s.d));
+        else cover(s.a.v, s.a.v.videoWidth, s.a.v.videoHeight);
+        ctx.globalAlpha = 1;
+        overlay(s.a.m);
+      }
+      const pct = Math.min(100, Math.round(((doneBefore + Math.min(t, s.d)) / total) * 100));
+      $('#reel-pct').textContent = pct + '%';
+      $('#reel-bar').style.width = pct + '%';
+      if (t >= s.d) {
+        if (s.kind === 'video') s.a.v.pause();
+        doneBefore += s.d; k++; segStart = performance.now();
+        if (k >= segs.length) return resolve();
+        begin(segs[k]);
+      }
+      requestAnimationFrame(frame);
+    }
+    frame();
+  });
+  rec.stop();
+  await stopped;
+  stream.getTracks().forEach((t) => t.stop());
+  assets.forEach((a) => { if (a.v) { a.v.pause(); a.v.removeAttribute('src'); } });
+  ov.hidden = true;
+  if (reelCancel) { toast('Video cancelled'); return; }
+  const type = (rec.mimeType || 'video/webm').split(';')[0];
+  const blob = new Blob(chunks, { type });
+  const name = `moments-${group.key}-${new Date().toISOString().slice(0, 10)}.${extFor(type)}`;
+  metrics.event('reel_made');
+  const file = new File([blob], name, { type });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file] }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  download(blob, name);
+  toast('Video saved');
+}
+
+/* =========================================================
+   REMINDERS — one push a day at the user's time; the phone picks the words
+   ========================================================= */
+const reminders = (() => {
+  const supported = () => !!CONFIG.pushURL && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const b64u = (s) => { const p = '='.repeat((4 - (s.length % 4)) % 4); const b = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(b, (ch) => ch.charCodeAt(0)); };
+  async function post(path, body) {
+    const r = await fetch(CONFIG.pushURL + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error('push ' + r.status);
+  }
+  const tz = () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  function initUI() {
+    const row = $('#reminder-row');
+    if (!CONFIG.pushURL) { row.hidden = true; return; }
+    row.hidden = false;
+    const cb = $('#opt-reminder');
+    cb.checked = localStorage.getItem('moments.reminder') === '1';
+    $('#reminder-time').value = localStorage.getItem('moments.reminderTime') || '20:00';
+    if (!supported() || (isIOS && !isStandalone())) {
+      cb.disabled = true; $('#reminder-time').disabled = true;
+      $('#reminder-line').textContent = isIOS && !isStandalone() ? 'Install the app to turn on reminders.' : 'This browser can’t show reminders.';
+    }
+  }
+  async function enable() {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { toast('Notifications are blocked for this site.'); return false; }
+    const reg = await navigator.serviceWorker.ready;
+    const key = (await (await fetch(CONFIG.pushURL + '/vapid')).text()).trim();
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(key) });
+    await post('/subscribe', { sub: sub.toJSON(), time: $('#reminder-time').value, tz: tz() });
+    localStorage.setItem('moments.reminder', '1');
+    metrics.event('reminder_on');
+    return true;
+  }
+  async function disable() {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if (sub) { await post('/unsubscribe', { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe().catch(() => {}); }
+    localStorage.setItem('moments.reminder', '0');
+  }
+  const fmt = (hhmm) => { const [h, m] = hhmm.split(':').map(Number); return new Date(2000, 0, 1, h, m).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); };
+  $('#opt-reminder').onchange = async (e) => {
+    const cb = e.target;
+    cb.disabled = true;
+    try {
+      if (cb.checked) { const ok = await enable(); cb.checked = ok; if (ok) toast(`Reminder set for ${fmt($('#reminder-time').value)}`); }
+      else { await disable(); toast('Reminder off'); }
+    } catch (_) { cb.checked = !cb.checked; toast('Couldn’t reach the reminder service. Try again later.'); }
+    cb.disabled = false;
+  };
+  $('#reminder-time').onchange = async (e) => {
+    localStorage.setItem('moments.reminderTime', e.target.value);
+    if (localStorage.getItem('moments.reminder') !== '1') return;
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) { await post('/subscribe', { sub: sub.toJSON(), time: e.target.value, tz: tz() }); toast(`Reminder moved to ${fmt(e.target.value)}`); }
+    } catch (_) { toast('Couldn’t update the reminder.'); }
+  };
+  return { initUI };
+})();
+
+// A reminder (or its notification) asks us to open somewhere specific.
+function handleOpen(where) {
+  if (where === 'camera') { state.captureStart = performance.now(); openCamera(); return; }
+  const gs = storyGroups();
+  const g = gs.find((x) => x.key === where) || gs.find((x) => x.key === 'week') || gs[0];
+  if (g) player.open(g);
+}
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (e.data && e.data.open) { metrics.event('reminder_opened'); handleOpen(e.data.open); }
+  });
+}
+
 // Hardware/browser back button returns to the feed instead of leaving the app.
 history.replaceState({ s: 'feed' }, '');
 const _show = show;
@@ -1473,6 +2008,7 @@ window.addEventListener('popstate', () => {
 /* =========================================================
    BOOT
    ========================================================= */
+document.body.classList.add('on-feed');
 (async function boot() {
   try { await reload(); } catch (e) { toast('Storage is unavailable in this browser mode.'); }
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
@@ -1481,6 +2017,13 @@ window.addEventListener('popstate', () => {
   if (isStandalone() && !localStorage.getItem('moments.standaloneSeen')) {
     localStorage.setItem('moments.standaloneSeen', '1');
     metrics.event('opened_installed');
+  }
+  const openParam = new URLSearchParams(location.search).get('open');
+  if (openParam) {
+    history.replaceState({ s: 'feed' }, '', location.pathname);
+    metrics.event('reminder_opened');
+    handleOpen(openParam);
+    return;
   }
   if (await offerDraft()) return; // don't jump to the camera over an unsaved moment
   // Fast path: open straight to camera if allowed before and the user wants it.

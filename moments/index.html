@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Moments</title>
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -22,6 +22,10 @@
 <main id="feed" class="screen active" aria-label="Your moments">
   <header class="topbar">
     <h1 class="brand">Moments</h1>
+    <button class="ring-mini" id="ring-mini" aria-label="This week's progress">
+      <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rm-bg" cx="18" cy="18" r="15"/><circle class="rm-fg" id="rm-fg" cx="18" cy="18" r="15"/></svg>
+      <span id="rm-text">0/3</span>
+    </button>
     <div class="top-actions">
       <button class="icon-btn" id="btn-search" aria-label="Search captions">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -48,7 +52,8 @@
     </button>
   </div>
 
-  <section class="onthisday" id="onthisday" hidden aria-label="On this day"></section>
+  <div id="home-view">
+  <section class="rail" id="rail" aria-label="Stories"></section>
   <section id="list" class="list"></section>
 
   <div class="empty" id="empty" hidden>
@@ -60,11 +65,43 @@
     <p class="fine">Your moments stay on this phone.</p>
   </div>
   <div class="no-results" id="no-results" hidden>No captions match.</div>
+  </div>
 
-  <button class="fab" id="fab" aria-label="Capture a new moment">
-    <span class="fab-ring"></span>
-  </button>
+  <div id="cal-view" hidden>
+    <section class="week-card">
+      <svg class="ring-big" viewBox="0 0 120 120" aria-hidden="true"><circle class="rb-bg" cx="60" cy="60" r="50"/><circle class="rb-fg" id="rb-fg" cx="60" cy="60" r="50"/></svg>
+      <div class="week-info">
+        <div class="week-num" id="week-num">0 of 3 days</div>
+        <div class="week-sub" id="week-sub">Capture a moment on 3 days this week.</div>
+        <div class="week-dots" id="week-dots"></div>
+      </div>
+    </section>
+    <section class="month">
+      <div class="month-head">
+        <button class="icon-btn" id="cal-prev" aria-label="Previous month"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <h3 id="cal-title"></h3>
+        <button class="icon-btn" id="cal-next" aria-label="Next month"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </section>
+    <section class="year">
+      <h3 class="sec-title" id="heat-title">The last 12 months</h3>
+      <div class="heat-wrap"><div class="heat" id="heat"></div></div>
+      <div class="heat-legend"><span>Less</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><span>More</span></div>
+    </section>
+  </div>
 </main>
+
+<nav class="tabbar" id="tabbar" aria-label="Main">
+  <button class="tab active" data-tab="home" aria-label="Home">
+    <svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg><span>Home</span>
+  </button>
+  <button class="fab" id="fab" aria-label="Capture a new moment"><span class="fab-ring"></span></button>
+  <button class="tab" data-tab="calendar" aria-label="Calendar">
+    <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span>Calendar</span>
+  </button>
+</nav>
 
 <!-- ============ CAMERA ============ -->
 <section id="camera" class="screen dark" aria-label="Camera">
@@ -142,6 +179,9 @@
       <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
     </button>
     <div class="viewer-when" id="viewer-when"></div>
+    <button class="icon-btn light heart-btn" id="viewer-fav" aria-label="Favourite" aria-pressed="false">
+      <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+    </button>
     <button class="icon-btn light" id="viewer-more" aria-label="More actions">
       <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
     </button>
@@ -154,6 +194,32 @@
     <button class="danger" id="viewer-delete">Delete</button>
   </div>
 </section>
+
+<!-- ============ STORY PLAYER ============ -->
+<section id="story" class="screen dark" aria-label="Story">
+  <div class="story-stage" id="story-stage"></div>
+  <div class="story-head">
+    <div class="story-bars" id="story-bars"></div>
+    <div class="story-top">
+      <div class="story-meta"><b id="story-title"></b><span id="story-when"></span></div>
+      <button class="pill-btn small light" id="story-reel" hidden>Make video</button>
+      <button class="icon-btn light" id="story-close" aria-label="Close story">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="story-caption" id="story-caption"></div>
+  <div class="heart-burst" id="heart-burst" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+  </div>
+</section>
+
+<div class="reel-overlay" id="reel-overlay" hidden>
+  <canvas id="reel-canvas" width="720" height="1280"></canvas>
+  <div class="reel-status"><b id="reel-msg">Making your week…</b><span id="reel-pct">0%</span></div>
+  <div class="reel-bar"><span id="reel-bar"></span></div>
+  <button class="text-btn light" id="reel-cancel">Cancel</button>
+</div>
 
 <!-- ============ SETTINGS SHEET ============ -->
 <div class="scrim" id="scrim" hidden></div>
@@ -205,6 +271,15 @@
     <label class="switch"><input type="checkbox" id="opt-camfirst" checked><span></span></label>
   </div>
 
+  <div class="sheet-row" id="reminder-row" hidden>
+    <div>
+      <div class="row-title">Daily reminder</div>
+      <div class="row-sub" id="reminder-line">One nudge a day, at the time you pick.</div>
+    </div>
+    <input type="time" id="reminder-time" value="20:00" aria-label="Reminder time">
+    <label class="switch"><input type="checkbox" id="opt-reminder"><span></span></label>
+  </div>
+
   <div class="sheet-row">
     <div>
       <div class="row-title">Share anonymous usage counts</div>
@@ -236,7 +311,7 @@
 <input type="file" id="file-capture" accept="image/*,video/*" capture="environment" hidden>
 <input type="file" id="file-import" accept=".zip,application/zip" hidden>
 
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

@@ -1,0 +1,15 @@
+name = "moments-push"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+
+# Check every 15 minutes for phones whose reminder time has arrived.
+[triggers]
+crons = ["*/15 * * * *"]
+
+[vars]
+VAPID_SUBJECT = "mailto:aditya.khanna@iiml.org"
+ALLOWED_ORIGIN = "https://aditya24khanna.github.io"
+
+[[kv_namespaces]]
+binding = "SUBS"
+id = "PASTE_KV_ID_HERE"
