@@ -323,3 +323,93 @@ body.grid .badge { top: 6px; right: 6px; padding: 3px 6px; font-size: 11px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ================= Phase 0 additions ================= */
+
+/* camera slides in from the left, like Instagram */
+#camera { transform: translateX(-30px); }
+#camera.active { transform: none; }
+.focus-ring {
+  position: absolute; z-index: 2; width: 72px; height: 72px; margin: -36px 0 0 -36px;
+  border: 2px solid var(--hl); border-radius: 12px; opacity: 0; pointer-events: none;
+}
+.focus-ring.go { animation: focus .7s var(--ease); }
+@keyframes focus { 0% { opacity: 1; transform: scale(1.5); } 40% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1); } }
+.zoom-label {
+  position: absolute; z-index: 2; left: 50%; top: calc(var(--sat) + 64px); transform: translateX(-50%);
+  background: rgba(0,0,0,.55); color: #fff; font-weight: 800; font-size: 14px; padding: 5px 12px; border-radius: 999px;
+}
+#cam-torch[aria-pressed="true"] { color: var(--hl); }
+#cam-torch svg { fill: none; }
+#cam-torch[aria-pressed="true"] svg { fill: var(--hl); }
+
+/* compose v2: full-bleed media, caption overlaid, big Save */
+#compose { background: #000; color: #fff; }
+.compose-media { position: absolute; inset: 0; display: grid; place-items: center; background: #000; }
+.compose-media img, .compose-media video { width: 100%; height: 100%; max-width: none; max-height: none; object-fit: contain; }
+.compose-top {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: calc(var(--sat) + 8px) 8px 18px;
+  background: linear-gradient(rgba(0,0,0,.55), transparent);
+}
+.compose-top .spacer { width: 40px; }
+.compose-when { font-size: 14px; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+.compose-panel {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 56px 16px calc(var(--sab) + 16px + var(--kb, 0px));
+  background: linear-gradient(transparent, rgba(0,0,0,.55) 28%, rgba(0,0,0,.82));
+  transition: padding-bottom .15s;
+}
+#compose #caption {
+  color: #fff; font-size: 20px; font-weight: 600; line-height: 1.35; min-height: 56px; max-height: 28vh;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+}
+#compose #caption::placeholder { color: rgba(255,255,255,.7); }
+#compose .caption-tools { margin: 6px 0 14px; }
+#compose .lang-btn { color: #fff; border-color: rgba(255,255,255,.35); }
+#compose .count { color: rgba(255,255,255,.7); }
+#compose .mic-hint { color: rgba(255,255,255,.75); }
+.mic-btn { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; padding: 12px 18px 12px 14px; font-size: 15px; }
+.mic-btn.holding { transform: scale(1.06); }
+.save-btn {
+  width: 100%; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 800;
+  background: #fff; color: #14213D; transition: transform .1s;
+}
+.save-btn:active { transform: scale(.98); }
+.save-btn:disabled { opacity: .5; }
+
+/* feed banner (install / backup) */
+.banner {
+  display: flex; align-items: center; gap: 10px; max-width: 536px;
+  margin: 12px auto 0; padding: 12px 6px 12px 14px;
+  background: var(--card); border: 1.5px solid var(--ink); border-left: 6px solid var(--hl);
+  border-radius: 12px; box-shadow: var(--shadow);
+  margin-left: max(12px, calc(50% - 268px)); margin-right: max(12px, calc(50% - 268px));
+  animation: pop .3s var(--ease);
+}
+.banner.warn { border-left-color: var(--red); }
+.banner-text { flex: 1; min-width: 0; font-size: 14px; line-height: 1.35; }
+.banner-text strong { display: block; font-size: 15px; }
+.banner-text span { color: var(--ink-2); }
+.banner-x { width: 32px; height: 32px; flex: 0 0 auto; }
+.banner-x svg { width: 18px; height: 18px; }
+
+/* iOS install how-to */
+.howto {
+  position: fixed; left: 12px; right: 12px; bottom: calc(var(--sab) + 12px); z-index: 30;
+  max-width: 520px; margin: 0 auto; padding: 18px 18px 16px;
+  background: var(--card); color: var(--ink); border: 1.5px solid var(--ink); border-radius: 16px; box-shadow: var(--shadow);
+  animation: up .28s var(--ease);
+}
+.howto h3 { margin: 0 0 8px; font-size: 18px; }
+.howto ol { margin: 0 0 10px; padding-left: 20px; line-height: 1.55; }
+.howto-note { font-size: 13px; color: var(--ink-2); margin: 0 0 14px; line-height: 1.45; }
+.howto .pill-btn { width: 100%; }
+.inline-ico { display: inline-block; width: 16px; height: 16px; vertical-align: -3px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 8px 0 14px; }
+.stat { background: var(--paper); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.stat b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; color: var(--ink-3); font-weight: 600; }

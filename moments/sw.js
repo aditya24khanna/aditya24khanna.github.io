@@ -1,10 +1,10 @@
 /* Moments service worker: cache the app shell so it opens offline. */
-const VERSION = 'moments-v1';
+const VERSION = 'moments-v2';
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=1',
-  './app.js?v=1',
+  './styles.css?v=2',
+  './app.js?v=2',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',

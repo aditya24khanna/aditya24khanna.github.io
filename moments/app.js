@@ -67,6 +67,18 @@ const store = (() => {
         t.objectStore('media').delete(id + ':thumb');
       });
     },
+    saveDraft: (blob, thumb) => tx(['media'], 'readwrite', (t) => {
+      const ms = t.objectStore('media');
+      ms.put(blob, '__draft');
+      if (thumb) ms.put(thumb, '__draft:thumb'); else ms.delete('__draft:thumb');
+    }),
+    async getDraft() {
+      return tx(['media'], 'readonly', async (t) => {
+        const ms = t.objectStore('media');
+        return { blob: await req(ms.get('__draft')), thumb: await req(ms.get('__draft:thumb')) };
+      });
+    },
+    clearDraft: () => tx(['media'], 'readwrite', (t) => { const ms = t.objectStore('media'); ms.delete('__draft'); ms.delete('__draft:thumb'); }),
     async clearAll() {
       return tx(['memories', 'media'], 'readwrite', (t) => { t.objectStore('memories').clear(); t.objectStore('media').clear(); });
     },
@@ -100,6 +112,68 @@ function dropURLs(id) {
 }
 
 /* =========================================================
+   METRICS — counted on this phone; anonymous events only if opted in.
+   Never sends photos, videos or captions.
+   ========================================================= */
+const metrics = (() => {
+  const KEY = 'moments.stats';
+  let s;
+  try { s = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (_) { s = {}; }
+  if (!s.firstUse) s.firstUse = new Date().toISOString();
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (_) {} };
+  save();
+  function isoWeek(d = new Date()) {
+    const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const day = t.getUTCDay() || 7;
+    t.setUTCDate(t.getUTCDate() + 4 - day);
+    const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    return t.getUTCFullYear() + '-W' + Math.ceil(((t - y0) / 864e5 + 1) / 7);
+  }
+  function mark(kind) {
+    const w = isoWeek();
+    s.weeks = s.weeks || {};
+    s.weeks[w] = s.weeks[w] || { c: 0, r: 0 };
+    s.weeks[w][kind]++;
+  }
+  const bump = (k) => { s[k] = (s[k] || 0) + 1; };
+  const optedIn = () => localStorage.getItem('moments.metrics') === '1';
+  function event(name) {
+    if (!optedIn()) return;
+    const gc = window.goatcounter;
+    if (gc && gc.count) { try { gc.count({ path: 'moments/e/' + name, title: name, event: true }); } catch (_) {} }
+  }
+  const median = (a) => { if (!a || !a.length) return null; const b = [...a].sort((x, y) => x - y); const m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
+  return {
+    saved(m, secs) {
+      bump('saves');
+      if (m.type === 'video') bump('videos');
+      if (m.caption) bump('captioned');
+      const voiced = m.caption && (m.captionSource === 'voice' || m.captionSource === 'mixed');
+      if (voiced) bump('voice');
+      if (secs && secs < 600) { s.tts = (s.tts || []).slice(-29); s.tts.push(Math.round(secs * 10) / 10); }
+      mark('c'); save();
+      event('moment_saved');
+      if (m.type === 'video') event('video_saved');
+      if (voiced) event('voice_caption');
+      if (secs && secs < 600) event(secs < 6 ? 'save_under_6s' : 'save_over_6s');
+    },
+    relived() { bump('relives'); mark('r'); save(); event('relive_opened'); },
+    event, optedIn,
+    setOptIn(v) { localStorage.setItem('moments.metrics', v ? '1' : '0'); if (v) event('metrics_on'); },
+    summary() {
+      const weeks = Object.values(s.weeks || {});
+      return {
+        saves: s.saves || 0, relives: s.relives || 0, voice: s.voice || 0,
+        captionRate: s.saves ? Math.round(((s.captioned || 0) / s.saves) * 100) : null,
+        medianSave: median(s.tts),
+        rememberWeeks: weeks.filter((w) => w.c > 0 && w.r > 0).length,
+        activeWeeks: weeks.filter((w) => w.c > 0).length,
+      };
+    },
+  };
+})();
+
+/* =========================================================
    NAV
    ========================================================= */
 const screens = ['feed', 'camera', 'compose', 'viewer'];
@@ -113,7 +187,7 @@ function show(name) {
 function haptic(ms = 12) { if (navigator.vibrate) try { navigator.vibrate(ms); } catch (_) {} }
 
 let toastTimer;
-function toast(msg, action) {
+function toast(msg, action, ms) {
   const t = $('#toast');
   t.innerHTML = '';
   const span = document.createElement('span'); span.textContent = msg; t.appendChild(span);
@@ -124,7 +198,7 @@ function toast(msg, action) {
   }
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), action ? 5000 : 2400);
+  toastTimer = setTimeout(() => t.classList.remove('show'), ms || (action ? 5000 : 2400));
 }
 
 /* =========================================================
@@ -198,11 +272,45 @@ const lazy = new IntersectionObserver(async (entries) => {
     const m = state.memories.find((x) => x.id === id);
     if (!m) continue;
     const img = e.target.querySelector('img');
-    const useThumb = state.view === 'grid' || m.type === 'video';
-    img.src = await mediaURL(id, useThumb);
-    if (m.type === 'video' && state.view === 'feed') feedVideos.observe(e.target);
+    img.src = await mediaURL(id, true); // thumbnail first: fast and light
+    if (state.view === 'feed') {
+      if (m.type === 'video') feedVideos.observe(e.target);
+      else upgrade.observe(e.target);
+      far.observe(e.target);
+    }
   }
 }, { rootMargin: '600px 0px' });
+
+// Swap in the full photo once a card is actually on screen.
+const upgrade = new IntersectionObserver(async (entries) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    upgrade.unobserve(e.target);
+    const id = e.target.dataset.id;
+    const src = await mediaURL(id, false);
+    const pre = new Image();
+    pre.onload = () => { const img = e.target.querySelector('img'); if (img) { img.src = src; e.target.dataset.full = '1'; } };
+    pre.src = src;
+  }
+}, { threshold: 0.35 });
+
+// Release full-size media for cards far off screen, so memory stays flat on long feeds.
+const far = new IntersectionObserver(async (entries) => {
+  for (const e of entries) {
+    if (e.isIntersecting) continue;
+    const card = e.target, id = card.dataset.id;
+    const v = card.querySelector('video');
+    if (v) { v.pause(); v.removeAttribute('src'); v.load(); v.remove(); }
+    if (card.dataset.full || v) {
+      delete card.dataset.full;
+      const img = card.querySelector('img');
+      if (img) img.src = await mediaURL(id, true);
+      if (state.viewerId !== id && urls.has(id)) { URL.revokeObjectURL(urls.get(id)); urls.delete(id); }
+      const m = state.memories.find((x) => x.id === id);
+      if (m && m.type !== 'video') upgrade.observe(card);
+    }
+  }
+}, { rootMargin: '2500px 0px' });
 
 // Instagram-style: videos autoplay muted when mostly on screen.
 const feedVideos = (() => {
@@ -231,7 +339,7 @@ const feedVideos = (() => {
     observe: (c) => io.observe(c),
     pauseAll: () => { for (const c of [...playing]) stop(c); },
     resume: () => { io.takeRecords(); for (const c of document.querySelectorAll('.card video')) { const card = c.closest('.card'); io.unobserve(card); io.observe(card); } },
-    reset: () => { io.disconnect(); playing.clear(); },
+    reset: () => { io.disconnect(); playing.clear(); upgrade.disconnect(); far.disconnect(); },
   };
 })();
 
@@ -262,6 +370,7 @@ function renderFeed() {
   }
   list.appendChild(frag);
   renderOnThisDay();
+  updateBanner();
 }
 
 async function renderOnThisDay() {
@@ -368,6 +477,7 @@ async function fileToDraft(file) {
 const camera = (() => {
   let stream = null, facing = 'environment', recorder = null, chunks = [], recStart = 0, recTimer = null, holdTimer = null;
   let pressed = false, recThumb = null;
+  let track = null, caps = {}, zoom = 1, torchOn = false;
   const vf = $('#viewfinder');
   const ring = $('#ring-prog');
   const RING = 283;
@@ -392,6 +502,40 @@ const camera = (() => {
     vf.srcObject = stream;
     vf.classList.toggle('mirror', facing === 'user');
     try { await vf.play(); } catch (_) {}
+    setupTrack();
+  }
+  function setupTrack() {
+    track = stream && stream.getVideoTracks()[0];
+    caps = (track && track.getCapabilities) ? track.getCapabilities() : {};
+    zoom = (track && track.getSettings && track.getSettings().zoom) || 1;
+    torchOn = false;
+    const tb = $('#cam-torch');
+    tb.hidden = !caps.torch;
+    tb.setAttribute('aria-pressed', 'false');
+    $('#cam-spacer').hidden = !!caps.torch;
+    $('#cam-hint').textContent = caps.zoom ? 'Tap for photo \u00b7 hold for video \u00b7 pinch to zoom' : 'Tap for photo \u00b7 hold for video';
+  }
+  async function setZoom(z) {
+    if (!caps.zoom || !track) return;
+    z = Math.min(caps.zoom.max, Math.max(caps.zoom.min, z));
+    zoom = z;
+    const zl = $('#zoom-label');
+    zl.hidden = false; zl.textContent = (Math.round(z * 10) / 10) + '\u00d7';
+    clearTimeout(setZoom.t); setZoom.t = setTimeout(() => { zl.hidden = true; }, 900);
+    try { await track.applyConstraints({ advanced: [{ zoom: z }] }); } catch (_) {}
+  }
+  async function focusAt(x, y, px, py) {
+    const r = $('#focus-ring');
+    r.style.left = px + 'px'; r.style.top = py + 'px';
+    r.classList.remove('go'); void r.offsetWidth; r.classList.add('go');
+    if (!track) return;
+    const modes = caps.focusMode || [];
+    const c = {};
+    if (modes.includes('single-shot')) c.focusMode = 'single-shot';
+    else if (modes.includes('manual')) c.focusMode = 'manual';
+    c.pointsOfInterest = [{ x: facing === 'user' ? 1 - x : x, y }];
+    try { await track.applyConstraints({ advanced: [c] }); } catch (_) {}
+    if (modes.includes('continuous')) setTimeout(() => { track && track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {}); }, 3000);
   }
   function fallback(msg) {
     $('#cam-fallback-msg').textContent = msg;
@@ -401,6 +545,7 @@ const camera = (() => {
     if (recorder && recorder.state === 'recording') { recorder.onstop = null; recorder.stop(); }
     recorder = null; resetRecUI();
     if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+    track = null; caps = {}; torchOn = false;
     vf.srcObject = null;
   }
   async function frameCanvas(max) {
@@ -492,7 +637,53 @@ const camera = (() => {
   // Keyboard: space/enter = photo
   sh.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); takePhoto(); } });
 
-  $('#cam-flip').onclick = () => { facing = facing === 'user' ? 'environment' : 'user'; haptic(); start(); };
+  const flip = () => { facing = facing === 'user' ? 'environment' : 'user'; haptic(); start(); };
+  $('#cam-flip').onclick = flip;
+  $('#cam-torch').onclick = async () => {
+    if (!track || !caps.torch) return;
+    torchOn = !torchOn;
+    try { await track.applyConstraints({ advanced: [{ torch: torchOn }] }); } catch (_) { torchOn = false; }
+    $('#cam-torch').setAttribute('aria-pressed', String(torchOn));
+    haptic();
+  };
+
+  // Viewfinder gestures: tap = focus, double-tap = flip, pinch = zoom, swipe left = back to feed.
+  const cam = $('#camera');
+  let t0 = null, pinch = null, lastTap = 0, tapTimer = null;
+  const isControl = (el) => el.closest('button, .cam-controls, .cam-fallback');
+  cam.addEventListener('touchstart', (e) => {
+    if (isControl(e.target)) return;
+    if (e.touches.length === 2) {
+      const [a, b] = e.touches;
+      pinch = { d: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), z: zoom };
+      t0 = null;
+    } else if (e.touches.length === 1) {
+      t0 = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+    }
+  }, { passive: true });
+  cam.addEventListener('touchmove', (e) => {
+    if (pinch && e.touches.length === 2) {
+      const [a, b] = e.touches;
+      const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      setZoom(pinch.z * (d / pinch.d));
+    }
+  }, { passive: true });
+  cam.addEventListener('touchend', (e) => {
+    if (pinch) { if (e.touches.length < 2) pinch = null; return; }
+    if (!t0 || isControl(e.target)) return;
+    const p = e.changedTouches[0];
+    const dx = p.clientX - t0.x, dy = p.clientY - t0.y, dt = Date.now() - t0.t;
+    t0 = null;
+    if (dx < -70 && Math.abs(dy) < 60 && dt < 600) { show('feed'); return; }
+    if (Math.abs(dx) > 12 || Math.abs(dy) > 12 || dt > 400) return;
+    const now = Date.now();
+    if (now - lastTap < 280) { clearTimeout(tapTimer); lastTap = 0; flip(); return; }
+    lastTap = now;
+    const rect = cam.getBoundingClientRect();
+    tapTimer = setTimeout(() => focusAt(p.clientX / rect.width, p.clientY / rect.height, p.clientX, p.clientY), 280);
+  }, { passive: true });
+  // Mouse wheel zoom on desktop
+  cam.addEventListener('wheel', (e) => { if (caps.zoom) setZoom(zoom * (e.deltaY < 0 ? 1.1 : 0.9)); }, { passive: true });
   $('#cam-close').onclick = () => show('feed');
   $('#cam-gallery').onclick = () => $('#file-pick').click();
   $('#cam-fallback-gallery').onclick = () => $('#file-pick').click();
@@ -501,7 +692,10 @@ const camera = (() => {
   return { start, stop };
 })();
 
-function openCamera() { show('camera'); camera.start(); }
+function openCamera() {
+  if (!state.captureStart) state.captureStart = performance.now();
+  show('camera'); camera.start();
+}
 
 /* =========================================================
    SPEECH (on-device / browser)
@@ -515,16 +709,14 @@ const speech = (() => {
   const langBtn = $('#lang');
   const setLangUI = () => { langBtn.textContent = lang === 'hi-IN' ? 'हि' : 'EN'; langBtn.setAttribute('aria-label', lang === 'hi-IN' ? 'Dictation language: Hindi' : 'Dictation language: English'); };
   setLangUI();
+  if (!SR) { btn.hidden = true; langBtn.hidden = true; $('#mic-hint').hidden = false; }
 
-  if (!SR) {
-    btn.hidden = true; langBtn.hidden = true; $('#mic-hint').hidden = false;
-  }
-
+  const label = (t) => { $('#mic-label').textContent = t; };
   function setUI(on) {
     listening = on;
     btn.setAttribute('aria-pressed', String(on));
-    $('#mic-label').textContent = on ? 'Listening… tap to stop' : 'Say it';
     ta.classList.toggle('listening', on);
+    if (!on) { label('Hold to talk'); btn.classList.remove('holding'); }
   }
   function start() {
     if (!SR || listening) return;
@@ -542,10 +734,10 @@ const speech = (() => {
         else interim += r[0].transcript;
       }
       const spoken = (finals + interim).trim();
-      const text = (base ? base + ' ' : '') + (spoken ? spoken.charAt(0).toUpperCase() + spoken.slice(1) : '');
-      ta.value = text.slice(0, 280);
+      ta.value = ((base ? base + ' ' : '') + (spoken ? spoken.charAt(0).toUpperCase() + spoken.slice(1) : '')).slice(0, 280);
       state.captionSource.voice = true;
       updateCount();
+      saveDraftCaption();
     };
     rec.onerror = (e) => {
       if (e.error === 'not-allowed' || e.error === 'service-not-allowed') toast('Microphone access is off. You can type instead.');
@@ -553,11 +745,32 @@ const speech = (() => {
       else if (e.error !== 'no-speech' && e.error !== 'aborted') toast("Didn't catch that. Try again.");
     };
     rec.onend = () => { setUI(false); rec = null; };
-    try { rec.start(); setUI(true); haptic(); } catch (_) { setUI(false); }
+    try { rec.start(); setUI(true); label('Listening…'); haptic(); } catch (_) { setUI(false); }
   }
   function stop() { if (rec) { try { rec.stop(); } catch (_) {} } setUI(false); }
 
-  btn.onclick = () => (listening ? stop() : start());
+  // Hold = talk while held (WhatsApp-style). Short tap = keep listening until tapped again.
+  let pressT = 0;
+  btn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    if (listening) { stop(); pressT = 0; haptic(); return; }
+    try { btn.setPointerCapture(e.pointerId); } catch (_) {}
+    pressT = performance.now();
+    btn.classList.add('holding');
+    start();
+  });
+  const release = () => {
+    btn.classList.remove('holding');
+    if (!pressT) return;
+    const held = performance.now() - pressT;
+    pressT = 0;
+    if (held > 450) { stop(); haptic(); }
+    else if (listening) label('Listening · tap to stop');
+  };
+  btn.addEventListener('pointerup', release);
+  btn.addEventListener('pointercancel', release);
+  btn.addEventListener('contextmenu', (e) => e.preventDefault());
+  btn.addEventListener('click', (e) => { if (e.detail === 0) (listening ? stop() : start()); }); // keyboard
   langBtn.onclick = () => {
     lang = lang === 'en-IN' ? 'hi-IN' : 'en-IN';
     localStorage.setItem('moments.lang', lang);
@@ -577,9 +790,24 @@ function updateCount() {
   c.classList.toggle('near', n > 250);
 }
 
+const DRAFT_KEY = 'moments.draft';
+function draftMeta(d) {
+  const { blob, thumb, previewURL, ...meta } = d;
+  return meta;
+}
+let draftCapTimer;
+function saveDraftCaption() {
+  const d = state.draft;
+  if (!d || d.editingId) return;
+  clearTimeout(draftCapTimer);
+  draftCapTimer = setTimeout(() => {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draftMeta(d), caption: $('#caption').value, cs: state.captionSource })); } catch (_) {}
+  }, 300);
+}
+
 async function openCompose(draft) {
   state.draft = draft;
-  state.captionSource = { typed: false, voice: false };
+  state.captionSource = draft.cs || { typed: false, voice: false };
   const box = $('#compose-media');
   box.innerHTML = '';
   let src;
@@ -595,23 +823,64 @@ async function openCompose(draft) {
     const i = document.createElement('img'); i.src = src; i.alt = ''; box.appendChild(i);
   }
   $('#caption').value = draft.caption || '';
-  $('#compose-title').textContent = draft.editingId ? 'Edit caption' : 'New moment';
-  $('#compose-cancel').textContent = draft.editingId ? 'Cancel' : 'Discard';
+  $('#compose-save').textContent = draft.editingId ? 'Save caption' : 'Save moment';
+  $('#compose-cancel').setAttribute('aria-label', draft.editingId ? 'Cancel editing' : 'Discard');
   $('#compose-when').textContent = fullLabel(new Date(draft.createdAt));
   updateCount();
   show('compose');
-  // Focus without popping the keyboard over the preview on small phones.
-  if (window.innerHeight > 700 && !speech.supported) setTimeout(() => $('#caption').focus(), 280);
+  // Autosave the draft so a killed app or an accidental back never loses the moment.
+  if (!draft.editingId && !draft.restored) {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draftMeta(draft), caption: draft.caption || '' }));
+      store.saveDraft(draft.blob, draft.thumb).catch(() => {});
+    } catch (_) {}
+  }
 }
 
-function closeCompose() {
-  if (state.draft && state.draft.previewURL) URL.revokeObjectURL(state.draft.previewURL);
+function closeCompose({ keepDraft = false } = {}) {
+  const d = state.draft;
+  if (d && d.previewURL) URL.revokeObjectURL(d.previewURL);
+  if (d && !d.editingId && keepDraft) {
+    clearTimeout(draftCapTimer);
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draftMeta(d), caption: $('#caption').value, cs: state.captionSource })); } catch (_) {}
+  }
+  if (d && !d.editingId && !keepDraft) {
+    localStorage.removeItem(DRAFT_KEY);
+    store.clearDraft().catch(() => {});
+  }
   state.draft = null;
+}
+
+async function loadDraft() {
+  let meta;
+  try { meta = JSON.parse(localStorage.getItem(DRAFT_KEY)); } catch (_) { meta = null; }
+  if (!meta) return null;
+  const { blob, thumb } = await store.getDraft().catch(() => ({}));
+  if (!blob) { localStorage.removeItem(DRAFT_KEY); return null; }
+  return { ...meta, blob, thumb, restored: true };
+}
+async function offerDraft() {
+  const d = await loadDraft();
+  if (!d) return false;
+  toast('You have an unsaved moment', { label: 'Open', fn: () => openCompose(d) }, 9000);
+  return true;
+}
+
+// Keep the caption panel above the on-screen keyboard (iOS doesn't resize the layout).
+if (window.visualViewport) {
+  const vv = window.visualViewport;
+  const upd = () => {
+    const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    document.documentElement.style.setProperty('--kb', (kb > 80 ? kb : 0) + 'px');
+  };
+  vv.addEventListener('resize', upd);
+  vv.addEventListener('scroll', upd);
 }
 
 $('#caption').addEventListener('input', (e) => {
   if (e.isTrusted && e.inputType) state.captionSource.typed = true;
   updateCount();
+  saveDraftCaption();
 });
 
 $('#compose-save').onclick = async () => {
@@ -655,7 +924,15 @@ $('#compose-save').onclick = async () => {
       show('feed');
       renderFeed();
       haptic(10);
-      try { await store.put(m, { blob, thumb }); toast('Saved'); maybeAskPersist(); }
+      const secs = state.captureStart ? (performance.now() - state.captureStart) / 1000 : 0;
+      state.captureStart = null;
+      try {
+        await store.put(m, { blob, thumb });
+        toast('Saved');
+        metrics.saved(m, secs);
+        maybeAskPersist();
+        updateBanner();
+      }
       catch (err) {
         state.memories = state.memories.filter((x) => x.id !== m.id);
         renderFeed();
@@ -673,12 +950,14 @@ $('#compose-cancel').onclick = () => {
   const dirty = $('#caption').value.trim().length > 0;
   if (dirty && !confirm('Discard this moment?')) return;
   closeCompose();
+  state.captureStart = performance.now();
   openCamera();
 };
 
 /* =========================================================
    VIEWER
    ========================================================= */
+const relivedThisSession = new Set();
 async function openViewer(id) {
   const list = visibleMemories();
   state.viewerIndex = list.findIndex((m) => m.id === id);
@@ -690,6 +969,11 @@ async function paintViewer(dir) {
   const list = visibleMemories();
   const m = list[state.viewerIndex];
   if (!m) return show('feed');
+  state.viewerId = m.id;
+  if (Date.now() - new Date(m.createdAt).getTime() > 864e5 && !relivedThisSession.has(m.id)) {
+    relivedThisSession.add(m.id);
+    metrics.relived();
+  }
   const stage = $('#viewer-stage');
   const old = stage.firstElementChild;
   if (old && old.tagName === 'VIDEO') old.pause();
@@ -891,11 +1175,17 @@ async function exportBackup() {
   const name = `moments-backup-${new Date().toISOString().slice(0, 10)}.zip`;
   const file = new File([blob], name, { type: 'application/zip' });
   if (/iPhone|iPad|Android/i.test(navigator.userAgent) && navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: name }); toast(`Backup ready: ${all.length} moments`); return; }
+    try { await navigator.share({ files: [file], title: name }); markBackup(); toast(`Backup ready: ${all.length} moments`); return; }
     catch (e) { if (e.name === 'AbortError') return; }
   }
   download(blob, name);
+  markBackup();
   toast(`Backup saved: ${all.length} moments`);
+}
+function markBackup() {
+  localStorage.setItem('moments.lastBackup', String(Date.now()));
+  metrics.event('backup_exported');
+  updateBanner();
 }
 
 async function importBackup(file) {
@@ -927,6 +1217,67 @@ async function importBackup(file) {
 }
 
 /* =========================================================
+   BANNERS — one at a time: iOS install (data safety) > backup > Android install
+   ========================================================= */
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const snoozed = (k) => Number(localStorage.getItem('moments.snooze.' + k) || 0) > Date.now();
+const snooze = (k, days) => localStorage.setItem('moments.snooze.' + k, String(Date.now() + days * 864e5));
+const daysSince = (t) => Math.floor((Date.now() - t) / 864e5);
+let bannerKey = null;
+
+function pickBanner() {
+  const n = state.memories.length;
+  const last = Number(localStorage.getItem('moments.lastBackup') || 0);
+  if (isIOS && !isStandalone() && !snoozed('ios')) {
+    return { key: 'ios', warn: true, days: 2,
+      title: 'Install to keep your moments safe',
+      sub: 'Safari clears sites you don\u2019t visit for a week. The home-screen app is kept.',
+      action: 'How', fn: showHowto };
+  }
+  if (n >= 5 && (!last || daysSince(last) >= 30) && !snoozed('backup')) {
+    return { key: 'backup', days: 7,
+      title: `Back up your ${n} moments`,
+      sub: last ? `Last backup was ${daysSince(last)} days ago.` : 'One file, saved wherever you like.',
+      action: 'Export', fn: exportBackup };
+  }
+  if (installPrompt && !isStandalone() && n >= 2 && !snoozed('install')) {
+    return { key: 'install', days: 7,
+      title: 'Add Moments to your home screen',
+      sub: 'Opens straight to the camera and works offline.',
+      action: 'Install', fn: doInstall };
+  }
+  return null;
+}
+function updateBanner() {
+  const b = pickBanner();
+  const el = $('#banner');
+  if (!b) { el.hidden = true; bannerKey = null; return; }
+  bannerKey = b.key;
+  el.hidden = false;
+  el.classList.toggle('warn', !!b.warn);
+  $('#banner-title').textContent = b.title;
+  $('#banner-sub').textContent = b.sub;
+  $('#banner-action').textContent = b.action;
+  $('#banner-action').onclick = b.fn;
+  $('#banner-close').onclick = () => { snooze(b.key, b.days); updateBanner(); };
+}
+function showHowto() {
+  $('#howto-note').hidden = state.memories.length === 0;
+  $('#howto').hidden = false; $('#scrim').hidden = false;
+}
+function hideHowto() { $('#howto').hidden = true; if ($('#sheet').hidden) $('#scrim').hidden = true; }
+$('#howto-ok').onclick = hideHowto;
+async function doInstall() {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  const choice = await installPrompt.userChoice.catch(() => null);
+  if (choice && choice.outcome === 'accepted') metrics.event('install_accepted');
+  installPrompt = null;
+  updateBanner();
+}
+
+/* =========================================================
    SETTINGS
    ========================================================= */
 const fmtBytes = (b) => b > 1e9 ? (b / 1e9).toFixed(1) + ' GB' : b > 1e6 ? Math.round(b / 1e6) + ' MB' : Math.round(b / 1e3) + ' KB';
@@ -945,21 +1296,35 @@ async function openSheet() {
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
   $('#install-row').hidden = standalone || !(installPrompt || ios);
   if (ios) { $('#install-line').textContent = 'Tap Share, then "Add to Home Screen".'; $('#install-btn').hidden = true; }
+  const last = Number(localStorage.getItem('moments.lastBackup') || 0);
+  $('#backup-line').textContent = last
+    ? `Last backup: ${daysSince(last) === 0 ? 'today' : daysSince(last) === 1 ? 'yesterday' : daysSince(last) + ' days ago'}.`
+    : 'No backup yet. One .zip with every photo, video and caption.';
+  $('#opt-metrics').checked = metrics.optedIn();
+  renderStats();
+}
+function renderStats() {
+  const s = metrics.summary();
+  const cells = [
+    [s.saves, 'moments saved'],
+    [s.relives, 'old moments relived'],
+    [s.medianSave != null ? s.medianSave.toFixed(1) + ' s' : '\u2013', 'median time to save'],
+    [s.captionRate != null ? s.captionRate + '%' : '\u2013', 'with a caption'],
+    [s.voice, 'captions spoken'],
+    [s.rememberWeeks, 'weeks you saved and relived'],
+  ];
+  $('#stats').innerHTML = cells.map(([v, l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
 }
 function closeSheet() { $('#scrim').hidden = true; $('#sheet').hidden = true; }
 
 let installPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installPrompt = e; });
-$('#install-btn').onclick = async () => {
-  if (!installPrompt) return;
-  installPrompt.prompt();
-  await installPrompt.userChoice;
-  installPrompt = null; $('#install-row').hidden = true;
-};
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installPrompt = e; updateBanner(); });
+$('#install-btn').onclick = async () => { await doInstall(); $('#install-row').hidden = true; };
+$('#opt-metrics').onchange = (e) => { metrics.setOptIn(e.target.checked); toast(e.target.checked ? 'Thanks. Only counts are shared.' : 'Usage counts are off.'); };
+window.addEventListener('appinstalled', () => { metrics.event('installed'); updateBanner(); });
 async function maybeAskPersist() {
-  if (state.memories.length === 3 && navigator.storage && navigator.storage.persist) {
-    try { await navigator.storage.persist(); } catch (_) {}
-  }
+  if (!(navigator.storage && navigator.storage.persist)) return;
+  try { if (!(await navigator.storage.persisted())) await navigator.storage.persist(); } catch (_) {}
 }
 $('#persist-btn').onclick = async () => {
   const ok = await navigator.storage.persist();
@@ -979,7 +1344,7 @@ $('#clear-btn').onclick = async () => {
   await reload();
   toast('All moments deleted');
 };
-$('#scrim').onclick = closeSheet;
+$('#scrim').onclick = () => { closeSheet(); hideHowto(); };
 (() => { // swipe the sheet down to close
   const s = $('#sheet'); let y0 = null;
   s.addEventListener('touchstart', (e) => { if (s.scrollTop <= 0) y0 = e.touches[0].clientY; }, { passive: true });
@@ -989,7 +1354,22 @@ $('#scrim').onclick = closeSheet;
 /* =========================================================
    FEED CONTROLS
    ========================================================= */
-$('#fab').onclick = () => { haptic(); openCamera(); };
+$('#fab').onclick = () => { haptic(); state.captureStart = performance.now(); openCamera(); };
+(() => { // Instagram-style: swipe right anywhere on the feed to open the camera
+  const feed = $('#feed');
+  let t0 = null;
+  feed.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1 || e.target.closest('.otd-strip, .searchbar, .banner, input, textarea')) { t0 = null; return; }
+    t0 = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+  }, { passive: true });
+  feed.addEventListener('touchend', (e) => {
+    if (!t0 || !$('#feed').classList.contains('active')) return;
+    const p = e.changedTouches[0];
+    const dx = p.clientX - t0.x, dy = p.clientY - t0.y, dt = Date.now() - t0.t;
+    t0 = null;
+    if (dx > 70 && Math.abs(dy) < 45 && dt < 600) { haptic(); state.captureStart = performance.now(); openCamera(); }
+  }, { passive: true });
+})();
 $('#btn-view').onclick = () => {
   state.view = state.view === 'grid' ? 'feed' : 'grid';
   localStorage.setItem('moments.view', state.view);
@@ -1010,7 +1390,7 @@ $('#q').addEventListener('input', (e) => {
   qTimer = setTimeout(() => { state.query = e.target.value; renderFeed(); }, 120);
 });
 for (const id of ['#file-pick', '#file-capture']) {
-  $(id).onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; fileToDraft(f); };
+  $(id).onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f && !state.captureStart) state.captureStart = performance.now(); fileToDraft(f); };
 }
 // Hardware/browser back button returns to the feed instead of leaving the app.
 history.replaceState({ s: 'feed' }, '');
@@ -1023,7 +1403,12 @@ show = function (name) { // eslint-disable-line no-func-assign
 };
 window.addEventListener('popstate', () => {
   if (!$('#sheet').hidden) { closeSheet(); history.pushState({ s: 'feed' }, ''); return; }
-  if (state.draft && !state.draft.editingId) closeCompose();
+  if (state.draft && !state.draft.editingId) {
+    closeCompose({ keepDraft: true });
+    _show('feed');
+    toast('Kept as a draft', { label: 'Open', fn: async () => { const dr = await loadDraft(); if (dr) openCompose(dr); } }, 5000);
+    return;
+  }
   _show('feed');
 });
 
@@ -1035,12 +1420,17 @@ window.addEventListener('popstate', () => {
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
+  if (isStandalone() && !localStorage.getItem('moments.standaloneSeen')) {
+    localStorage.setItem('moments.standaloneSeen', '1');
+    metrics.event('opened_installed');
+  }
+  if (await offerDraft()) return; // don't jump to the camera over an unsaved moment
   // Fast path: open straight to camera if allowed before and the user wants it.
   const wantCam = localStorage.getItem('moments.camFirst') !== '0' && localStorage.getItem('moments.camOK') === '1';
   if (wantCam && navigator.permissions && navigator.permissions.query) {
     try {
       const p = await navigator.permissions.query({ name: 'camera' });
-      if (p.state === 'granted') openCamera();
+      if (p.state === 'granted') { state.captureStart = performance.now(); openCamera(); }
     } catch (_) {}
   }
 })();

@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Moments</title>
-<link rel="stylesheet" href="styles.css?v=1">
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
@@ -40,6 +40,14 @@
       <button class="text-btn" id="search-cancel">Cancel</button>
     </div>
   </header>
+
+  <div class="banner" id="banner" hidden>
+    <div class="banner-text"><strong id="banner-title"></strong><span id="banner-sub"></span></div>
+    <button class="pill-btn small" id="banner-action"></button>
+    <button class="icon-btn banner-x" id="banner-close" aria-label="Dismiss">
+      <svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg>
+    </button>
+  </div>
 
   <section class="onthisday" id="onthisday" hidden aria-label="On this day"></section>
   <section id="list" class="list"></section>
@@ -75,11 +83,16 @@
       <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
     <div class="rec-badge" id="rec-badge" hidden><span class="dot"></span><span id="rec-time">0:00</span></div>
-    <span class="spacer"></span>
+    <button class="icon-btn light" id="cam-torch" aria-label="Torch" aria-pressed="false" hidden>
+      <svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+    </button>
+    <span class="spacer" id="cam-spacer"></span>
   </div>
+  <div class="focus-ring" id="focus-ring"></div>
+  <div class="zoom-label" id="zoom-label" hidden>1×</div>
 
   <div class="cam-bottom">
-    <p class="cam-hint" id="cam-hint">Tap for photo · hold for video</p>
+    <p class="cam-hint" id="cam-hint">Tap for photo · hold for video · pinch to zoom</p>
     <div class="cam-controls">
       <button class="icon-btn light round" id="cam-gallery" aria-label="Choose from gallery">
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>
@@ -99,25 +112,27 @@
 </section>
 
 <!-- ============ COMPOSE ============ -->
-<section id="compose" class="screen" aria-label="New moment">
-  <header class="compose-bar">
-    <button class="text-btn" id="compose-cancel">Discard</button>
-    <span class="compose-title" id="compose-title">New moment</span>
-    <button class="pill-btn" id="compose-save">Save</button>
-  </header>
+<section id="compose" class="screen dark" aria-label="New moment">
   <div class="compose-media" id="compose-media"></div>
-  <div class="caption-box">
-    <div class="caption-meta" id="compose-when"></div>
-    <textarea id="caption" maxlength="280" rows="3" placeholder="What's this moment? Type, or tap the mic and say it." enterkeyhint="done"></textarea>
+  <div class="compose-top">
+    <button class="icon-btn light" id="compose-cancel" aria-label="Discard">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <span class="compose-when" id="compose-when"></span>
+    <span class="spacer"></span>
+  </div>
+  <div class="compose-panel" id="compose-panel">
+    <textarea id="caption" maxlength="280" rows="2" placeholder="Add a line about it (optional)" enterkeyhint="done"></textarea>
     <div class="caption-tools">
-      <button class="mic-btn" id="mic" aria-label="Dictate caption" aria-pressed="false">
+      <button class="mic-btn" id="mic" aria-label="Hold to talk, or tap to dictate" aria-pressed="false">
         <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-        <span class="mic-label" id="mic-label">Say it</span>
+        <span class="mic-label" id="mic-label">Hold to talk</span>
       </button>
       <button class="lang-btn" id="lang" aria-label="Dictation language">EN</button>
       <span class="mic-hint" id="mic-hint" hidden>Use your keyboard's mic to dictate.</span>
       <span class="count" id="count">0/280</span>
     </div>
+    <button class="save-btn" id="compose-save">Save moment</button>
   </div>
 </section>
 
@@ -146,7 +161,7 @@
 <aside class="sheet" id="sheet" aria-label="Settings" hidden>
   <div class="sheet-handle"></div>
   <h2>Moments</h2>
-  <p class="privacy">Your photos, videos and captions stay on this phone. Only an anonymous visit count is kept.</p>
+  <p class="privacy">Your photos, videos and captions stay on this phone. Only an anonymous visit count is kept, plus usage counts if you turn them on.</p>
 
   <div class="sheet-row">
     <div>
@@ -175,7 +190,7 @@
   <div class="sheet-row">
     <div>
       <div class="row-title">Backup</div>
-      <div class="row-sub">One .zip with every photo, video and caption.</div>
+      <div class="row-sub" id="backup-line">One .zip with every photo, video and caption.</div>
     </div>
   </div>
   <div class="sheet-btns">
@@ -191,8 +206,30 @@
     <label class="switch"><input type="checkbox" id="opt-camfirst" checked><span></span></label>
   </div>
 
+  <div class="sheet-row">
+    <div>
+      <div class="row-title">Share anonymous usage counts</div>
+      <div class="row-sub">Counts like "a moment was saved". Never photos, videos or captions.</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="opt-metrics"><span></span></label>
+  </div>
+
+  <div class="sheet-row"><div><div class="row-title">Your stats</div><div class="row-sub">Counted on this phone only.</div></div></div>
+  <div class="stats" id="stats"></div>
+
   <button class="text-btn danger wide" id="clear-btn">Delete all moments on this phone</button>
 </aside>
+
+<div class="howto" id="howto" hidden>
+  <h3>Install Moments</h3>
+  <ol>
+    <li>Tap <strong>Share</strong> <svg viewBox="0 0 24 24" class="inline-ico"><path d="M12 3v12M7 8l5-5 5 5M5 13v7h14v-7"/></svg> in Safari's toolbar.</li>
+    <li>Choose <strong>Add to Home Screen</strong>.</li>
+    <li>Open Moments from your home screen and capture there.</li>
+  </ol>
+  <p class="howto-note" id="howto-note">The installed app keeps its own storage. Moments saved here in Safari don't move across, so <strong>export a backup first</strong>, then import it in the app.</p>
+  <button class="pill-btn" id="howto-ok">Got it</button>
+</div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -200,7 +237,7 @@
 <input type="file" id="file-capture" accept="image/*,video/*" capture="environment" hidden>
 <input type="file" id="file-import" accept=".zip,application/zip" hidden>
 
-<script src="app.js?v=1"></script>
+<script src="app.js?v=2"></script>
 <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
