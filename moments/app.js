@@ -2,7 +2,7 @@
 'use strict';
 
 // Set after the reminder worker is deployed (see moments-push/README.md). Empty = reminders hidden.
-const CONFIG = { pushURL: '' };
+const CONFIG = { pushURL: 'https://moments-push.aditya24khanna.workers.dev' };
 
 const $ = (s) => document.querySelector(s);
 const MAX_VIDEO_SEC = 30;
