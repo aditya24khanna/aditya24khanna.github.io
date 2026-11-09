@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Moments</title>
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 
@@ -143,7 +143,7 @@
 </nav>
 
 <!-- ============ CAMERA ============ -->
-<section id="camera" class="screen dark" aria-label="Camera">
+<section inert aria-hidden="true" id="camera" class="screen dark" aria-label="Camera">
   <video id="viewfinder" playsinline muted autoplay></video>
   <div class="cam-flash" id="cam-flash"></div>
 
@@ -191,7 +191,7 @@
 </section>
 
 <!-- ============ COMPOSE ============ -->
-<section id="compose" class="screen dark" aria-label="New moment">
+<section inert aria-hidden="true" id="compose" class="screen dark" aria-label="New moment">
   <div class="compose-media" id="compose-media"></div>
   <div class="compose-top">
     <button class="icon-btn light" id="compose-cancel" aria-label="Discard">
@@ -232,7 +232,7 @@
 </section>
 
 <!-- ============ VIEWER ============ -->
-<section id="viewer" class="screen dark" aria-label="Moment">
+<section inert aria-hidden="true" id="viewer" class="screen dark" aria-label="Moment">
   <div class="viewer-top">
     <button class="icon-btn light" id="viewer-close" aria-label="Back to feed">
       <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
@@ -263,7 +263,7 @@
 </section>
 
 <!-- ============ STORY PLAYER ============ -->
-<section id="story" class="screen dark" aria-label="Story">
+<section inert aria-hidden="true" id="story" class="screen dark" aria-label="Story">
   <div class="story-stage" id="story-stage"></div>
   <div class="story-head">
     <div class="story-bars" id="story-bars"></div>
@@ -335,7 +335,7 @@
       <div class="row-title">Open straight to camera</div>
       <div class="row-sub">Once you've allowed the camera.</div>
     </div>
-    <label class="switch"><input type="checkbox" id="opt-camfirst" checked><span></span></label>
+    <label class="switch"><input type="checkbox" id="opt-camfirst" checked aria-label="Open straight to camera"><span></span></label>
   </div>
 
   <div class="sheet-row" id="reminder-row" hidden>
@@ -344,7 +344,7 @@
       <div class="row-sub" id="reminder-line">One nudge a day, at the time you pick.</div>
     </div>
     <input type="time" id="reminder-time" value="20:00" aria-label="Reminder time">
-    <label class="switch"><input type="checkbox" id="opt-reminder"><span></span></label>
+    <label class="switch"><input type="checkbox" id="opt-reminder" aria-label="Daily reminder"><span></span></label>
   </div>
 
   <div class="sheet-row">
@@ -352,7 +352,7 @@
       <div class="row-title">Share anonymous usage counts</div>
       <div class="row-sub">Counts like "a moment was saved". Never photos, videos or captions.</div>
     </div>
-    <label class="switch"><input type="checkbox" id="opt-metrics"><span></span></label>
+    <label class="switch"><input type="checkbox" id="opt-metrics" aria-label="Share anonymous usage counts"><span></span></label>
   </div>
 
   <div class="sheet-row"><div><div class="row-title">Your stats</div><div class="row-sub">Counted on this phone only.</div></div></div>
@@ -389,7 +389,7 @@
 <input type="file" id="file-capture" accept="image/*,video/*" capture="environment" hidden>
 <input type="file" id="file-import" accept=".zip,application/zip" hidden>
 
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

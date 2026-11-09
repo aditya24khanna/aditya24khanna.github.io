@@ -207,7 +207,13 @@ const metrics = (() => {
    ========================================================= */
 const screens = ['feed', 'camera', 'compose', 'viewer', 'story'];
 function show(name) {
-  for (const s of screens) $('#' + s).classList.toggle('active', s === name);
+  for (const s of screens) {
+    const el = $('#' + s);
+    el.classList.toggle('active', s === name);
+    el.inert = s !== name; // hidden screens are out of reach for taps, keyboard and screen readers
+    if (s === name) el.removeAttribute('aria-hidden'); else el.setAttribute('aria-hidden', 'true');
+  }
+  $('#tabbar').inert = name !== 'feed';
   document.body.classList.toggle('on-feed', name === 'feed');
   if (name !== 'story' && typeof player !== 'undefined') player.halt();
   if (name !== 'camera') camera.stop();
@@ -284,7 +290,7 @@ function cardEl(m) {
   const said = (m.captionSource === 'voice' || m.captionSource === 'mixed') && !m.voice;
   const n = partCount(m);
   const slides = n > 1
-    ? `<div class="slides">${Array.from({ length: n }, (_, p) => `<div class="slide" data-p="${p}"><img alt="" decoding="async"></div>`).join('')}</div>
+    ? `<div class="slides" tabindex="0" role="group" aria-label="${n} photos and videos, swipe to see more">${Array.from({ length: n }, (_, p) => `<div class="slide" data-p="${p}"><img alt="" decoding="async"></div>`).join('')}</div>
        <div class="dots">${Array.from({ length: n }, (_, p) => `<i class="${p ? '' : 'on'}"></i>`).join('')}</div>
        <span class="badge">1/${n}</span>`
     : `<img alt="" decoding="async">${m.type === 'video' ? `<span class="badge">${ICON_PLAY}${m.durationSec ? fmtDur(m.durationSec) : ''}</span>` : ''}`;
@@ -2015,12 +2021,23 @@ const player = (() => {
     holding = false;
     holdT = setTimeout(() => { holding = true; pause(); }, 200);
   });
+  // Movement means a swipe, not a hold: cancel the pause.
+  stage.addEventListener('pointermove', (e) => {
+    if (!down || down.moved) return;
+    if (Math.abs(e.clientX - down.x) > 12 || Math.abs(e.clientY - down.y) > 12) {
+      down.moved = true;
+      clearTimeout(holdT);
+      if (holding) { holding = false; resume(); }
+    }
+  });
   stage.addEventListener('pointerup', (e) => {
     clearTimeout(holdT);
     if (!down) return;
     const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    const moved = down.moved;
     down = null;
-    if (holding) { holding = false; resume(); return; }
+    if (holding && !moved) { holding = false; resume(); return; }
+    holding = false;
     if (dy > 90 && Math.abs(dy) > Math.abs(dx)) { close(); return; }
     if (Math.abs(dx) > 60) { dx < 0 ? next() : prev(); return; }
     const now = Date.now();
@@ -2035,6 +2052,7 @@ const player = (() => {
   });
   stage.addEventListener('pointercancel', () => { clearTimeout(holdT); if (holding) { holding = false; resume(); } down = null; });
   stage.addEventListener('contextmenu', (e) => e.preventDefault());
+  stage.addEventListener('dragstart', (e) => e.preventDefault()); // image drag would cancel the gesture
   $('#story-close').onclick = close;
   $('#story-reel').onclick = () => { if (g) { pause(); makeReel(g).finally(() => resume()); } };
   document.addEventListener('keydown', (e) => {

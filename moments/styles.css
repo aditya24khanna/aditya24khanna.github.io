@@ -4,7 +4,7 @@
   --grid: #DCE5F0;
   --ink: #14213D;
   --ink-2: #4A5672;
-  --ink-3: #8592AD;
+  --ink-3: #5E6A86;
   --hl: #F4B740;
   --red: #C2452D;
   --card: #FFFFFF;
@@ -22,7 +22,7 @@
     --grid: #1B2840;
     --ink: #E9EEF7;
     --ink-2: #B4BFD4;
-    --ink-3: #7584A3;
+    --ink-3: #8D9AB8;
     --card: #141F33;
     --line: #22314D;
     --shadow: 3px 3px 0 #000;
@@ -669,3 +669,8 @@ body.grid .dots { display: none; }
 .picker-new input { flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); outline: none; }
 .wide-btn { width: 100%; }
 .picker-empty { color: var(--ink-3); font-size: 14px; padding: 6px 2px 10px; }
+.story-stage img, .viewer-stage img { -webkit-user-drag: none; user-select: none; -webkit-user-select: none; }
+
+/* a11y: future calendar days use a colour, not opacity, so numbers stay readable */
+.cal-day.future { opacity: 1; background: transparent; border-style: dashed; color: var(--ink-3); }
+.slides:focus-visible, .shot:focus-visible, .bubble:focus-visible, .res:focus-visible, .card:focus-visible { outline: 3px solid var(--hl); outline-offset: 2px; }
