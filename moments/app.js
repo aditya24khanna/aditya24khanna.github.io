@@ -49,11 +49,20 @@ const store = (() => {
       return all.filter((m) => includeDeleted || !m.deleted).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     },
     get: (id) => tx(['memories'], 'readonly', (t) => req(t.objectStore('memories').get(id))),
+    // media: { blob, thumb, parts: [{blob, thumb}], voice: Blob | null (null = delete) }
     async put(memory, media) {
       return tx(['memories', 'media'], 'readwrite', (t) => {
         t.objectStore('memories').put(memory);
-        if (media && media.blob) t.objectStore('media').put(media.blob, memory.id);
-        if (media && media.thumb) t.objectStore('media').put(media.thumb, memory.id + ':thumb');
+        const ms = t.objectStore('media');
+        if (!media) return;
+        if (media.blob) ms.put(media.blob, memory.id);
+        if (media.thumb) ms.put(media.thumb, memory.id + ':thumb');
+        (media.parts || []).forEach((pt, k) => {
+          if (pt.blob) ms.put(pt.blob, `${memory.id}#${k + 1}`);
+          if (pt.thumb) ms.put(pt.thumb, `${memory.id}#${k + 1}:thumb`);
+        });
+        if (media.voice) ms.put(media.voice, memory.id + ':voice');
+        else if (media.voice === null) ms.delete(memory.id + ':voice');
       });
     },
     getMedia: (id, thumb = false) => tx(['media'], 'readonly', (t) => req(t.objectStore('media').get(thumb ? id + ':thumb' : id))),
@@ -61,32 +70,47 @@ const store = (() => {
     async remove(id, { hard = false } = {}) {
       return tx(['memories', 'media'], 'readwrite', async (t) => {
         const ms = t.objectStore('memories');
+        const m = await req(ms.get(id));
         if (hard) ms.delete(id);
-        else {
-          const m = await req(ms.get(id));
-          if (m) ms.put({ ...m, deleted: true, caption: '', updatedAt: new Date().toISOString(), syncState: 'local' });
-        }
-        t.objectStore('media').delete(id);
-        t.objectStore('media').delete(id + ':thumb');
+        else if (m) ms.put({ ...m, deleted: true, caption: '', tags: [], mood: '', voice: undefined, updatedAt: new Date().toISOString(), syncState: 'local' });
+        const md = t.objectStore('media');
+        md.delete(id); md.delete(id + ':thumb'); md.delete(id + ':voice');
+        const n = m && m.parts ? m.parts.length : 0;
+        for (let k = 1; k <= n; k++) { md.delete(`${id}#${k}`); md.delete(`${id}#${k}:thumb`); }
       });
     },
-    saveDraft: (blob, thumb) => tx(['media'], 'readwrite', (t) => {
+    // Drafts: shots at __draft#k (+ :thumb), voice at __draft:voice. Old single-shot drafts used __draft.
+    saveDraft: (shots, voice) => tx(['media'], 'readwrite', (t) => {
       const ms = t.objectStore('media');
-      ms.put(blob, '__draft');
-      if (thumb) ms.put(thumb, '__draft:thumb'); else ms.delete('__draft:thumb');
+      ms.delete(IDBKeyRange.bound('__draft', '__draft\uffff'));
+      shots.forEach((sh, k) => {
+        if (sh.blob) ms.put(sh.blob, `__draft#${k}`);
+        if (sh.thumb) ms.put(sh.thumb, `__draft#${k}:thumb`);
+      });
+      if (voice && voice.blob) ms.put(voice.blob, '__draft:voice');
     }),
-    async getDraft() {
+    async getDraft(n) {
       return tx(['media'], 'readonly', async (t) => {
         const ms = t.objectStore('media');
-        return { blob: await req(ms.get('__draft')), thumb: await req(ms.get('__draft:thumb')) };
+        if (n == null) return { shots: [{ blob: await req(ms.get('__draft')), thumb: await req(ms.get('__draft:thumb')) }], voice: null };
+        const shots = [];
+        for (let k = 0; k < n; k++) shots.push({ blob: await req(ms.get(`__draft#${k}`)), thumb: await req(ms.get(`__draft#${k}:thumb`)) });
+        return { shots, voice: await req(ms.get('__draft:voice')) };
       });
     },
-    clearDraft: () => tx(['media'], 'readwrite', (t) => { const ms = t.objectStore('media'); ms.delete('__draft'); ms.delete('__draft:thumb'); }),
+    clearDraft: () => tx(['media'], 'readwrite', (t) => { t.objectStore('media').delete(IDBKeyRange.bound('__draft', '__draft\uffff')); }),
     async clearAll() {
       return tx(['memories', 'media'], 'readwrite', (t) => { t.objectStore('memories').clear(); t.objectStore('media').clear(); });
     },
   };
 })();
+
+const MAX_SHOTS = 10;
+const partKey = (m, p) => (p ? `${m.id}#${p}` : m.id);
+const partCount = (m) => 1 + ((m && m.parts && m.parts.length) || 0);
+const partInfo = (m, p) => (p ? m.parts[p - 1] : m);
+const shotMeta = ({ blob, thumb, previewURL, thumbURL, ...meta }) => meta;
+const fmtSecs = (s) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
 
 /* =========================================================
    STATE + URL CACHE
@@ -111,7 +135,9 @@ async function mediaURL(id, thumb) {
   return u;
 }
 function dropURLs(id) {
-  for (const k of [id, id + ':t']) { if (urls.has(k)) { URL.revokeObjectURL(urls.get(k)); urls.delete(k); } }
+  for (const k of [...urls.keys()]) {
+    if (k === id || k.startsWith(id + ':') || k.startsWith(id + '#')) { URL.revokeObjectURL(urls.get(k)); urls.delete(k); }
+  }
 }
 
 /* =========================================================
@@ -187,6 +213,7 @@ function show(name) {
   if (name !== 'camera') camera.stop();
   if (name !== 'compose') speech.stop();
   if (name !== 'viewer') { const v = $('#viewer-stage video'); if (v) v.pause(); $('#viewer-menu').hidden = true; }
+  if (name !== 'viewer' && name !== 'compose' && typeof voicePlayer !== 'undefined') voicePlayer.stop();
   if (name === 'feed') feedVideos.resume(); else feedVideos.pauseAll();
 }
 function haptic(ms = 12) { if (navigator.vibrate) try { navigator.vibrate(ms); } catch (_) {} }
@@ -254,17 +281,33 @@ function cardEl(m) {
   el.className = 'card';
   el.dataset.id = m.id;
   const ar = m.width && m.height ? Math.min(Math.max(m.width / m.height, 0.8), 1.91) : 0.8;
-  const voice = m.captionSource === 'voice' || m.captionSource === 'mixed';
+  const said = (m.captionSource === 'voice' || m.captionSource === 'mixed') && !m.voice;
+  const n = partCount(m);
+  const slides = n > 1
+    ? `<div class="slides">${Array.from({ length: n }, (_, p) => `<div class="slide" data-p="${p}"><img alt="" decoding="async"></div>`).join('')}</div>
+       <div class="dots">${Array.from({ length: n }, (_, p) => `<i class="${p ? '' : 'on'}"></i>`).join('')}</div>
+       <span class="badge">1/${n}</span>`
+    : `<img alt="" decoding="async">${m.type === 'video' ? `<span class="badge">${ICON_PLAY}${m.durationSec ? fmtDur(m.durationSec) : ''}</span>` : ''}`;
+  const tags = (m.tags || []).length ? `<div class="card-tags">${m.tags.map((t) => '#' + escapeHTML(t)).join(' ')}</div>` : '';
   el.innerHTML = `
-    <div class="card-media" style="--ar:${ar}">
-      <img alt="" decoding="async">
-      ${m.type === 'video' ? `<span class="badge">${ICON_PLAY}${m.durationSec ? fmtDur(m.durationSec) : ''}</span>` : ''}
-    </div>
+    <div class="card-media" style="--ar:${ar}">${slides}</div>
     <div class="card-body">
       <p class="card-caption ${m.caption ? '' : 'none'}">${m.caption ? highlight(m.caption, state.query.trim()) : 'No caption'}</p>
-      <div class="card-time">${timeLabel(d)}${voice ? `<span class="voice">· ${ICON_MIC}said</span>` : ''}${m.favorite ? `<span class="fav">${ICON_HEART}</span>` : ''}</div>
+      ${tags}
+      <div class="card-time">${timeLabel(d)}${m.mood ? `<span class="mood">${m.mood}</span>` : ''}${m.voice ? `<span class="vp">${ICON_MIC}${fmtSecs(m.voice.durationSec || 0)}</span>` : ''}${said ? `<span class="voice">· ${ICON_MIC}said</span>` : ''}${m.favorite ? `<span class="fav">${ICON_HEART}</span>` : ''}</div>
     </div>`;
-  el.addEventListener('click', () => openViewer(m.id));
+  if (n > 1) {
+    const sl = el.querySelector('.slides');
+    sl.addEventListener('scroll', () => {
+      const p = Math.round(sl.scrollLeft / sl.clientWidth);
+      el.querySelectorAll('.dots i').forEach((dot, k) => dot.classList.toggle('on', k === p));
+      el.querySelector('.badge').textContent = `${p + 1}/${n}`;
+    }, { passive: true });
+  }
+  el.addEventListener('click', () => {
+    const sl = el.querySelector('.slides');
+    openViewer(m.id, undefined, sl ? Math.round(sl.scrollLeft / sl.clientWidth) : 0);
+  });
   lazy.observe(el);
   return el;
 }
@@ -279,6 +322,10 @@ const lazy = new IntersectionObserver(async (entries) => {
     if (!m) continue;
     const img = e.target.querySelector('img');
     img.src = await mediaURL(id, true); // thumbnail first: fast and light
+    e.target.querySelectorAll('.slide').forEach((sl) => {
+      const p = Number(sl.dataset.p);
+      if (p) mediaURL(partKey(m, p), true).then((u) => { sl.querySelector('img').src = u; });
+    });
     if (state.view === 'feed') {
       if (m.type === 'video') feedVideos.observe(e.target);
       else upgrade.observe(e.target);
@@ -335,7 +382,8 @@ const feedVideos = (() => {
       v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute('playsinline', '');
       v.src = await mediaURL(card.dataset.id, false);
       v.style.position = 'absolute'; v.style.inset = '0';
-      card.querySelector('.card-media').insertBefore(v, card.querySelector('.badge'));
+      const holder = card.querySelector('.slide') || card.querySelector('.card-media');
+      holder.insertBefore(v, holder.querySelector('.badge'));
     }
     v.play().catch(() => {});
     playing.add(card);
@@ -378,6 +426,8 @@ function renderFeed() {
   renderRail();
   updateRing();
   if (state.tab === 'calendar') renderCalendar();
+  if (state.tab === 'search') renderSearch();
+  if (state.tab === 'collections') renderAlbums();
   updateBanner();
 }
 
@@ -448,14 +498,34 @@ function videoFileToDraft(file) {
     v.src = u;
   });
 }
-async function fileToDraft(file) {
-  if (!file) return;
-  try {
-    const draft = file.type.startsWith('video') ? await videoFileToDraft(file) : await imageFileToDraft(file);
-    openCompose(draft);
-  } catch (e) {
-    toast("Couldn't open that file.");
+async function filesToShots(files) {
+  const list = [...files].slice(0, MAX_SHOTS);
+  if (!list.length) return;
+  const shots = [];
+  for (const f of list) {
+    try { shots.push(f.type.startsWith('video') ? await videoFileToDraft(f) : await imageFileToDraft(f)); } catch (_) {}
   }
+  if (!shots.length) { toast("Couldn't open that file."); return; }
+  if (state.adding && state.draft) { shots.forEach((sh) => deliverCapture(sh)); return; }
+  openCompose({ ...shots[0], shots });
+}
+// Every capture lands here: a new moment, or one more shot for the moment being composed.
+function deliverCapture(shot) {
+  if (state.adding && state.draft) {
+    const d = state.draft;
+    if (d.shots.length >= MAX_SHOTS) { toast(`Up to ${MAX_SHOTS} per moment`); }
+    else { d.shots.push(shot); state.composePart = d.shots.length - 1; }
+    state.adding = false;
+    persistDraft();
+    renderComposeMedia();
+    show('compose');
+    return;
+  }
+  openCompose(shot);
+}
+function closeCamera() {
+  if (state.adding && state.draft) { state.adding = false; show('compose'); return; }
+  show('feed');
 }
 
 /* =========================================================
@@ -463,7 +533,7 @@ async function fileToDraft(file) {
    ========================================================= */
 const camera = (() => {
   let stream = null, facing = 'environment', recorder = null, chunks = [], recStart = 0, recTimer = null, holdTimer = null;
-  let pressed = false, recThumb = null;
+  let pressed = false, recThumb = null, locked = false, downY = 0;
   let track = null, caps = {}, zoom = 1, torchOn = false;
   let rec2 = null; // canvas pipeline for recording with digital zoom
   const DIGITAL_MAX = 4;
@@ -596,7 +666,7 @@ const camera = (() => {
     const f = $('#cam-flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
     const big = await frameCanvas(MAX_PHOTO_EDGE);
     const small = await frameCanvas(THUMB_EDGE);
-    openCompose({
+    deliverCapture({
       type: 'photo', mime: 'image/jpeg',
       blob: await canvasToBlob(big), thumb: await canvasToBlob(small, 'image/jpeg', 0.78),
       width: big.width, height: big.height, createdAt: new Date().toISOString(),
@@ -622,6 +692,8 @@ const camera = (() => {
     recStart = performance.now();
     $('#shutter').classList.add('recording');
     $('#rec-badge').hidden = false;
+    $('#lock-text').textContent = 'Slide up to lock';
+    $('#lock-hint').hidden = !pressed;
     $('#cam-hint').style.opacity = 0;
     tick();
   }
@@ -637,6 +709,9 @@ const camera = (() => {
   }
   function resetRecUI() {
     cancelAnimationFrame(recTimer);
+    locked = false;
+    $('#lock-hint').hidden = true;
+    $('#lock-hint').classList.remove('locked');
     $('#shutter').classList.remove('recording');
     $('#rec-badge').hidden = true;
     $('#cam-hint').style.opacity = '';
@@ -651,7 +726,7 @@ const camera = (() => {
     haptic(15);
     if (dur < 0.6) { toast('Hold a little longer for video.'); return; }
     const blob = new Blob(chunks, { type: type.split(';')[0] });
-    openCompose({
+    deliverCapture({
       type: 'video', mime: blob.type, blob, thumb: recThumb,
       ...dims, durationSec: Math.round(dur),
       createdAt: new Date(Date.now() - dur * 1000).toISOString(),
@@ -662,19 +737,33 @@ const camera = (() => {
   const sh = $('#shutter');
   sh.addEventListener('pointerdown', (e) => {
     e.preventDefault();
+    if (locked && recorder && recorder.state === 'recording') { stopRec(); return; } // tap to stop a locked recording
     pressed = true;
+    downY = e.clientY;
     try { sh.setPointerCapture(e.pointerId); } catch (_) {}
     holdTimer = setTimeout(() => { if (pressed) startRec(); }, HOLD_MS);
+  });
+  // Slide up while recording to lock: let go and it keeps recording.
+  sh.addEventListener('pointermove', (e) => {
+    if (!pressed || locked || !recorder || recorder.state !== 'recording') return;
+    if (e.clientY - downY < -70) {
+      locked = true;
+      haptic(20);
+      $('#lock-hint').classList.add('locked');
+      $('#lock-text').textContent = 'Locked \u00b7 tap to stop';
+      metrics.event('video_locked');
+    }
   });
   const release = () => {
     if (!pressed) return;
     pressed = false;
     clearTimeout(holdTimer);
+    if (locked) return;
     if (recorder && recorder.state === 'recording') stopRec();
     else takePhoto();
   };
   sh.addEventListener('pointerup', release);
-  sh.addEventListener('pointercancel', () => { pressed = false; clearTimeout(holdTimer); stopRec(); });
+  sh.addEventListener('pointercancel', () => { pressed = false; clearTimeout(holdTimer); if (!locked) stopRec(); });
   sh.addEventListener('contextmenu', (e) => e.preventDefault());
   // Keyboard: space/enter = photo
   sh.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); takePhoto(); } });
@@ -719,7 +808,7 @@ const camera = (() => {
     const p = e.changedTouches[0];
     const dx = p.clientX - t0.x, dy = p.clientY - t0.y, dt = Date.now() - t0.t;
     t0 = null;
-    if (dx < -70 && Math.abs(dy) < 60 && dt < 600) { show('feed'); return; }
+    if (dx < -70 && Math.abs(dy) < 60 && dt < 600) { closeCamera(); return; }
     if (Math.abs(dx) > 12 || Math.abs(dy) > 12 || dt > 400) return;
     const now = Date.now();
     if (now - lastTap < 280) { clearTimeout(tapTimer); lastTap = 0; flip(); return; }
@@ -729,7 +818,7 @@ const camera = (() => {
   }, { passive: true });
   // Mouse wheel zoom on desktop
   cam.addEventListener('wheel', (e) => { setZoom(zoom * (e.deltaY < 0 ? 1.1 : 0.9)); }, { passive: true });
-  $('#cam-close').onclick = () => show('feed');
+  $('#cam-close').onclick = () => closeCamera();
   $('#cam-gallery').onclick = () => $('#file-pick').click();
   $('#cam-fallback-gallery').onclick = () => $('#file-pick').click();
   $('#cam-native').onclick = () => $('#file-capture').click();
@@ -750,6 +839,33 @@ const speech = (() => {
   const ta = $('#caption');
   const btn = $('#mic');
   let rec = null, listening = false, base = '', finals = '';
+  let aRec = null, aStream = null, aChunks = [], aStart = 0, aMime = '';
+  const canRecord = () => !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) && localStorage.getItem('moments.voiceConflict') !== '1';
+  async function startAudio() {
+    if (!canRecord()) return;
+    try {
+      aStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      if (!listening) { aStream.getTracks().forEach((t) => t.stop()); aStream = null; return; }
+      aMime = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'].find((t) => MediaRecorder.isTypeSupported(t)) || '';
+      aRec = new MediaRecorder(aStream, aMime ? { mimeType: aMime, audioBitsPerSecond: 48000 } : undefined);
+      aChunks = [];
+      aRec.ondataavailable = (e) => e.data && e.data.size && aChunks.push(e.data);
+      aRec.start(250);
+      aStart = performance.now();
+    } catch (_) { aRec = null; if (aStream) { aStream.getTracks().forEach((t) => t.stop()); aStream = null; } }
+  }
+  function stopAudio(deliver) {
+    const r = aRec, st = aStream, dur = (performance.now() - aStart) / 1000;
+    aRec = null; aStream = null;
+    if (!r) return;
+    r.onstop = () => {
+      if (st) st.getTracks().forEach((t) => t.stop());
+      if (!deliver || dur < 1) return;
+      const type = (r.mimeType || aMime || 'audio/webm').split(';')[0];
+      onVoiceRecorded({ blob: new Blob(aChunks, { type }), mime: type, durationSec: Math.round(dur) });
+    };
+    try { r.stop(); } catch (_) { if (st) st.getTracks().forEach((t) => t.stop()); }
+  }
   let lang = localStorage.getItem('moments.lang') || 'en-IN';
   const langBtn = $('#lang');
   const setLangUI = () => { langBtn.textContent = lang === 'hi-IN' ? 'हि' : 'EN'; langBtn.setAttribute('aria-label', lang === 'hi-IN' ? 'Dictation language: Hindi' : 'Dictation language: English'); };
@@ -785,14 +901,22 @@ const speech = (() => {
       saveDraftCaption();
     };
     rec.onerror = (e) => {
+      // Some phones can't transcribe and record at once: drop the recording, keep the words.
+      if (e.error === 'audio-capture' && aRec) {
+        localStorage.setItem('moments.voiceConflict', '1');
+        stopAudio(false);
+        toast('This phone can\u2019t record and transcribe together. Keeping the words only.');
+        setTimeout(start, 300);
+        return;
+      }
       if (e.error === 'not-allowed' || e.error === 'service-not-allowed') toast('Microphone access is off. You can type instead.');
       else if (e.error === 'network') toast('Dictation needs a connection on this browser.');
       else if (e.error !== 'no-speech' && e.error !== 'aborted') toast("Didn't catch that. Try again.");
     };
-    rec.onend = () => { setUI(false); rec = null; };
-    try { rec.start(); setUI(true); label('Listening…'); haptic(); } catch (_) { setUI(false); }
+    rec.onend = () => { setUI(false); rec = null; stopAudio(true); };
+    try { rec.start(); setUI(true); label('Listening\u2026'); haptic(); startAudio(); } catch (_) { setUI(false); }
   }
-  function stop() { if (rec) { try { rec.stop(); } catch (_) {} } setUI(false); }
+  function stop() { if (rec) { try { rec.stop(); } catch (_) {} } else stopAudio(true); setUI(false); }
 
   // Hold = talk while held (WhatsApp-style). Short tap = keep listening until tapped again.
   let pressT = 0;
@@ -822,7 +946,7 @@ const speech = (() => {
     setLangUI();
     if (listening) { stop(); setTimeout(start, 250); }
   };
-  return { stop, supported: !!SR };
+  return { stop, supported: !!SR, cancelAudio: () => stopAudio(false) };
 })();
 
 /* =========================================================
@@ -836,73 +960,249 @@ function updateCount() {
 }
 
 const DRAFT_KEY = 'moments.draft';
+const MOODS = ['😊', '😂', '😍', '🥹', '😌', '🤩', '😢', '😤'];
 function draftMeta(d) {
-  const { blob, thumb, previewURL, ...meta } = d;
-  return meta;
+  const { blob, thumb, previewURL, shots, voice, ...meta } = d;
+  return {
+    ...meta,
+    shots: (shots || []).map(shotMeta),
+    voiceMeta: voice && !voice.existing ? { mime: voice.mime, durationSec: voice.durationSec } : null,
+  };
 }
 let draftCapTimer;
-function saveDraftCaption() {
+function writeDraftMeta() {
   const d = state.draft;
   if (!d || d.editingId) return;
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draftMeta(d), caption: $('#caption').value, cs: state.captionSource })); } catch (_) {}
+}
+function saveDraftCaption() {
   clearTimeout(draftCapTimer);
-  draftCapTimer = setTimeout(() => {
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draftMeta(d), caption: $('#caption').value, cs: state.captionSource })); } catch (_) {}
-  }, 300);
+  draftCapTimer = setTimeout(writeDraftMeta, 300);
+}
+// Media + metadata, after shots or the voice change.
+function persistDraft() {
+  const d = state.draft;
+  if (!d || d.editingId) return;
+  writeDraftMeta();
+  store.saveDraft(d.shots, d.voice && !d.voice.existing ? d.voice : null).catch(() => {});
 }
 
 async function openCompose(draft) {
+  if (!draft.editingId && !draft.shots) {
+    const { blob, thumb, type, mime, width, height, durationSec, createdAt } = draft;
+    draft.shots = [{ blob, thumb, type, mime, width, height, durationSec, createdAt }];
+  }
+  draft.tags = draft.tags || [];
+  draft.collections = draft.collections || [];
+  draft.mood = draft.mood || '';
   state.draft = draft;
+  state.composePart = 0;
   state.captionSource = draft.cs || { typed: false, voice: false };
+  $('#caption').value = draft.caption || '';
+  $('#compose-save').textContent = draft.editingId ? 'Save changes' : 'Save moment';
+  $('#compose-cancel').setAttribute('aria-label', draft.editingId ? 'Cancel editing' : 'Discard');
+  $('#compose-when').textContent = fullLabel(new Date(draft.createdAt));
+  $('#voice-ask').hidden = true;
+  $('#mood-pop').hidden = true; $('#tag-entry').hidden = true;
+  updateCount();
+  await renderComposeMedia();
+  renderMetaChips();
+  show('compose');
+  // Autosave the draft so a killed app or an accidental back never loses the moment.
+  if (!draft.editingId && !draft.restored) persistDraft();
+}
+
+async function renderComposeMedia() {
+  const d = state.draft;
+  if (!d) return;
   const box = $('#compose-media');
+  const old = box.querySelector('video'); if (old) old.pause();
   box.innerHTML = '';
-  let src;
-  if (draft.editingId) src = await mediaURL(draft.editingId, false);
-  else src = draft.previewURL = URL.createObjectURL(draft.blob);
-  if (draft.type === 'video') {
+  let src, type;
+  if (d.editingId) {
+    const m = state.memories.find((x) => x.id === d.editingId);
+    const p = Math.min(state.composePart, partCount(m) - 1);
+    src = await mediaURL(partKey(m, p), false);
+    type = partInfo(m, p).type;
+  } else {
+    const sh = d.shots[Math.min(state.composePart, d.shots.length - 1)];
+    sh.previewURL = sh.previewURL || URL.createObjectURL(sh.blob);
+    src = sh.previewURL; type = sh.type;
+  }
+  if (type === 'video') {
     const v = document.createElement('video');
-    v.src = src; v.playsInline = true; v.setAttribute('playsinline', ''); v.loop = true; v.muted = true; v.autoplay = true; v.controls = false;
+    v.src = src; v.playsInline = true; v.setAttribute('playsinline', ''); v.loop = true; v.muted = true; v.autoplay = true;
     v.onclick = () => { v.muted = !v.muted; };
     box.appendChild(v);
     v.play().catch(() => {});
   } else {
     const i = document.createElement('img'); i.src = src; i.alt = ''; box.appendChild(i);
   }
-  $('#caption').value = draft.caption || '';
-  $('#compose-save').textContent = draft.editingId ? 'Save caption' : 'Save moment';
-  $('#compose-cancel').setAttribute('aria-label', draft.editingId ? 'Cancel editing' : 'Discard');
-  $('#compose-when').textContent = fullLabel(new Date(draft.createdAt));
-  updateCount();
-  show('compose');
-  // Autosave the draft so a killed app or an accidental back never loses the moment.
-  if (!draft.editingId && !draft.restored) {
-    try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draftMeta(draft), caption: draft.caption || '' }));
-      store.saveDraft(draft.blob, draft.thumb).catch(() => {});
-    } catch (_) {}
+  // Shot strip: tap to preview, x to remove, + to add another shot.
+  const strip = $('#compose-strip');
+  strip.innerHTML = '';
+  if (d.editingId) {
+    const m = state.memories.find((x) => x.id === d.editingId);
+    const n = partCount(m);
+    if (n > 1) for (let p = 0; p < n; p++) {
+      const b = document.createElement('button');
+      b.className = 'shot' + (p === state.composePart ? ' sel' : '');
+      b.innerHTML = '<img alt="">';
+      mediaURL(partKey(m, p), true).then((u) => { b.querySelector('img').src = u; });
+      b.onclick = () => { state.composePart = p; renderComposeMedia(); };
+      strip.appendChild(b);
+    }
+    return;
+  }
+  d.shots.forEach((sh, k) => {
+    const b = document.createElement('div');
+    b.className = 'shot' + (k === state.composePart ? ' sel' : '');
+    sh.thumbURL = sh.thumbURL || (sh.thumb ? URL.createObjectURL(sh.thumb) : (sh.previewURL || URL.createObjectURL(sh.blob)));
+    b.innerHTML = `<img alt="">${sh.type === 'video' ? '<span class="vid">▶</span>' : ''}${d.shots.length > 1 && k === state.composePart ? '<button class="x" aria-label="Remove this shot">✕</button>' : ''}`;
+    b.querySelector('img').src = sh.thumbURL;
+    b.onclick = (e) => {
+      if (e.target.closest('.x')) {
+        const [gone] = d.shots.splice(k, 1);
+        if (gone.previewURL) URL.revokeObjectURL(gone.previewURL);
+        state.composePart = Math.max(0, Math.min(k, d.shots.length - 1));
+        persistDraft(); renderComposeMedia(); return;
+      }
+      state.composePart = k; renderComposeMedia();
+    };
+    strip.appendChild(b);
+  });
+  if (d.shots.length < MAX_SHOTS) {
+    const add = document.createElement('button');
+    add.className = 'shot add';
+    add.setAttribute('aria-label', 'Add another shot');
+    add.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
+    add.onclick = () => { speech.stop(); state.adding = true; openCamera(); };
+    strip.appendChild(add);
   }
 }
 
+// Mood, tags, albums and the kept voice recording, shown as chips above the caption.
+function renderMetaChips() {
+  const d = state.draft;
+  if (!d) return;
+  const box = $('#meta-chips');
+  const parts = [];
+  if (d.voice) parts.push(`<span class="tagchip voice"><button data-a="play" aria-label="Play voice">▶</button>Voice ${fmtSecs(d.voice.durationSec || 0)}<button data-a="rmvoice" aria-label="Remove voice">✕</button></span>`);
+  for (const t of d.tags) parts.push(`<span class="tagchip">#${escapeHTML(t)}<button data-a="rmtag" data-v="${escapeHTML(t)}" aria-label="Remove tag">✕</button></span>`);
+  for (const id of d.collections) { const c = albums.get(id); if (c) parts.push(`<span class="tagchip col">${escapeHTML(c.name)}<button data-a="rmcol" data-v="${id}" aria-label="Remove from album">✕</button></span>`); }
+  box.innerHTML = parts.join('');
+  const mb = $('#mood-btn');
+  mb.textContent = d.mood ? `${d.mood} Mood` : '🙂 Mood';
+  mb.classList.toggle('on', !!d.mood);
+  $('#tag-btn').classList.toggle('on', d.tags.length > 0);
+  $('#colpick-btn').classList.toggle('on', d.collections.length > 0);
+}
+$('#meta-chips').addEventListener('click', async (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  const d = state.draft; if (!d) return;
+  const a = b.dataset.a, v = b.dataset.v;
+  if (a === 'rmtag') d.tags = d.tags.filter((t) => t !== v);
+  if (a === 'rmcol') d.collections = d.collections.filter((c) => c !== v);
+  if (a === 'rmvoice') { d.voice = null; d.voiceRemoved = true; voicePlayer.stop(); persistDraft(); }
+  if (a === 'play') {
+    const src = d.voice.existing ? await mediaURL(`${d.editingId}:voice`, false) : (d.voice.url = d.voice.url || URL.createObjectURL(d.voice.blob));
+    voicePlayer.toggle(src);
+    return;
+  }
+  writeDraftMeta(); renderMetaChips();
+});
+// Mood
+$('#mood-pop').innerHTML = MOODS.map((m) => `<button data-m="${m}" aria-label="Mood ${m}">${m}</button>`).join('');
+$('#mood-btn').onclick = () => {
+  $('#tag-entry').hidden = true;
+  const pop = $('#mood-pop'); pop.hidden = !pop.hidden;
+  pop.querySelectorAll('button').forEach((b) => b.classList.toggle('on', state.draft && b.dataset.m === state.draft.mood));
+};
+$('#mood-pop').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b || !state.draft) return;
+  state.draft.mood = state.draft.mood === b.dataset.m ? '' : b.dataset.m;
+  $('#mood-pop').hidden = true; haptic(8);
+  writeDraftMeta(); renderMetaChips();
+});
+// Tags
+const normTag = (t) => t.trim().replace(/^#+/, '').toLowerCase().replace(/\s+/g, '-').replace(/[^\p{L}\p{N}_-]/gu, '').slice(0, 24);
+$('#tag-btn').onclick = () => { $('#mood-pop').hidden = true; const te = $('#tag-entry'); te.hidden = !te.hidden; if (!te.hidden) $('#tag-input').focus(); };
+function addTagFromInput() {
+  const d = state.draft; const inp = $('#tag-input');
+  const parts = inp.value.split(/[,\s]+/).map(normTag).filter(Boolean);
+  inp.value = '';
+  if (!d || !parts.length) return;
+  for (const t of parts) if (!d.tags.includes(t) && d.tags.length < 5) d.tags.push(t);
+  writeDraftMeta(); renderMetaChips();
+}
+$('#tag-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTagFromInput(); if (e.key === 'Enter') $('#tag-entry').hidden = true; }
+});
+$('#tag-input').addEventListener('blur', addTagFromInput);
+// Albums
+$('#colpick-btn').onclick = () => {
+  const d = state.draft; if (!d) return;
+  openPicker(d.collections, (ids) => { d.collections = ids; writeDraftMeta(); renderMetaChips(); });
+};
+
+// Voice recording: asked each time before it is kept.
+let pendingVoice = null;
+function onVoiceRecorded(v) {
+  if (!state.draft || !$('#compose').classList.contains('active')) return;
+  pendingVoice = v;
+  $('#voice-ask-dur').textContent = fmtSecs(v.durationSec);
+  $('#voice-ask').hidden = false;
+}
+$('#voice-keep').onclick = () => {
+  const d = state.draft; if (!d || !pendingVoice) return;
+  if (d.voice && d.voice.url) URL.revokeObjectURL(d.voice.url);
+  d.voice = pendingVoice; d.voiceRemoved = false; pendingVoice = null;
+  $('#voice-ask').hidden = true;
+  metrics.event('voice_kept');
+  persistDraft(); renderMetaChips();
+};
+$('#voice-drop').onclick = () => { pendingVoice = null; $('#voice-ask').hidden = true; metrics.event('voice_declined'); };
+
+const voicePlayer = (() => {
+  let a = null, onEnd = null;
+  function stop() { if (a) { a.pause(); a = null; } if (onEnd) { onEnd(); onEnd = null; } }
+  function play(src, done) {
+    stop();
+    a = new Audio(src); onEnd = done || null;
+    a.onended = stop;
+    a.play().catch(() => stop());
+    return a;
+  }
+  return { play, stop, toggle: (src, done) => (a ? stop() : play(src, done)), playing: () => !!a };
+})();
+
 function closeCompose({ keepDraft = false } = {}) {
   const d = state.draft;
-  if (d && d.previewURL) URL.revokeObjectURL(d.previewURL);
-  if (d && !d.editingId && keepDraft) {
-    clearTimeout(draftCapTimer);
-    try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draftMeta(d), caption: $('#caption').value, cs: state.captionSource })); } catch (_) {}
-  }
+  speech.cancelAudio && speech.cancelAudio();
+  voicePlayer.stop();
+  if (d && d.shots) d.shots.forEach((sh) => { if (sh.previewURL) URL.revokeObjectURL(sh.previewURL); if (sh.thumbURL && sh.thumb) URL.revokeObjectURL(sh.thumbURL); delete sh.previewURL; delete sh.thumbURL; });
+  if (d && !d.editingId && keepDraft) { clearTimeout(draftCapTimer); writeDraftMeta(); }
   if (d && !d.editingId && !keepDraft) {
     localStorage.removeItem(DRAFT_KEY);
     store.clearDraft().catch(() => {});
   }
-  state.draft = null;
+  $('#voice-ask').hidden = true; pendingVoice = null;
+  state.draft = null; state.adding = false;
 }
 
 async function loadDraft() {
   let meta;
   try { meta = JSON.parse(localStorage.getItem(DRAFT_KEY)); } catch (_) { meta = null; }
   if (!meta) return null;
-  const { blob, thumb } = await store.getDraft().catch(() => ({}));
-  if (!blob) { localStorage.removeItem(DRAFT_KEY); return null; }
-  return { ...meta, blob, thumb, restored: true };
+  const legacy = !Array.isArray(meta.shots);
+  const got = await store.getDraft(legacy ? null : meta.shots.length).catch(() => null);
+  if (!got || !got.shots.length || !got.shots[0].blob) { localStorage.removeItem(DRAFT_KEY); return null; }
+  const shots = legacy
+    ? [{ blob: got.shots[0].blob, thumb: got.shots[0].thumb, type: meta.type, mime: meta.mime, width: meta.width, height: meta.height, durationSec: meta.durationSec, createdAt: meta.createdAt }]
+    : meta.shots.map((sm, k) => ({ ...sm, ...got.shots[k] })).filter((sh) => sh.blob);
+  const voice = got.voice && meta.voiceMeta ? { blob: got.voice, ...meta.voiceMeta } : null;
+  const { voiceMeta, ...rest } = meta;
+  return { ...rest, shots, voice, restored: true };
 }
 async function offerDraft() {
   const d = await loadDraft();
@@ -932,48 +1232,65 @@ $('#compose-save').onclick = async () => {
   const d = state.draft;
   if (!d) return;
   speech.stop();
+  voicePlayer.stop();
+  if (!$('#tag-entry').hidden) addTagFromInput();
   const caption = $('#caption').value.trim().slice(0, 280);
   const now = new Date().toISOString();
   const cs = state.captionSource;
   const source = cs.voice && cs.typed ? 'mixed' : cs.voice ? 'voice' : 'typed';
+  const meta = { mood: d.mood || '', tags: d.tags || [], collections: d.collections || [] };
   $('#compose-save').disabled = true;
   try {
     if (d.editingId) {
       const m = await store.get(d.editingId);
-      const updated = { ...m, caption, updatedAt: now, syncState: 'local',
+      const updated = { ...m, ...meta, caption, updatedAt: now, syncState: 'local',
         captionSource: caption === m.caption ? m.captionSource : (m.captionSource && m.captionSource !== source ? 'mixed' : source) };
+      let voiceBlob;
+      if (d.voice && !d.voice.existing) { updated.voice = { mime: d.voice.mime, durationSec: d.voice.durationSec }; voiceBlob = d.voice.blob; }
+      else if (d.voiceRemoved) { delete updated.voice; voiceBlob = null; }
       const i = state.memories.findIndex((x) => x.id === m.id);
       if (i > -1) state.memories[i] = updated;
-      await store.put(updated);
+      await store.put(updated, voiceBlob !== undefined ? { voice: voiceBlob } : undefined);
+      if (voiceBlob !== undefined) dropURLs(m.id + ':voice');
+      const list = state.viewerList;
       closeCompose();
       renderFeed();
-      openViewer(m.id);
-      toast('Caption updated');
+      openViewer(m.id, list && list.map((x) => (x.id === m.id ? updated : x)), state.viewerPart || 0);
+      toast('Saved');
     } else {
+      const shots = d.shots;
+      const main = shots[0];
       const m = {
         id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)),
-        createdAt: d.createdAt, updatedAt: now, deleted: false,
-        type: d.type, mime: d.mime, caption, captionSource: caption ? source : 'typed',
-        width: d.width || 0, height: d.height || 0,
-        ...(d.durationSec ? { durationSec: d.durationSec } : {}),
+        createdAt: main.createdAt || d.createdAt, updatedAt: now, deleted: false,
+        type: main.type, mime: main.mime, caption, captionSource: caption ? source : 'typed',
+        width: main.width || 0, height: main.height || 0,
+        ...(main.durationSec ? { durationSec: main.durationSec } : {}),
+        ...(shots.length > 1 ? { parts: shots.slice(1).map((sh) => { const { createdAt, ...pm } = shotMeta(sh); return pm; }) } : {}),
+        ...(d.voice ? { voice: { mime: d.voice.mime, durationSec: d.voice.durationSec } } : {}),
+        ...meta,
         syncState: 'local',
       };
       const daysBefore = captureDaysInWeek(startOfWeek()).size;
       // Optimistic: show in the feed straight away.
       state.memories.unshift(m);
       state.memories.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-      urls.set(m.id, d.previewURL); d.previewURL = null;
-      if (d.thumb) urls.set(m.id + ':t', URL.createObjectURL(d.thumb));
-      const blob = d.blob, thumb = d.thumb;
+      shots.forEach((sh, k) => {
+        const key = partKey(m, k);
+        urls.set(key, sh.previewURL || URL.createObjectURL(sh.blob)); sh.previewURL = null;
+        if (sh.thumb) { urls.set(key + ':t', URL.createObjectURL(sh.thumb)); }
+      });
+      const media = { blob: main.blob, thumb: main.thumb, parts: shots.slice(1).map((sh) => ({ blob: sh.blob, thumb: sh.thumb })), voice: d.voice ? d.voice.blob : undefined };
       closeCompose();
       $('#feed').scrollTo({ top: 0 });
+      if (state.tab !== 'home') setTab('home');
       show('feed');
       renderFeed();
       haptic(10);
       const secs = state.captureStart ? (performance.now() - state.captureStart) / 1000 : 0;
       state.captureStart = null;
       try {
-        await store.put(m, { blob, thumb });
+        await store.put(m, media);
         const daysAfter = captureDaysInWeek(startOfWeek()).size;
         if (daysBefore < WEEK_GOAL && daysAfter >= WEEK_GOAL && new Date(m.createdAt) >= startOfWeek()) {
           toast(`Week filled: ${WEEK_GOAL} days of moments`, null, 3200);
@@ -981,6 +1298,10 @@ $('#compose-save').onclick = async () => {
           metrics.event('week_filled');
         } else toast('Saved');
         metrics.saved(m, secs);
+        if (shots.length > 1) metrics.event('multi_shot_saved');
+        if (m.mood) metrics.event('mood_set');
+        if (m.tags.length) metrics.event('tags_set');
+        if (m.collections.length) metrics.event('added_to_album');
         maybeAskPersist();
         updateBanner();
       }
@@ -997,8 +1318,8 @@ $('#compose-save').onclick = async () => {
 
 $('#compose-cancel').onclick = () => {
   const d = state.draft;
-  if (d && d.editingId) { const id = d.editingId; closeCompose(); openViewer(id); return; }
-  const dirty = $('#caption').value.trim().length > 0;
+  if (d && d.editingId) { const id = d.editingId, list = state.viewerList; closeCompose(); openViewer(id, list, state.viewerPart || 0); return; }
+  const dirty = $('#caption').value.trim().length > 0 || (d && (d.shots.length > 1 || d.voice || d.tags.length));
   if (dirty && !confirm('Discard this moment?')) return;
   closeCompose();
   state.captureStart = performance.now();
@@ -1009,17 +1330,24 @@ $('#compose-cancel').onclick = () => {
    VIEWER
    ========================================================= */
 const relivedThisSession = new Set();
-async function openViewer(id) {
-  const list = visibleMemories();
-  state.viewerIndex = list.findIndex((m) => m.id === id);
+const vlist = () => state.viewerList || visibleMemories();
+const vcur = () => vlist()[state.viewerIndex];
+async function openViewer(id, list, part = 0) {
+  state.viewerList = list || visibleMemories();
+  state.viewerIndex = state.viewerList.findIndex((m) => m.id === id);
+  if (state.viewerIndex < 0) { state.viewerList = state.memories; state.viewerIndex = state.memories.findIndex((m) => m.id === id); }
   if (state.viewerIndex < 0) return;
+  state.viewerPart = part;
   show('viewer');
   await paintViewer(0);
 }
 async function paintViewer(dir) {
-  const list = visibleMemories();
-  const m = list[state.viewerIndex];
+  const m = vcur();
   if (!m) return show('feed');
+  voicePlayer.stop();
+  const n = partCount(m);
+  state.viewerPart = Math.max(0, Math.min(state.viewerPart || 0, n - 1));
+  const p = state.viewerPart, info = partInfo(m, p), key = partKey(m, p);
   state.viewerId = m.id;
   if (Date.now() - new Date(m.createdAt).getTime() > 864e5 && !relivedThisSession.has(m.id)) {
     relivedThisSession.add(m.id);
@@ -1029,33 +1357,53 @@ async function paintViewer(dir) {
   const old = stage.firstElementChild;
   if (old && old.tagName === 'VIDEO') old.pause();
   let el;
-  if (m.type === 'video') {
+  if (info.type === 'video') {
     el = document.createElement('video');
     el.playsInline = true; el.setAttribute('playsinline', ''); el.controls = true; el.autoplay = true; el.loop = true;
-    el.poster = await mediaURL(m.id, true);
+    el.poster = await mediaURL(key, true);
   } else {
     el = document.createElement('img'); el.alt = m.caption || 'Moment';
   }
-  el.src = await mediaURL(m.id, false);
+  el.src = await mediaURL(key, false);
   if (dir) { el.style.opacity = 0; el.style.transform = `translateX(${dir * 40}px)`; }
   stage.innerHTML = '';
   stage.appendChild(el);
   if (dir) requestAnimationFrame(() => { el.style.opacity = 1; el.style.transform = 'none'; });
-  if (m.type === 'video') el.play().catch(() => {});
-  $('#viewer-when').textContent = fullLabel(new Date(m.createdAt));
+  if (info.type === 'video') el.play().catch(() => {});
+  $('#viewer-dots').innerHTML = n > 1 ? Array.from({ length: n }, (_, k) => `<i class="${k === p ? 'on' : ''}"></i>`).join('') : '';
+  $('#viewer-when').textContent = fullLabel(new Date(m.createdAt)) + (m.mood ? ' ' + m.mood : '');
   $('#viewer-fav').setAttribute('aria-pressed', String(!!m.favorite));
+  const vp = $('#viewer-voice');
+  vp.hidden = !m.voice; vp.classList.remove('playing');
+  if (m.voice) $('#viewer-voice-t').textContent = fmtSecs(m.voice.durationSec || 0);
   const cap = $('#viewer-caption');
-  cap.textContent = m.caption;
-  cap.hidden = !m.caption;
+  const tags = (m.tags || []).map((t) => '#' + t).join(' ');
+  cap.textContent = [m.caption, tags].filter(Boolean).join('\n');
+  cap.hidden = !cap.textContent;
   $('#viewer-menu').hidden = true;
+  $('#viewer-card').hidden = info.type !== 'photo';
+  $('#viewer-rmvoice').hidden = !m.voice;
 }
+// Within a moment's shots first, then on to the next moment.
 function step(dir) {
-  const n = visibleMemories().length;
+  const m = vcur();
+  const n = partCount(m);
+  const np = (state.viewerPart || 0) + dir;
+  if (m && np >= 0 && np < n) { state.viewerPart = np; paintViewer(dir); return; }
+  const list = vlist();
   const next = state.viewerIndex + dir;
-  if (next < 0 || next >= n) { haptic(5); return; }
+  if (next < 0 || next >= list.length) { haptic(5); return; }
   state.viewerIndex = next;
+  state.viewerPart = dir > 0 ? 0 : partCount(list[next]) - 1;
   paintViewer(dir);
 }
+$('#viewer-voice').onclick = async () => {
+  const m = vcur(); if (!m || !m.voice) return;
+  const vp = $('#viewer-voice');
+  if (voicePlayer.playing()) { voicePlayer.stop(); return; }
+  vp.classList.add('playing');
+  voicePlayer.play(await mediaURL(`${m.id}:voice`, false), () => vp.classList.remove('playing'));
+};
 (() => {
   const stage = $('#viewer-stage');
   let x0 = null, y0 = null, t0 = 0;
@@ -1066,7 +1414,7 @@ function step(dir) {
     x0 = null;
     if (Math.abs(dx) < 12 && Math.abs(dy) < 12) { // double-tap = favourite
       const now = Date.now();
-      if (now - (stage._lastTap || 0) < 300) { stage._lastTap = 0; const m = visibleMemories()[state.viewerIndex]; if (m) toggleFav(m.id); }
+      if (now - (stage._lastTap || 0) < 300) { stage._lastTap = 0; const m = vcur(); if (m) toggleFav(m.id); }
       else stage._lastTap = now;
       return;
     }
@@ -1081,37 +1429,66 @@ function step(dir) {
   });
 })();
 $('#viewer-close').onclick = () => show('feed');
-$('#viewer-fav').onclick = () => { const m = visibleMemories()[state.viewerIndex]; if (m) toggleFav(m.id); };
-$('#viewer-stage').addEventListener('dblclick', () => { const m = visibleMemories()[state.viewerIndex]; if (m) toggleFav(m.id); });
+$('#viewer-fav').onclick = () => { const m = vcur(); if (m) toggleFav(m.id); };
+$('#viewer-stage').addEventListener('dblclick', () => { const m = vcur(); if (m) toggleFav(m.id); });
 $('#viewer-more').onclick = (e) => { e.stopPropagation(); $('#viewer-menu').hidden = !$('#viewer-menu').hidden; };
+$('#viewer-menu').addEventListener('click', (e) => { if (e.target.closest('button')) setTimeout(() => { $('#viewer-menu').hidden = true; }, 0); });
 $('#viewer').addEventListener('click', (e) => { if (!e.target.closest('#viewer-menu, #viewer-more')) $('#viewer-menu').hidden = true; });
 $('#viewer-edit').onclick = () => {
-  const m = visibleMemories()[state.viewerIndex];
+  const m = vcur();
   if (!m) return;
-  openCompose({ editingId: m.id, type: m.type, caption: m.caption, createdAt: m.createdAt });
+  state.composePart = state.viewerPart || 0;
+  openCompose({ editingId: m.id, type: m.type, caption: m.caption, createdAt: m.createdAt,
+    mood: m.mood || '', tags: [...(m.tags || [])], collections: [...(m.collections || [])],
+    voice: m.voice ? { existing: true, ...m.voice } : null }).then(() => { state.composePart = state.viewerPart || 0; renderComposeMedia(); });
+};
+$('#viewer-share').onclick = () => { const m = vcur(); if (m) shareMoment(m); };
+$('#viewer-card').onclick = () => { const m = vcur(); if (m) shareCard(m, state.viewerPart || 0); };
+$('#viewer-addcol').onclick = () => {
+  const m = vcur(); if (!m) return;
+  openPicker(m.collections || [], async (ids) => {
+    const added = ids.some((x) => !(m.collections || []).includes(x));
+    m.collections = ids; m.updatedAt = new Date().toISOString(); m.syncState = 'local';
+    await store.put(m);
+    if (added) { toast('Added to album'); metrics.event('added_to_album'); }
+  });
+};
+$('#viewer-rmvoice').onclick = async () => {
+  const m = vcur(); if (!m || !m.voice) return;
+  if (!confirm('Remove the voice recording from this moment?')) return;
+  voicePlayer.stop();
+  delete m.voice; m.updatedAt = new Date().toISOString(); m.syncState = 'local';
+  await store.put(m, { voice: null });
+  dropURLs(m.id + ':voice');
+  paintViewer(0); renderFeed();
+  toast('Voice recording removed');
 };
 $('#viewer-save-file').onclick = async () => {
-  const m = visibleMemories()[state.viewerIndex];
+  const m = vcur();
   if (!m) return;
-  const blob = await store.getMedia(m.id);
-  const name = `moment-${m.createdAt.slice(0, 10)}.${extFor(m.mime)}`;
-  const file = new File([blob], name, { type: m.mime });
+  const p = state.viewerPart || 0, info = partInfo(m, p);
+  const blob = await store.getMedia(partKey(m, p));
+  const name = `moment-${m.createdAt.slice(0, 10)}${p ? '-' + (p + 1) : ''}.${extFor(info.mime)}`;
+  const file = new File([blob], name, { type: info.mime });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try { await navigator.share({ files: [file] }); return; } catch (e) { if (e.name === 'AbortError') return; }
   }
   download(blob, name);
 };
 $('#viewer-delete').onclick = async () => {
-  const list = visibleMemories();
-  const m = list[state.viewerIndex];
+  const m = vcur();
   if (!m) return;
   haptic(20);
   // Hide immediately; commit after the undo window.
   if (state.pendingDelete) await commitDelete();
   state.pendingDelete = { memory: m, timer: setTimeout(commitDelete, 5200) };
   state.memories = state.memories.filter((x) => x.id !== m.id);
+  if (state.viewerList) state.viewerList = state.viewerList.filter((x) => x.id !== m.id);
   renderFeed();
-  const remaining = visibleMemories();
+  if (state.tab === 'search') renderSearch();
+  if (state.tab === 'collections') renderAlbums();
+  state.viewerPart = 0;
+  const remaining = vlist();
   if (remaining.length) { state.viewerIndex = Math.min(state.viewerIndex, remaining.length - 1); paintViewer(0); }
   else show('feed');
   toast('Moment deleted', { label: 'Undo', fn: undoDelete });
@@ -1226,10 +1603,15 @@ async function exportBackup() {
   const all = await store.list();
   if (!all.length) return toast('Nothing to back up yet.');
   toast('Preparing backup…');
-  const files = [{ name: 'memories.json', data: JSON.stringify({ app: 'moments', version: 1, exportedAt: new Date().toISOString(), memories: all }, null, 2) }];
+  const files = [{ name: 'memories.json', data: JSON.stringify({ app: 'moments', version: 2, exportedAt: new Date().toISOString(), albums: albums.list(), memories: all }, null, 2) }];
   for (const m of all) {
     const b = await store.getMedia(m.id); if (b) files.push({ name: `media/${m.id}.${extFor(m.mime)}`, data: b });
     const t = await store.getMedia(m.id, true); if (t) files.push({ name: `media/${m.id}_thumb.jpg`, data: t });
+    for (let k = 1; k < partCount(m); k++) {
+      const pb = await store.getMedia(`${m.id}#${k}`); if (pb) files.push({ name: `media/${m.id}_p${k}.${extFor(m.parts[k - 1].mime)}`, data: pb });
+      const pt = await store.getMedia(`${m.id}#${k}`, true); if (pt) files.push({ name: `media/${m.id}_p${k}_thumb.jpg`, data: pt });
+    }
+    if (m.voice) { const vb = await store.getMedia(`${m.id}:voice`); if (vb) files.push({ name: `media/${m.id}_voice.${extFor(m.voice.mime)}`, data: vb }); }
   }
   const blob = await zip.build(files);
   const name = `moments-backup-${new Date().toISOString().slice(0, 10)}.zip`;
@@ -1255,6 +1637,7 @@ async function importBackup(file) {
     if (!json) throw new Error('No memories.json');
     const data = JSON.parse(await json.text());
     if (data.app !== 'moments' || !Array.isArray(data.memories)) throw new Error('Not a Moments backup');
+    if (Array.isArray(data.albums)) albums.merge(data.albums);
     const existing = new Map((await store.list({ includeDeleted: true })).map((m) => [m.id, m]));
     let added = 0, updated = 0;
     for (const m of data.memories) {
@@ -1263,9 +1646,16 @@ async function importBackup(file) {
       const blob = entries.get(`media/${m.id}.${extFor(m.mime)}`);
       if (!blob && !m.deleted) continue;
       const thumb = entries.get(`media/${m.id}_thumb.jpg`);
+      const parts = (m.parts || []).map((pm, k) => {
+        const pb = entries.get(`media/${m.id}_p${k + 1}.${extFor(pm.mime)}`), pt = entries.get(`media/${m.id}_p${k + 1}_thumb.jpg`);
+        return { blob: pb ? new Blob([pb], { type: pm.mime }) : null, thumb: pt ? new Blob([pt], { type: 'image/jpeg' }) : null };
+      });
+      const vb = m.voice ? entries.get(`media/${m.id}_voice.${extFor(m.voice.mime)}`) : null;
       await store.put({ ...m, syncState: 'local' }, {
         blob: blob ? new Blob([blob], { type: m.mime }) : null,
         thumb: thumb ? new Blob([thumb], { type: 'image/jpeg' }) : null,
+        parts,
+        voice: vb ? new Blob([vb], { type: m.voice.mime }) : undefined,
       });
       cur ? updated++ : added++;
     }
@@ -1420,7 +1810,7 @@ $('#fab').onclick = () => { haptic(); state.captureStart = performance.now(); op
   const feed = $('#feed');
   let t0 = null;
   feed.addEventListener('touchstart', (e) => {
-    if (e.touches.length !== 1 || e.target.closest('.otd-strip, .searchbar, .banner, input, textarea')) { t0 = null; return; }
+    if (e.touches.length !== 1 || e.target.closest('.otd-strip, .searchbar, .banner, input, textarea, .slides, .filters, .rail, .heat-wrap')) { t0 = null; return; }
     t0 = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
   }, { passive: true });
   feed.addEventListener('touchend', (e) => {
@@ -1451,7 +1841,7 @@ $('#q').addEventListener('input', (e) => {
   qTimer = setTimeout(() => { state.query = e.target.value; renderFeed(); }, 120);
 });
 for (const id of ['#file-pick', '#file-capture']) {
-  $(id).onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f && !state.captureStart) state.captureStart = performance.now(); fileToDraft(f); };
+  $(id).onchange = (e) => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length && !state.captureStart) state.captureStart = performance.now(); filesToShots(fs); };
 }
 
 /* =========================================================
@@ -1540,16 +1930,17 @@ async function renderRail() {
    STORY PLAYER — tap to advance, hold to pause, double-tap to favourite
    ========================================================= */
 const player = (() => {
-  let g = null, i = 0, raf = 0, start = 0, elapsed = 0, dur = 5000, paused = false, vid = null, token = 0;
+  let g = null, segs = [], i = 0, raf = 0, start = 0, elapsed = 0, dur = 5000, paused = false, vid = null, token = 0, aud = null;
   const stage = $('#story-stage');
   const PHOTO_MS = 5000, MAX_VIDEO_MS = 15000;
 
   async function open(group, startIndex = 0) {
     g = group; i = startIndex;
+    segs = group.items.flatMap((m) => Array.from({ length: partCount(m) }, (_, p) => ({ m, p })));
     markSeen(group);
     $('#story-title').textContent = group.title;
     $('#story-reel').hidden = !(group.reel && group.items.length >= 3 && window.MediaRecorder && HTMLCanvasElement.prototype.captureStream);
-    $('#story-bars').innerHTML = group.items.map(() => '<i><b></b></i>').join('');
+    $('#story-bars').innerHTML = segs.map(() => '<i><b></b></i>').join('');
     show('story');
     metrics.event('story_opened');
     await play();
@@ -1562,35 +1953,43 @@ const player = (() => {
     cancelAnimationFrame(raf);
     const my = ++token;
     if (vid) { vid.pause(); vid = null; }
-    const m = g && g.items[i];
-    if (!m) return close();
+    if (aud) { aud.pause(); aud = null; }
+    const seg = g && segs[i];
+    if (!seg) return close();
+    const m = seg.m, part = seg.p, info = partInfo(m, part), key = partKey(m, part);
     bars();
     if (Date.now() - new Date(m.createdAt).getTime() > 864e5 && !relivedThisSession.has(m.id)) { relivedThisSession.add(m.id); metrics.relived(); }
     $('#story-when').textContent = fullLabel(new Date(m.createdAt));
     $('#story-caption').textContent = m.caption || '';
-    const src = await mediaURL(m.id, false);
+    const src = await mediaURL(key, false);
     if (my !== token) return;
     stage.innerHTML = '';
-    if (m.type === 'video') {
+    if (info.type === 'video') {
       const v = document.createElement('video');
       v.playsInline = true; v.setAttribute('playsinline', ''); v.src = src;
-      v.poster = await mediaURL(m.id, true);
+      v.poster = await mediaURL(key, true);
       stage.appendChild(v);
       vid = v;
       v.muted = false;
       try { await v.play(); } catch (_) { v.muted = true; v.play().catch(() => {}); }
-      dur = Math.min((m.durationSec || 10) * 1000, MAX_VIDEO_MS);
+      dur = Math.min((info.durationSec || 10) * 1000, MAX_VIDEO_MS);
       v.onended = () => { if (my === token) next(); };
     } else {
       const img = document.createElement('img'); img.alt = m.caption || 'Moment'; img.src = src;
       stage.appendChild(img);
       try { await img.decode(); } catch (_) {}
       dur = PHOTO_MS;
+      // The moment's own voice plays over its first photo.
+      if (part === 0 && m.voice) {
+        aud = new Audio(await mediaURL(`${m.id}:voice`, false));
+        aud.play().catch(() => {});
+        dur = Math.min(Math.max((m.voice.durationSec || 0) * 1000 + 400, PHOTO_MS), MAX_VIDEO_MS);
+      }
     }
     if (my !== token) return;
     elapsed = 0; start = performance.now(); paused = false;
     tick();
-    const n = g.items[i + 1]; if (n) mediaURL(n.id, n.type === 'video'); // warm the next one
+    const nx = segs[i + 1]; if (nx) mediaURL(partKey(nx.m, nx.p), partInfo(nx.m, nx.p).type === 'video'); // warm the next one
   }
   function tick() {
     if (!g) return;
@@ -1602,11 +2001,11 @@ const player = (() => {
     }
     raf = requestAnimationFrame(tick);
   }
-  function pause() { if (paused || !g) return; elapsed += performance.now() - start; paused = true; if (vid) vid.pause(); }
-  function resume() { if (!paused || !g) return; start = performance.now(); paused = false; if (vid) vid.play().catch(() => {}); }
-  function next() { if (!g) return; if (i < g.items.length - 1) { i++; play(); } else close(); }
+  function pause() { if (paused || !g) return; elapsed += performance.now() - start; paused = true; if (vid) vid.pause(); if (aud) aud.pause(); }
+  function resume() { if (!paused || !g) return; start = performance.now(); paused = false; if (vid) vid.play().catch(() => {}); if (aud) aud.play().catch(() => {}); }
+  function next() { if (!g) return; if (i < segs.length - 1) { i++; play(); } else close(); }
   function prev() { if (!g) return; if (i > 0) i--; play(); }
-  function halt() { cancelAnimationFrame(raf); token++; if (vid) { vid.pause(); vid = null; } stage.innerHTML = ''; g = null; }
+  function halt() { cancelAnimationFrame(raf); token++; if (vid) { vid.pause(); vid = null; } if (aud) { aud.pause(); aud = null; } stage.innerHTML = ''; g = null; }
   function close() { halt(); show('feed'); renderRail(); }
 
   // Gestures
@@ -1627,7 +2026,7 @@ const player = (() => {
     const now = Date.now();
     if (now - lastTap < 260) {
       clearTimeout(tapT); lastTap = 0;
-      const m = g && g.items[i]; if (m) toggleFav(m.id, true);
+      const sg = g && segs[i]; if (sg) toggleFav(sg.m.id, true);
       return;
     }
     lastTap = now;
@@ -1676,11 +2075,17 @@ async function toggleFav(id, burst = false) {
 state.tab = 'home';
 state.calMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 function setTab(t) {
-  if (t === 'calendar' && !$('#searchbar').hidden) $('#search-cancel').click();
+  if (t !== 'home' && !$('#searchbar').hidden) $('#search-cancel').click();
   state.tab = t;
   $('#home-view').hidden = t !== 'home';
   $('#cal-view').hidden = t !== 'calendar';
+  $('#search-view').hidden = t !== 'search';
+  $('#col-view').hidden = t !== 'collections';
   document.body.classList.toggle('on-cal', t === 'calendar');
+  document.body.classList.toggle('on-search', t === 'search');
+  document.body.classList.toggle('on-cols', t === 'collections');
+  if (t === 'search') { renderSearch(); metrics.event('search_opened'); }
+  if (t === 'collections') { state.openAlbum = null; renderAlbums(); }
   for (const b of document.querySelectorAll('.tab')) b.classList.toggle('active', b.dataset.tab === t);
   $('#feed').scrollTo({ top: 0 });
   if (t === 'calendar') { renderCalendar(); metrics.event('calendar_opened'); }
@@ -1783,8 +2188,9 @@ function pickRecMime() {
 let reelCancel = false;
 $('#reel-cancel').onclick = () => { reelCancel = true; };
 async function makeReel(group) {
-  let items = group.items;
-  if (items.length > 24) { const step = items.length / 24; items = Array.from({ length: 24 }, (_, k) => items[Math.floor(k * step)]); }
+  const items = group.items;
+  let shots = items.flatMap((m) => Array.from({ length: partCount(m) }, (_, p) => ({ m, p })));
+  if (shots.length > 24) { const st = shots.length / 24; shots = Array.from({ length: 24 }, (_, k) => shots[Math.floor(k * st)]); }
   const ov = $('#reel-overlay');
   ov.hidden = false; reelCancel = false;
   $('#reel-msg').textContent = group.key === 'week' ? 'Making your week…' : 'Making your video…';
@@ -1793,9 +2199,10 @@ async function makeReel(group) {
 
   // Load media first so the recording has no stalls
   const assets = [];
-  for (const m of items) {
-    const src = await mediaURL(m.id, false);
-    if (m.type === 'video') {
+  for (const { m, p } of shots) {
+    const info = partInfo(m, p);
+    const src = await mediaURL(partKey(m, p), false);
+    if (info.type === 'video') {
       const v = document.createElement('video');
       v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = src;
       await new Promise((res) => { v.onloadeddata = res; v.onerror = res; setTimeout(res, 3000); });
@@ -1809,7 +2216,7 @@ async function makeReel(group) {
   const first = new Date(items[0].createdAt), last = new Date(items[items.length - 1].createdAt);
   const fmtD = (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   const range = dayKey(first) === dayKey(last) ? fmtD(first) : `${fmtD(first)} – ${fmtD(last)}`;
-  const segs = [{ kind: 'title', d: 1800 }, ...assets.map((a) => ({ kind: a.v ? 'video' : 'photo', a, d: a.v ? Math.min((a.m.durationSec || 3) * 1000, 3500) : 2600 })), { kind: 'end', d: 1600 }];
+  const segs = [{ kind: 'title', d: 1800 }, ...assets.map((a) => ({ kind: a.v ? 'video' : 'photo', a, d: a.v ? Math.min((a.v.duration && isFinite(a.v.duration) ? a.v.duration : 3) * 1000, 3500) : 2600 })), { kind: 'end', d: 1600 }];
   const total = segs.reduce((x, s) => x + s.d, 0);
 
   const mime = pickRecMime();
@@ -1971,6 +2378,274 @@ const reminders = (() => {
   };
   return { initUI };
 })();
+
+
+/* =========================================================
+   ALBUMS (collections) — names live here; moments carry album ids
+   ========================================================= */
+const albums = (() => {
+  const KEY = 'moments.collections';
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (_) { return []; } };
+  const save = (l) => { try { localStorage.setItem(KEY, JSON.stringify(l)); } catch (_) {} };
+  return {
+    list: load,
+    get: (id) => load().find((c) => c.id === id),
+    create(name) {
+      name = name.trim().slice(0, 40);
+      if (!name) return null;
+      const l = load();
+      const dup = l.find((c) => c.name.toLowerCase() === name.toLowerCase());
+      if (dup) return dup;
+      const c = { id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, createdAt: new Date().toISOString() };
+      l.push(c); save(l);
+      metrics.event('album_created');
+      return c;
+    },
+    rename(id, name) { const l = load(); const c = l.find((x) => x.id === id); if (c && name.trim()) { c.name = name.trim().slice(0, 40); save(l); } },
+    async remove(id) {
+      save(load().filter((c) => c.id !== id));
+      for (const m of state.memories) {
+        if ((m.collections || []).includes(id)) { m.collections = m.collections.filter((x) => x !== id); m.updatedAt = new Date().toISOString(); await store.put(m); }
+      }
+    },
+    merge(incoming) { const l = load(); for (const c of incoming) if (c && c.id && !l.find((x) => x.id === c.id)) l.push(c); save(l); },
+    items: (id) => state.memories.filter((m) => (m.collections || []).includes(id)),
+  };
+})();
+
+// Album picker sheet: tick albums, or create one. onDone(ids) on close.
+let pickerSel = [], pickerDone = null;
+function openPicker(selected, onDone) {
+  pickerSel = [...selected]; pickerDone = onDone;
+  $('#picker-input').value = '';
+  renderPicker();
+  $('#scrim').hidden = false; $('#picker').hidden = false;
+}
+function renderPicker() {
+  const l = albums.list();
+  $('#picker-list').innerHTML = l.length
+    ? l.map((c) => `<button class="pick${pickerSel.includes(c.id) ? ' on' : ''}" data-id="${c.id}"><span class="box"></span>${escapeHTML(c.name)}</button>`).join('')
+    : '<p class="picker-empty">No albums yet. Name your first one below.</p>';
+}
+$('#picker-list').addEventListener('click', (e) => {
+  const b = e.target.closest('.pick'); if (!b) return;
+  const id = b.dataset.id;
+  pickerSel = pickerSel.includes(id) ? pickerSel.filter((x) => x !== id) : [...pickerSel, id];
+  haptic(6); renderPicker();
+});
+function pickerCreate() {
+  const c = albums.create($('#picker-input').value);
+  $('#picker-input').value = '';
+  if (c && !pickerSel.includes(c.id)) pickerSel.push(c.id);
+  renderPicker();
+}
+$('#picker-create').onclick = pickerCreate;
+$('#picker-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); pickerCreate(); } });
+function closePicker() {
+  if ($('#picker').hidden) return;
+  if ($('#picker-input').value.trim()) pickerCreate();
+  $('#picker').hidden = true;
+  if ($('#sheet').hidden && $('#howto').hidden) $('#scrim').hidden = true;
+  const cb = pickerDone; pickerDone = null;
+  if (cb) cb(pickerSel);
+}
+$('#picker-done').onclick = closePicker;
+$('#scrim').addEventListener('click', closePicker);
+
+function thumbGrid(box, list, onOpen) {
+  box.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  for (const m of list) {
+    const b = document.createElement('button');
+    b.className = 'res';
+    const icons = [partCount(m) > 1 ? `<span>${partCount(m)}</span>` : '', m.type === 'video' ? '<span>▶</span>' : '', m.voice ? '<span>🎙</span>' : ''].join('');
+    b.innerHTML = `<img alt=""><div class="ri">${icons}</div>`;
+    b.setAttribute('aria-label', m.caption || dayLabel(new Date(m.createdAt)));
+    mediaURL(m.id, true).then((u) => { b.querySelector('img').src = u; });
+    b.onclick = () => onOpen(m);
+    frag.appendChild(b);
+  }
+  box.appendChild(frag);
+}
+
+function renderAlbums() {
+  const showDetail = !!state.openAlbum && albums.get(state.openAlbum);
+  $('#col-list').hidden = !!showDetail;
+  $('#col-detail').hidden = !showDetail;
+  $('#col-menu').hidden = true;
+  if (showDetail) {
+    const c = albums.get(state.openAlbum);
+    const items = albums.items(c.id);
+    $('#col-name').textContent = c.name;
+    $('#col-count').textContent = `${items.length} moment${items.length === 1 ? '' : 's'}`;
+    $('#col-play').disabled = !items.length;
+    $('#col-reel').hidden = items.length < 3 || !(window.MediaRecorder && HTMLCanvasElement.prototype.captureStream);
+    $('#col-empty').hidden = items.length > 0;
+    thumbGrid($('#col-items'), items, (m) => openViewer(m.id, items));
+    return;
+  }
+  const grid = $('#col-grid');
+  grid.innerHTML = '';
+  for (const c of albums.list()) {
+    const items = albums.items(c.id);
+    const b = document.createElement('button');
+    b.className = 'col-card';
+    b.innerHTML = `<div class="col-cover">${items.length ? '<img alt="">' : '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 17-5-5-9 9"/></svg>'}</div><b>${escapeHTML(c.name)}</b><span>${items.length} moment${items.length === 1 ? '' : 's'}</span>`;
+    if (items.length) mediaURL(items[0].id, true).then((u) => { b.querySelector('img').src = u; });
+    b.onclick = () => { state.openAlbum = c.id; renderAlbums(); $('#feed').scrollTo({ top: 0 }); };
+    grid.appendChild(b);
+  }
+  const nb = document.createElement('button');
+  nb.className = 'col-card new';
+  nb.innerHTML = '<div class="col-cover"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div><b>New album</b><span>Trips, firsts, food…</span>';
+  nb.onclick = () => {
+    const name = prompt('Name your album');
+    if (name && albums.create(name)) renderAlbums();
+  };
+  grid.appendChild(nb);
+}
+$('#col-back').onclick = () => { state.openAlbum = null; renderAlbums(); };
+$('#col-menu-btn').onclick = () => { $('#col-menu').hidden = !$('#col-menu').hidden; };
+$('#col-rename').onclick = () => {
+  const c = albums.get(state.openAlbum); if (!c) return;
+  const name = prompt('Rename album', c.name);
+  if (name) { albums.rename(c.id, name); renderAlbums(); }
+};
+$('#col-delete').onclick = async () => {
+  const c = albums.get(state.openAlbum); if (!c) return;
+  if (!confirm(`Delete the album “${c.name}”? Its moments stay in your feed.`)) return;
+  await albums.remove(c.id);
+  state.openAlbum = null; renderAlbums(); renderFeed();
+  toast('Album deleted');
+};
+$('#col-play').onclick = () => {
+  const c = albums.get(state.openAlbum); if (!c) return;
+  const items = asc(albums.items(c.id));
+  if (items.length) player.open({ key: 'album:' + c.id, title: c.name, items, reel: true });
+};
+$('#col-reel').onclick = () => {
+  const c = albums.get(state.openAlbum); if (!c) return;
+  makeReel({ key: 'album', title: c.name, items: asc(albums.items(c.id)) });
+};
+
+/* =========================================================
+   SEARCH — captions, #tags, mood and quick filters
+   ========================================================= */
+state.filters = new Set();
+function searchResults() {
+  const q = $('#sq').value.trim().toLowerCase();
+  const tq = q.startsWith('#') ? q.slice(1) : null;
+  return state.memories.filter((m) => {
+    if (q) {
+      const inTags = (m.tags || []).some((t) => (tq != null ? t.startsWith(tq) : t.includes(q)));
+      if (!(inTags || (tq == null && m.caption.toLowerCase().includes(q)))) return false;
+    }
+    for (const f of state.filters) {
+      if (f === 'voice' && !m.voice) return false;
+      if (f === 'video' && m.type !== 'video' && !(m.parts || []).some((pt) => pt.type === 'video')) return false;
+      if (f === 'fav' && !m.favorite) return false;
+      if (f.startsWith('mood:') && m.mood !== f.slice(5)) return false;
+      if (f.startsWith('tag:') && !(m.tags || []).includes(f.slice(4))) return false;
+    }
+    return true;
+  });
+}
+function renderSearch() {
+  const moods = [...new Set(state.memories.map((m) => m.mood).filter(Boolean))];
+  const tagCounts = new Map();
+  for (const m of state.memories) for (const t of m.tags || []) tagCounts.set(t, (tagCounts.get(t) || 0) + 1);
+  const topTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([t]) => t);
+  const chips = [
+    ['fav', '♥ Favourites'], ['voice', '🎙 Voice'], ['video', '▶ Videos'],
+    ...moods.map((m) => ['mood:' + m, m]),
+    ...topTags.map((t) => ['tag:' + t, '#' + t]),
+  ];
+  $('#filters').innerHTML = chips.map(([k, l]) => `<button class="filter${state.filters.has(k) ? ' on' : ''}" data-k="${escapeHTML(k)}">${escapeHTML(l)}</button>`).join('');
+  const res = searchResults();
+  const active = $('#sq').value.trim() || state.filters.size;
+  $('#s-empty').hidden = res.length > 0;
+  $('#s-empty').textContent = state.memories.length ? 'Nothing matches.' : 'Your moments will show up here.';
+  thumbGrid($('#results'), res, (m) => openViewer(m.id, res));
+  $('#results').setAttribute('aria-label', active ? `${res.length} results` : 'All moments');
+}
+$('#filters').addEventListener('click', (e) => {
+  const b = e.target.closest('.filter'); if (!b) return;
+  const k = b.dataset.k;
+  state.filters.has(k) ? state.filters.delete(k) : state.filters.add(k);
+  haptic(6); renderSearch();
+});
+let sqTimer;
+$('#sq').addEventListener('input', () => { clearTimeout(sqTimer); sqTimer = setTimeout(renderSearch, 120); });
+
+/* =========================================================
+   SHARE — the original files, or a Moments card
+   ========================================================= */
+async function shareMoment(m) {
+  const files = [];
+  for (let p = 0; p < partCount(m); p++) {
+    const info = partInfo(m, p);
+    const blob = await store.getMedia(partKey(m, p));
+    if (blob) files.push(new File([blob], `moment-${m.createdAt.slice(0, 10)}${p ? '-' + (p + 1) : ''}.${extFor(info.mime)}`, { type: info.mime }));
+  }
+  if (!files.length) return;
+  const text = m.caption || '';
+  if (navigator.canShare && navigator.canShare({ files })) {
+    try { await navigator.share({ files, text }); metrics.event('shared'); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
+  }
+  files.forEach((f) => download(f, f.name));
+  metrics.event('shared');
+  toast(files.length > 1 ? 'Saved the files' : 'Saved the file');
+}
+async function shareCard(m, p = 0) {
+  const info = partInfo(m, p);
+  if (info.type !== 'photo') return;
+  const img = new Image();
+  img.src = await mediaURL(partKey(m, p), false);
+  try { await img.decode(); } catch (_) {}
+  const W = 1080, H = 1350, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  const font = getComputedStyle(document.body).fontFamily;
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = '#DCE5F0'; ctx.lineWidth = 2;
+  for (let x = 0; x <= W; x += 45) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y <= H; y += 45) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  const px = 70, py = 70, pw = W - 140, ph = 900;
+  ctx.fillStyle = '#14213D'; ctx.fillRect(px + 10, py + 10, pw, ph);
+  ctx.save(); ctx.beginPath(); ctx.rect(px, py, pw, ph); ctx.clip();
+  const sc = Math.max(pw / img.naturalWidth, ph / img.naturalHeight);
+  const w = img.naturalWidth * sc, h = img.naturalHeight * sc;
+  ctx.drawImage(img, px + (pw - w) / 2, py + (ph - h) / 2, w, h);
+  ctx.restore();
+  ctx.strokeStyle = '#14213D'; ctx.lineWidth = 5; ctx.strokeRect(px, py, pw, ph);
+  ctx.fillStyle = '#14213D'; ctx.textBaseline = 'alphabetic';
+  let y = py + ph + 95;
+  if (m.caption) {
+    ctx.font = `600 46px ${font}`;
+    const words = m.caption.split(/\s+/); const lines = []; let line = '';
+    for (const wd of words) { const t = line ? line + ' ' + wd : wd; if (ctx.measureText(t).width > pw && line) { lines.push(line); line = wd; } else line = t; }
+    if (line) lines.push(line);
+    const shown = lines.slice(0, 3);
+    if (lines.length > 3) shown[2] = shown[2].replace(/\s*\S*$/, '…');
+    shown.forEach((l, k) => ctx.fillText(l, px, y + k * 58));
+    y += shown.length * 58;
+  }
+  ctx.font = `700 30px ${font}`; ctx.fillStyle = '#4A5672';
+  ctx.fillText(new Date(m.createdAt).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) + (m.mood ? '  ' + m.mood : ''), px, H - 60);
+  ctx.font = `800 34px ${font}`; ctx.fillStyle = '#14213D';
+  const mark = 'Moments', mw = ctx.measureText(mark).width;
+  ctx.fillStyle = '#F4B740'; ctx.fillRect(W - px - mw, H - 72, mw, 14);
+  ctx.fillStyle = '#14213D'; ctx.fillText(mark, W - px - mw, H - 60);
+  const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.92));
+  const file = new File([blob], `moment-card-${m.createdAt.slice(0, 10)}.jpg`, { type: 'image/jpeg' });
+  metrics.event('shared_card');
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], text: m.caption || '' }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  download(blob, file.name);
+  toast('Card saved');
+}
 
 // A reminder (or its notification) asks us to open somewhere specific.
 function handleOpen(where) {
