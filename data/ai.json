@@ -41,6 +41,19 @@
       ],
       "url": "moments/",
       "linkLabel": "Open Moments ↗"
+    },
+    {
+      "title": "Mixlingo",
+      "status": "Beta",
+      "q": "What if a language app taught the way people actually talk?",
+      "d": "An AI tutor for the mix people really speak, Kanglish included. A 6-minute chat finds your level, then 3-minute daily sessions: phrases, quick reviews, and chats with an auto driver, a friend and a friend's mum. The pace rises as you improve. Kannada first. Runs on Claude, so it needs a Claude sign-in.",
+      "tags": [
+        "Claude artifact",
+        "Adaptive learning",
+        "Evals"
+      ],
+      "url": "https://claude.ai/artifact/PSRUrhpz9vF4SxqCCWCP6N",
+      "linkLabel": "Start talking ↗"
     }
   ]
 }
