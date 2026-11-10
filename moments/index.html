@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Moments</title>
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
 
@@ -68,6 +68,11 @@
   </div>
 
   <div id="cal-view" hidden>
+    <button class="year-card" id="year-card">
+      <span class="yc-k" id="year-card-k">Your year so far</span>
+      <b id="year-card-title"></b>
+      <span class="yc-s" id="year-card-sub"></span>
+    </button>
     <section class="week-card">
       <svg class="ring-big" viewBox="0 0 120 120" aria-hidden="true"><circle class="rb-bg" cx="60" cy="60" r="50"/><circle class="rb-fg" id="rb-fg" cx="60" cy="60" r="50"/></svg>
       <div class="week-info">
@@ -99,6 +104,12 @@
     <div class="filters" id="filters"></div>
     <div class="results" id="results"></div>
     <p class="s-empty" id="s-empty" hidden>Nothing matches yet.</p>
+    <section class="sem-sec" id="sem-sec" hidden>
+      <h3 class="sec-title" id="sem-title">Looks like</h3>
+      <div class="results" id="sem-results"></div>
+      <p class="sem-note" id="sem-note"></p>
+    </section>
+    <p class="sem-hint" id="sem-hint" hidden>Tip: turn on <b>Search by meaning</b> in ••• Settings to find photos by what's in them.</p>
   </div>
 
   <div id="col-view" hidden>
@@ -207,6 +218,14 @@
       <button class="pill-btn small light" id="voice-keep">Keep</button>
       <button class="text-btn light" id="voice-drop">No</button>
     </div>
+    <div class="tidy-box" id="tidy-box" hidden>
+      <div class="tidy-label">Tidied</div>
+      <div class="tidy-text" id="tidy-text"></div>
+      <div class="tidy-actions">
+        <button class="pill-btn small light" id="tidy-accept">Use this</button>
+        <button class="text-btn light" id="tidy-reject">Keep mine</button>
+      </div>
+    </div>
     <div class="chips-row" id="meta-chips"></div>
     <textarea id="caption" maxlength="280" rows="2" placeholder="Add a line about it (optional)" enterkeyhint="done"></textarea>
     <div class="caption-tools">
@@ -215,6 +234,7 @@
         <span class="mic-label" id="mic-label">Hold to talk</span>
       </button>
       <button class="lang-btn" id="lang" aria-label="Dictation language">EN</button>
+      <button class="lang-btn tidy-btn" id="tidy-btn" hidden aria-label="Tidy the caption with AI">✨ Tidy</button>
       <span class="mic-hint" id="mic-hint" hidden>Use your keyboard's mic to dictate.</span>
       <span class="count" id="count">0/280</span>
     </div>
@@ -268,7 +288,7 @@
   <div class="story-head">
     <div class="story-bars" id="story-bars"></div>
     <div class="story-top">
-      <div class="story-meta"><b id="story-title"></b><span id="story-when"></span></div>
+      <div class="story-meta"><b id="story-title"></b><i class="story-ai" id="story-ai"></i><span id="story-when"></span></div>
       <button class="pill-btn small light" id="story-reel" hidden>Make video</button>
       <button class="icon-btn light" id="story-close" aria-label="Close story">
         <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
@@ -288,12 +308,33 @@
   <button class="text-btn light" id="reel-cancel">Cancel</button>
 </div>
 
+<!-- ============ YEAR IN REVIEW ============ -->
+<section inert aria-hidden="true" id="year" class="screen" aria-label="Year in review">
+  <div class="year-scroll">
+    <header class="year-top">
+      <button class="icon-btn" id="year-close" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <div class="year-head"><span id="year-kicker">Year in review</span><h2 id="year-title"></h2></div>
+    </header>
+    <div class="year-stats" id="year-stats"></div>
+    <section class="year-story">
+      <h3 class="sec-title">Your year, in your words</h3>
+      <div class="year-text" id="year-text"></div>
+      <button class="pill-btn" id="year-write" hidden>Write my year in review</button>
+      <p class="year-note" id="year-note"></p>
+    </section>
+    <div class="year-actions">
+      <button class="pill-btn" id="year-play">Play your year</button>
+      <button class="pill-btn ghost" id="year-reel">Make year video</button>
+    </div>
+  </div>
+</section>
+
 <!-- ============ SETTINGS SHEET ============ -->
 <div class="scrim" id="scrim" hidden></div>
 <aside class="sheet" id="sheet" aria-label="Settings" hidden>
   <div class="sheet-handle"></div>
   <h2>Moments</h2>
-  <p class="privacy">Your photos, videos and captions stay on this phone. Only an anonymous visit count is kept, plus usage counts if you turn them on.</p>
+  <p class="privacy">Your photos, videos and captions stay on this phone. Only an anonymous visit count is kept, plus usage counts if you turn them on. With AI help on, caption text is sent for processing and not stored.</p>
 
   <div class="sheet-row">
     <div>
@@ -349,6 +390,23 @@
 
   <div class="sheet-row">
     <div>
+      <div class="row-title">Search by meaning</div>
+      <div class="row-sub" id="sem-line">Find photos by what's in them, like "rain" or "cake". Runs on this phone; downloads a 45 MB model once.</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="opt-semantic" aria-label="Search by meaning"><span></span></label>
+  </div>
+  <div class="meter" id="sem-meter" hidden><span id="sem-bar"></span></div>
+
+  <div class="sheet-row">
+    <div>
+      <div class="row-title">AI help</div>
+      <div class="row-sub">Tidies dictation and writes titles and your year in review. Sends caption text only, never photos, and nothing is kept.</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="opt-ai" aria-label="AI help"><span></span></label>
+  </div>
+
+  <div class="sheet-row">
+    <div>
       <div class="row-title">Share anonymous usage counts</div>
       <div class="row-sub">Counts like "a moment was saved". Never photos, videos or captions.</div>
     </div>
@@ -389,7 +447,7 @@
 <input type="file" id="file-capture" accept="image/*,video/*" capture="environment" hidden>
 <input type="file" id="file-import" accept=".zip,application/zip" hidden>
 
-<script src="app.js?v=7"></script>
+<script src="app.js?v=8"></script>
 <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

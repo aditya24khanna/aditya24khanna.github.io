@@ -74,9 +74,9 @@ const store = (() => {
         if (hard) ms.delete(id);
         else if (m) ms.put({ ...m, deleted: true, caption: '', tags: [], mood: '', voice: undefined, updatedAt: new Date().toISOString(), syncState: 'local' });
         const md = t.objectStore('media');
-        md.delete(id); md.delete(id + ':thumb'); md.delete(id + ':voice');
+        md.delete(id); md.delete(id + ':thumb'); md.delete(id + ':voice'); md.delete(id + ':emb');
         const n = m && m.parts ? m.parts.length : 0;
-        for (let k = 1; k <= n; k++) { md.delete(`${id}#${k}`); md.delete(`${id}#${k}:thumb`); }
+        for (let k = 1; k <= n; k++) { md.delete(`${id}#${k}`); md.delete(`${id}#${k}:thumb`); md.delete(`${id}#${k}:emb`); }
       });
     },
     // Drafts: shots at __draft#k (+ :thumb), voice at __draft:voice. Old single-shot drafts used __draft.
@@ -99,6 +99,17 @@ const store = (() => {
       });
     },
     clearDraft: () => tx(['media'], 'readwrite', (t) => { t.objectStore('media').delete(IDBKeyRange.bound('__draft', '__draft\uffff')); }),
+    // Search-by-meaning vectors live next to the media they describe: <key>:emb
+    putEmbedding: (key, vec) => tx(['media'], 'readwrite', (t) => { t.objectStore('media').put(vec, key + ':emb'); }),
+    async getEmbeddings() {
+      return tx(['media'], 'readonly', async (t) => {
+        const ms = t.objectStore('media');
+        const keys = (await req(ms.getAllKeys())).filter((k) => typeof k === 'string' && k.endsWith(':emb'));
+        const out = new Map();
+        for (const k of keys) out.set(k.slice(0, -4), await req(ms.get(k)));
+        return out;
+      });
+    },
     async clearAll() {
       return tx(['memories', 'media'], 'readwrite', (t) => { t.objectStore('memories').clear(); t.objectStore('media').clear(); });
     },
@@ -205,7 +216,7 @@ const metrics = (() => {
 /* =========================================================
    NAV
    ========================================================= */
-const screens = ['feed', 'camera', 'compose', 'viewer', 'story'];
+const screens = ['feed', 'camera', 'compose', 'viewer', 'story', 'year'];
 function show(name) {
   for (const s of screens) {
     const el = $('#' + s);
@@ -919,7 +930,7 @@ const speech = (() => {
       else if (e.error === 'network') toast('Dictation needs a connection on this browser.');
       else if (e.error !== 'no-speech' && e.error !== 'aborted') toast("Didn't catch that. Try again.");
     };
-    rec.onend = () => { setUI(false); rec = null; stopAudio(true); };
+    rec.onend = () => { setUI(false); rec = null; stopAudio(true); updateTidy(); };
     try { rec.start(); setUI(true); label('Listening\u2026'); haptic(); startAudio(); } catch (_) { setUI(false); }
   }
   function stop() { if (rec) { try { rec.stop(); } catch (_) {} } else stopAudio(true); setUI(false); }
@@ -1010,7 +1021,9 @@ async function openCompose(draft) {
   $('#compose-when').textContent = fullLabel(new Date(draft.createdAt));
   $('#voice-ask').hidden = true;
   $('#mood-pop').hidden = true; $('#tag-entry').hidden = true;
+  $('#tidy-box').hidden = true;
   updateCount();
+  updateTidy();
   await renderComposeMedia();
   renderMetaChips();
   show('compose');
@@ -1304,6 +1317,7 @@ $('#compose-save').onclick = async () => {
           metrics.event('week_filled');
         } else toast('Saved');
         metrics.saved(m, secs);
+        semantic.onSaved(m);
         if (shots.length > 1) metrics.event('multi_shot_saved');
         if (m.mood) metrics.event('mood_set');
         if (m.tags.length) metrics.event('tags_set');
@@ -1505,6 +1519,7 @@ async function commitDelete() {
   clearTimeout(p.timer);
   state.pendingDelete = null;
   dropURLs(p.memory.id);
+  semantic.forget(p.memory);
   await store.remove(p.memory.id);
 }
 function undoDelete() {
@@ -1666,6 +1681,7 @@ async function importBackup(file) {
       cur ? updated++ : added++;
     }
     await reload();
+    semantic.indexAll();
     toast(added || updated ? `Imported ${added} new${updated ? `, ${updated} updated` : ''}` : 'Everything was already here.');
   } catch (e) {
     toast("That file isn't a Moments backup.");
@@ -1758,6 +1774,9 @@ async function openSheet() {
     ? `Last backup: ${daysSince(last) === 0 ? 'today' : daysSince(last) === 1 ? 'yesterday' : daysSince(last) + ' days ago'}.`
     : 'No backup yet. One .zip with every photo, video and caption.';
   $('#opt-metrics').checked = metrics.optedIn();
+  $('#opt-semantic').checked = semantic.on();
+  $('#opt-ai').checked = aiCloud.on();
+  semantic.ui();
   renderStats();
 }
 function renderStats() {
@@ -1945,6 +1964,8 @@ const player = (() => {
     segs = group.items.flatMap((m) => Array.from({ length: partCount(m) }, (_, p) => ({ m, p })));
     markSeen(group);
     $('#story-title').textContent = group.title;
+    $('#story-ai').textContent = group.aiTitle || '';
+    if (!group.aiTitle) aiCloud.titleFor(group).then((t) => { if (t && g === group) $('#story-ai').textContent = t; });
     $('#story-reel').hidden = !(group.reel && group.items.length >= 3 && window.MediaRecorder && HTMLCanvasElement.prototype.captureStream);
     $('#story-bars').innerHTML = segs.map(() => '<i><b></b></i>').join('');
     show('story');
@@ -2125,6 +2146,11 @@ function openDay(date, items) {
 function renderCalendar() {
   const now = new Date();
   const map = byDay();
+  const yd = yearData(now.getFullYear());
+  $('#year-card').hidden = yd.moments < 3;
+  $('#year-card-k').textContent = now.getMonth() === 11 ? `Your ${now.getFullYear()} in review` : 'Your year so far';
+  $('#year-card-title').textContent = `${yd.moments} moments`;
+  $('#year-card-sub').textContent = `${yd.days} days \u00b7 tap for your year in review`;
   // week card
   const ws = startOfWeek();
   const days = captureDaysInWeek(ws);
@@ -2293,7 +2319,7 @@ async function makeReel(group) {
       if (reelCancel) return resolve();
       const s = segs[k];
       const t = performance.now() - segStart;
-      if (s.kind === 'title') card(group.title, range);
+      if (s.kind === 'title') card(group.aiTitle || group.title, group.aiTitle ? `${group.title} \u00b7 ${range}` : range);
       else if (s.kind === 'end') card('Moments', `${items.length} moment${items.length > 1 ? 's' : ''} · ${range}`);
       else {
         ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
@@ -2541,9 +2567,11 @@ $('#col-play').onclick = () => {
   const items = asc(albums.items(c.id));
   if (items.length) player.open({ key: 'album:' + c.id, title: c.name, items, reel: true });
 };
-$('#col-reel').onclick = () => {
+$('#col-reel').onclick = async () => {
   const c = albums.get(state.openAlbum); if (!c) return;
-  makeReel({ key: 'album', title: c.name, items: asc(albums.items(c.id)) });
+  const group = { key: 'album:' + c.id, title: c.name, items: asc(albums.items(c.id)) };
+  await aiCloud.titleFor(group, 4000);
+  makeReel(group);
 };
 
 /* =========================================================
@@ -2585,6 +2613,38 @@ function renderSearch() {
   $('#s-empty').textContent = state.memories.length ? 'Nothing matches.' : 'Your moments will show up here.';
   thumbGrid($('#results'), res, (m) => openViewer(m.id, res));
   $('#results').setAttribute('aria-label', active ? `${res.length} results` : 'All moments');
+  renderMeaning(res);
+}
+let semToken = 0;
+async function renderMeaning(captionHits) {
+  const q = $('#sq').value.trim();
+  const sec = $('#sem-sec');
+  const usable = q.length >= 3 && !q.startsWith('#');
+  $('#sem-hint').hidden = !(usable && !semantic.on() && state.memories.length >= 3);
+  if (!usable || semantic.status() !== 'ready') { sec.hidden = true; return; }
+  const my = ++semToken;
+  let hits;
+  try { hits = await semantic.search(q); } catch (_) { sec.hidden = true; return; }
+  if (my !== semToken) return;
+  const seen = new Set(captionHits.map((m) => m.id));
+  const list = hits.filter((m) => !seen.has(m.id) && (!state.filters.size || searchResultsFilter(m)));
+  sec.hidden = !list.length;
+  $('#sem-title').textContent = `Looks like \u201C${q}\u201D`;
+  thumbGrid($('#sem-results'), list, (m) => openViewer(m.id, list));
+  const pending = semantic.pendingCount();
+  $('#sem-note').textContent = pending ? `Still learning ${pending} older photo${pending > 1 ? 's' : ''}\u2026` : '';
+  metrics.event('semantic_search');
+  if (!list.length && $('#s-empty').hidden === false) $('#s-empty').textContent = 'Nothing matches.';
+}
+function searchResultsFilter(m) {
+  for (const f of state.filters) {
+    if (f === 'voice' && !m.voice) return false;
+    if (f === 'video' && m.type !== 'video' && !(m.parts || []).some((pt) => pt.type === 'video')) return false;
+    if (f === 'fav' && !m.favorite) return false;
+    if (f.startsWith('mood:') && m.mood !== f.slice(5)) return false;
+    if (f.startsWith('tag:') && !(m.tags || []).includes(f.slice(4))) return false;
+  }
+  return true;
 }
 $('#filters').addEventListener('click', (e) => {
   const b = e.target.closest('.filter'); if (!b) return;
@@ -2665,6 +2725,299 @@ async function shareCard(m, p = 0) {
   toast('Card saved');
 }
 
+
+/* =========================================================
+   SEARCH BY MEANING — MobileCLIP on this phone, in a worker
+   ========================================================= */
+const semantic = (() => {
+  let worker = null, seq = 0, backend = null, st = 'off', indexing = false, embs = null, todo = 0, done = 0;
+  const pending = new Map(), files = new Map();
+  const on = () => localStorage.getItem('moments.semantic') === '1';
+  function call(type, payload = {}) {
+    if (backend) return backend(type, payload);
+    if (!worker) {
+      worker = new Worker('ai-worker.js', { type: 'module' });
+      worker.onmessage = (e) => {
+        const d = e.data;
+        if (d.type === 'progress') { files.set(d.file, d); ui(); return; }
+        const p = pending.get(d.id); if (!p) return;
+        pending.delete(d.id);
+        d.type === 'error' ? p.rej(new Error(d.message)) : p.res(d);
+      };
+      worker.onerror = () => { for (const p of pending.values()) p.rej(new Error('worker failed')); pending.clear(); worker = null; st = on() ? 'error' : 'off'; ui(); };
+    }
+    const id = ++seq;
+    return new Promise((res, rej) => { pending.set(id, { res, rej }); worker.postMessage({ id, type, ...payload }); });
+  }
+  function ui() {
+    const line = $('#sem-line'), meter = $('#sem-meter');
+    if (!line) return;
+    let pct = 0;
+    if (st === 'loading') {
+      let l = 0, t = 0; for (const f of files.values()) { l += f.loaded; t += f.total; }
+      pct = t ? Math.round((l / t) * 100) : 0;
+      line.textContent = t ? `Downloading the model… ${pct}% (once only)` : 'Getting the model ready…';
+    } else if (st === 'ready') {
+      pct = todo ? Math.round((done / todo) * 100) : 100;
+      line.textContent = indexing && todo ? `Learning your photos… ${done} of ${todo}` : `On. ${embs ? embs.size : 0} photos searchable, all on this phone.`;
+    } else if (st === 'error') {
+      line.textContent = 'Couldn’t load the model. Check your connection and try again.';
+    } else {
+      line.textContent = 'Find photos by what’s in them, like "rain" or "cake". Runs on this phone; downloads a 45 MB model once.';
+    }
+    meter.hidden = !(st === 'loading' || (st === 'ready' && indexing));
+    $('#sem-bar').style.width = pct + '%';
+  }
+  async function enable() {
+    if (st === 'ready' || st === 'loading') return;
+    st = 'loading'; files.clear(); ui();
+    try {
+      await call('init');
+      st = 'ready';
+      embs = await store.getEmbeddings();
+      ui();
+      indexAll();
+    } catch (_) { st = 'error'; ui(); }
+  }
+  function disable() {
+    st = 'off';
+    if (worker) { worker.terminate(); worker = null; }
+    pending.clear(); ui();
+  }
+  const keysFor = (m) => Array.from({ length: partCount(m) }, (_, p) => partKey(m, p));
+  async function indexAll() {
+    if (indexing || st !== 'ready') return;
+    indexing = true;
+    const queue = [];
+    for (const m of state.memories) for (const k of keysFor(m)) if (!embs.has(k)) queue.push(k);
+    todo = queue.length; done = 0; ui();
+    for (const key of queue) {
+      if (st !== 'ready') break;
+      try {
+        const blob = (await store.getMedia(key, true)) || (await store.getMedia(key));
+        if (blob && blob.type.startsWith('image')) {
+          const { vec } = await call('image', { blob });
+          embs.set(key, vec);
+          await store.putEmbedding(key, vec);
+        }
+      } catch (_) {}
+      done++;
+      if (done % 3 === 0 || done === todo) ui();
+      await new Promise((r) => setTimeout(r, 0));
+    }
+    indexing = false; todo = 0; done = 0; ui();
+    if (state.tab === 'search') renderSearch();
+  }
+  // Scores are cosine similarity; keep the strong matches only.
+  const MIN_SCORE = 0.2, SPREAD = 0.06, MAX_HITS = 30;
+  async function search(q) {
+    if (st !== 'ready' || !embs || !embs.size) return [];
+    const { vec } = await call('text', { text: q });
+    const scored = [];
+    for (const m of state.memories) {
+      let best = -1;
+      for (const k of keysFor(m)) {
+        const e = embs.get(k); if (!e) continue;
+        let d = 0; for (let i = 0; i < e.length; i++) d += e[i] * vec[i];
+        if (d > best) best = d;
+      }
+      if (best > -1) scored.push([best, m]);
+    }
+    scored.sort((a, b) => b[0] - a[0]);
+    if (!scored.length) return [];
+    const top = scored[0][0];
+    state.lastSemScores = scored.slice(0, 10).map(([sc, m]) => [Math.round(sc * 1000) / 1000, m.caption.slice(0, 30)]);
+    return scored.filter(([sc]) => sc >= MIN_SCORE && sc >= top - SPREAD).slice(0, MAX_HITS).map(([, m]) => m);
+  }
+  return {
+    on, enable, disable, search, indexAll, ui,
+    status: () => st,
+    pendingCount: () => (indexing ? todo - done : 0),
+    onSaved: () => { if (st === 'ready') setTimeout(indexAll, 500); },
+    forget: (m) => { if (embs) for (const k of keysFor(m)) embs.delete(k); },
+    setBackend: (fn) => { backend = fn; },
+  };
+})();
+$('#opt-semantic').onchange = (e) => {
+  localStorage.setItem('moments.semantic', e.target.checked ? '1' : '0');
+  if (e.target.checked) { semantic.enable(); metrics.event('semantic_on'); } else semantic.disable();
+};
+
+/* =========================================================
+   AI HELP — caption text only, via your Cloudflare worker
+   ========================================================= */
+const aiCloud = (() => {
+  const on = () => localStorage.getItem('moments.ai') === '1' && !!CONFIG.pushURL;
+  async function call(path, body, timeout = 15000) {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), timeout);
+    try {
+      const r = await fetch(CONFIG.pushURL + '/ai/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctl.signal });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || 'ai ' + r.status);
+      return j;
+    } finally { clearTimeout(t); }
+  }
+  const cacheGet = (k) => { try { return (JSON.parse(localStorage.getItem('moments.aititles')) || {})[k]; } catch (_) { return null; } };
+  const cacheSet = (k, v) => { try { const c = JSON.parse(localStorage.getItem('moments.aititles')) || {}; c[k] = v; const keys = Object.keys(c); if (keys.length > 60) delete c[keys[0]]; localStorage.setItem('moments.aititles', JSON.stringify(c)); } catch (_) {} };
+  // Titles for weeks, favourites, albums and years: written from the person's own captions.
+  async function titleFor(group, timeout = 12000) {
+    if (!on() || !group || group.items.length < 3 || !/^(week|favs|album|year)/.test(group.key)) return '';
+    const caps = group.items.map((m) => m.caption).filter(Boolean);
+    if (caps.length < 2) return '';
+    const sig = group.key + ':' + group.items.map((m) => m.id.slice(-6) + (m.caption || '').length).join('');
+    const cached = cacheGet(sig);
+    if (cached != null) { group.aiTitle = cached; return cached; }
+    try {
+      const { title } = await call('title', { captions: caps.slice(-40) }, timeout);
+      cacheSet(sig, title || '');
+      if (title) { group.aiTitle = title; metrics.event('ai_title'); }
+      return title || '';
+    } catch (_) { return ''; }
+  }
+  return { on, call, titleFor };
+})();
+$('#opt-ai').onchange = (e) => {
+  localStorage.setItem('moments.ai', e.target.checked ? '1' : '0');
+  if (e.target.checked) { metrics.event('ai_on'); toast('AI help on. Only caption text is sent.'); }
+  updateTidy();
+};
+
+// Tidy dictation: suggestion shown first; the person chooses.
+function updateTidy() {
+  const show = aiCloud.on() && !!state.draft && $('#caption').value.trim().length >= 3;
+  $('#tidy-btn').hidden = !show;
+}
+$('#caption').addEventListener('input', updateTidy);
+$('#tidy-btn').onclick = async () => {
+  const b = $('#tidy-btn');
+  const text = $('#caption').value.trim();
+  if (!text || b.getAttribute('aria-busy') === 'true') return;
+  b.setAttribute('aria-busy', 'true'); b.textContent = '✨ Tidying…';
+  try {
+    const r = await aiCloud.call('tidy', { text });
+    if (r.changed && r.text && r.text !== text) {
+      $('#tidy-text').textContent = r.text;
+      $('#tidy-box').hidden = false;
+      metrics.event('ai_tidy');
+    } else toast(r.rejected ? 'Kept yours: the tidy changed too much.' : 'Already tidy.');
+  } catch (_) { toast('AI help isn’t reachable right now.'); }
+  b.removeAttribute('aria-busy'); b.textContent = '✨ Tidy';
+};
+$('#tidy-accept').onclick = () => {
+  $('#caption').value = $('#tidy-text').textContent.slice(0, 280);
+  $('#tidy-box').hidden = true;
+  updateCount(); saveDraftCaption();
+  metrics.event('ai_tidy_used');
+};
+$('#tidy-reject').onclick = () => { $('#tidy-box').hidden = true; };
+
+/* =========================================================
+   YEAR IN REVIEW — counts on the phone; the written part is AI help
+   ========================================================= */
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function yearData(y) {
+  const items = state.memories.filter((m) => new Date(m.createdAt).getFullYear() === y);
+  const days = new Set(items.map((m) => dayKey(new Date(m.createdAt))));
+  const count = (arr) => { const c = new Map(); arr.forEach((x) => c.set(x, (c.get(x) || 0) + 1)); return [...c.entries()].sort((a, b) => b[1] - a[1]); };
+  const moods = count(items.map((m) => m.mood).filter(Boolean));
+  const tags = count(items.flatMap((m) => m.tags || []));
+  const byMonth = MONTHS.map(() => []);
+  items.forEach((m) => byMonth[new Date(m.createdAt).getMonth()].push(m));
+  const busiest = byMonth.reduce((best, arr, i) => (arr.length > best[1] ? [i, arr.length] : best), [-1, 0]);
+  return {
+    year: y, items: asc(items), moments: items.length, days: days.size,
+    favs: items.filter((m) => m.favorite).length, voices: items.filter((m) => m.voice).length,
+    shots: items.reduce((n, m) => n + partCount(m), 0),
+    moods: moods.slice(0, 3).map(([k]) => k), tags: tags.slice(0, 5).map(([k]) => k),
+    busiest: busiest[0] >= 0 ? MONTHS[busiest[0]] : '–', byMonth,
+  };
+}
+function yearStory(yd) {
+  // Favourites first, then one moment per month (the one with the most to say), in time order.
+  const pick = new Map();
+  yd.items.filter((m) => m.favorite).forEach((m) => pick.set(m.id, m));
+  yd.byMonth.forEach((arr) => {
+    if (!arr.length) return;
+    const best = [...arr].sort((a, b) => (b.caption || '').length - (a.caption || '').length)[0];
+    pick.set(best.id, best);
+  });
+  return asc([...pick.values()]).slice(0, 40);
+}
+function openYear() {
+  const y = new Date().getFullYear();
+  const yd = yearData(y);
+  state.yearData = yd;
+  $('#year-kicker').textContent = new Date().getMonth() === 11 ? 'Year in review' : 'Your year so far';
+  $('#year-title').textContent = `${y} in moments`;
+  const cells = [
+    [yd.moments, 'moments'], [yd.days, 'days with a moment'], [yd.busiest, 'busiest month'],
+    [yd.moods.join(' ') || '–', 'top moods'], [yd.favs, 'favourites'], [yd.voices, 'voice notes kept'],
+  ];
+  $('#year-stats').innerHTML = cells.map(([v, l]) => `<div class="ys"><b>${escapeHTML(String(v))}</b><span>${l}</span></div>`).join('')
+    + (yd.tags.length ? `<div class="ys" style="grid-column:1/-1"><b style="font-size:17px;white-space:normal">${yd.tags.map((t) => '#' + escapeHTML(t)).join(' ')}</b><span>your most used tags</span></div>` : '');
+  renderYearText(yd);
+  $('#year-reel').hidden = !(window.MediaRecorder && HTMLCanvasElement.prototype.captureStream) || yd.moments < 3;
+  show('year');
+  metrics.event('year_opened');
+}
+function yearSig(yd) { return yd.moments + ':' + yd.items.map((m) => (m.caption || '').length).join('').slice(-80); }
+function renderYearText(yd) {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem('moments.year.' + yd.year)); } catch (_) {}
+  const box = $('#year-text'), btn = $('#year-write'), note = $('#year-note');
+  box.textContent = '';
+  if (saved && saved.text) {
+    box.textContent = saved.text;
+    box.insertAdjacentHTML('beforeend', '<span class="ai-tag">Written by AI help from your captions.</span>');
+  }
+  const captioned = yd.items.filter((m) => m.caption).length;
+  if (!aiCloud.on()) {
+    btn.hidden = true;
+    note.textContent = saved ? '' : 'Turn on AI help in ••• Settings to get a short written look back, built only from your captions.';
+  } else if (captioned < 5) {
+    btn.hidden = true;
+    note.textContent = 'Add captions to a few more moments and a written look back will be possible.';
+  } else {
+    btn.hidden = false;
+    btn.textContent = saved ? (saved.sig === yearSig(yd) ? 'Write it again' : 'Update with new moments') : 'Write my year in review';
+    note.textContent = 'Only your captions and the counts above are sent. Nothing is stored.';
+  }
+}
+$('#year-write').onclick = async () => {
+  const yd = state.yearData; if (!yd) return;
+  const btn = $('#year-write');
+  btn.disabled = true; btn.textContent = 'Writing…';
+  try {
+    const months = yd.byMonth.map((arr, i) => ({
+      month: MONTHS[i],
+      captions: [...arr].sort((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0) || (b.caption || '').length - (a.caption || '').length).map((m) => m.caption).filter(Boolean).slice(0, 8),
+    })).filter((m) => m.captions.length);
+    const { text } = await aiCloud.call('year', { year: String(yd.year), months, stats: { moments: yd.moments, days: yd.days, moods: yd.moods, tags: yd.tags } }, 30000);
+    if (text) {
+      localStorage.setItem('moments.year.' + yd.year, JSON.stringify({ text, sig: yearSig(yd), at: Date.now() }));
+      metrics.event('ai_year');
+    } else toast('Couldn’t write it this time.');
+  } catch (_) { toast('AI help isn’t reachable right now.'); }
+  btn.disabled = false;
+  renderYearText(yd);
+};
+$('#year-card').onclick = openYear;
+$('#year-close').onclick = () => { show('feed'); };
+$('#year-play').onclick = () => {
+  const yd = state.yearData; if (!yd) return;
+  const items = yearStory(yd);
+  if (items.length) player.open({ key: 'year:' + yd.year, title: `${yd.year} in moments`, items, reel: true });
+};
+$('#year-reel').onclick = async () => {
+  const yd = state.yearData; if (!yd) return;
+  const group = { key: 'year:' + yd.year, title: `${yd.year} in moments`, items: yearStory(yd) };
+  await aiCloud.titleFor(group, 4000);
+  makeReel(group);
+};
+
+// Test hook (no effect in normal use)
+window.__moments = { semantic, aiCloud, state };
 // A reminder (or its notification) asks us to open somewhere specific.
 function handleOpen(where) {
   if (where === 'camera') { state.captureStart = performance.now(); openCamera(); return; }
@@ -2707,6 +3060,7 @@ document.body.classList.add('on-feed');
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
+  if (semantic.on()) setTimeout(() => semantic.enable(), 2500); // model comes from the browser cache after the first time
   if (isStandalone() && !localStorage.getItem('moments.standaloneSeen')) {
     localStorage.setItem('moments.standaloneSeen', '1');
     metrics.event('opened_installed');
