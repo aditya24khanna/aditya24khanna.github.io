@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Moments</title>
-<link rel="stylesheet" href="styles.css?v=8">
+<link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
 
@@ -115,6 +115,10 @@
   <div id="col-view" hidden>
     <div id="col-list">
       <h2 class="view-title">Albums</h2>
+      <button class="print-card" id="print-card">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13z"/></svg>
+        <span><b>Make a printed photo book</b><i>Pick a size, answer a few questions, get a print-ready PDF.</i></span>
+      </button>
       <div class="col-grid" id="col-grid"></div>
     </div>
     <div id="col-detail" hidden>
@@ -130,6 +134,7 @@
       <div class="col-actions">
         <button class="pill-btn" id="col-play">Play</button>
         <button class="pill-btn ghost" id="col-reel">Make video</button>
+        <button class="pill-btn ghost" id="col-print">Print</button>
       </div>
       <div class="results" id="col-items"></div>
       <p class="s-empty" id="col-empty" hidden>Add moments from the viewer's ••• menu or when you save.</p>
@@ -326,7 +331,23 @@
       <button class="pill-btn" id="year-play">Play your year</button>
       <button class="pill-btn ghost" id="year-reel">Make year video</button>
     </div>
+    <div class="year-actions"><button class="pill-btn ghost" id="year-print">Print your year as a book</button></div>
   </div>
+</section>
+
+<!-- ============ PHOTO BOOK MAKER ============ -->
+<section inert aria-hidden="true" id="book" class="screen" aria-label="Make a photo book">
+  <header class="book-top">
+    <button class="icon-btn" id="book-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="book-head"><span id="book-step-k"></span><h2 id="book-step-t"></h2></div>
+    <button class="icon-btn" id="book-close" aria-label="Close the book maker"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </header>
+  <div class="book-dots" id="book-dots"></div>
+  <div class="book-body" id="book-body"></div>
+  <footer class="book-foot">
+    <span class="book-sum" id="book-sum"></span>
+    <button class="pill-btn" id="book-next">Next</button>
+  </footer>
 </section>
 
 <!-- ============ SETTINGS SHEET ============ -->
@@ -447,7 +468,8 @@
 <input type="file" id="file-capture" accept="image/*,video/*" capture="environment" hidden>
 <input type="file" id="file-import" accept=".zip,application/zip" hidden>
 
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
+<script src="book.js?v=9"></script>
 <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

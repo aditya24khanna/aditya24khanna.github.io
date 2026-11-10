@@ -216,7 +216,7 @@ const metrics = (() => {
 /* =========================================================
    NAV
    ========================================================= */
-const screens = ['feed', 'camera', 'compose', 'viewer', 'story', 'year'];
+const screens = ['feed', 'camera', 'compose', 'viewer', 'story', 'year', 'book'];
 function show(name) {
   for (const s of screens) {
     const el = $('#' + s);
@@ -2524,6 +2524,7 @@ function renderAlbums() {
     $('#col-count').textContent = `${items.length} moment${items.length === 1 ? '' : 's'}`;
     $('#col-play').disabled = !items.length;
     $('#col-reel').hidden = items.length < 3 || !(window.MediaRecorder && HTMLCanvasElement.prototype.captureStream);
+    $('#col-print').hidden = !items.length;
     $('#col-empty').hidden = items.length > 0;
     thumbGrid($('#col-items'), items, (m) => openViewer(m.id, items));
     return;
@@ -2958,6 +2959,7 @@ function openYear() {
     + (yd.tags.length ? `<div class="ys" style="grid-column:1/-1"><b style="font-size:17px;white-space:normal">${yd.tags.map((t) => '#' + escapeHTML(t)).join(' ')}</b><span>your most used tags</span></div>` : '');
   renderYearText(yd);
   $('#year-reel').hidden = !(window.MediaRecorder && HTMLCanvasElement.prototype.captureStream) || yd.moments < 3;
+  $('#year-print').hidden = yd.moments < 1;
   show('year');
   metrics.event('year_opened');
 }

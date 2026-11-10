@@ -1,10 +1,11 @@
 /* Moments service worker: offline app shell + daily reminder notifications. */
-const VERSION = 'moments-v8';
+const VERSION = 'moments-v9';
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=8',
-  './app.js?v=8',
+  './styles.css?v=9',
+  './app.js?v=9',
+  './book.js?v=9',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
