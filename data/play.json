@@ -14,6 +14,19 @@
       "url": "play/",
       "linkLabel": "Ride today's road →",
       "note": "pothole-dash"
+    },
+    {
+      "title": "Aunty, Help me please!",
+      "status": "New",
+      "q": "What does that office email actually mean?",
+      "d": "Paste office jargon and a Punjabi aunty, Tamil mami, Bengali mashima or Gujarati masi tells you what it really means, in Hinglish or English. It works the other way too: \"Beta, khana kha lo\" becomes a corporate email. No sign-in.",
+      "tags": [
+        "Game",
+        "Hinglish",
+        "Office jargon"
+      ],
+      "url": "play/aunty/",
+      "linkLabel": "Ask an aunty →"
     }
   ]
 }

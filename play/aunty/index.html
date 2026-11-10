@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aunty, Help me please!</title>
+<meta name="description" content="Paste your office jargon. A Punjabi aunty, Tamil mami, Bengali mashima or Gujarati masi tells you what it really means.">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Hanken+Grotesk:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#fff;--grid:#DCE5F0;--ink:#14213D;--muted:#4a5875;--hl:#F4B740;--red:#C2452D;--card:#fff;--line:#14213D}
+@media (prefers-color-scheme:dark){:root{--paper:#0f1626;--grid:#1c2740;--ink:#E8EDF7;--muted:#a9b4cc;--card:#16203a;--line:#E8EDF7;--red:#ff7a5c}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:16px/1.5 "Hanken Grotesk",system-ui,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px 48px}
+.back{font:500 13px "JetBrains Mono",monospace;color:var(--ink);text-decoration:none;opacity:.75}
+.hero{margin:18px 0 18px}
+h1{font-size:clamp(30px,8vw,44px);line-height:1.05;margin:0 0 8px;font-weight:800;letter-spacing:-.02em}
+.hl{background:linear-gradient(transparent 55%,var(--hl) 55%);padding:0 2px;color:inherit}
+.sub{margin:0;color:var(--muted);font-size:17px}
+.pen{font:700 21px "Caveat",cursive;color:var(--red);margin:4px 0 0;transform:rotate(-1.5deg);display:inline-block}
+.card{background:var(--card);border:2px solid var(--line);border-radius:10px;box-shadow:4px 4px 0 var(--line);padding:16px;margin:0 0 20px}
+.lbl{display:block;font:500 12px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:16px 0 8px}
+.seg{display:flex;border:2px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink);font:600 15px "Hanken Grotesk",sans-serif;padding:10px 8px;cursor:pointer}
+.seg button+button{border-left:2px solid var(--line)}
+.seg button.on{background:var(--ink);color:var(--paper)}
+.seg.small button{font-size:14px;padding:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:7px 12px;font:600 14px "Hanken Grotesk",sans-serif;cursor:pointer}
+.chip.on{background:var(--hl);color:#14213D;border-color:var(--line)}
+textarea{width:100%;border:2px solid var(--line);border-radius:8px;padding:12px;font:16px/1.45 "Hanken Grotesk",sans-serif;background:var(--paper);color:var(--ink);resize:vertical}
+textarea:focus{outline:3px solid var(--hl);outline-offset:1px}
+.samples{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.samples button{border:1px dashed var(--muted);background:transparent;color:var(--muted);border-radius:6px;padding:4px 8px;font:13px "Hanken Grotesk",sans-serif;cursor:pointer;text-align:left}
+.privacy{font-size:13px;color:var(--muted);margin:10px 0 0}
+.go{display:block;width:100%;margin-top:14px;border:2px solid var(--line);background:var(--hl);color:#14213D;font:800 18px "Hanken Grotesk",sans-serif;padding:13px;border-radius:8px;box-shadow:3px 3px 0 var(--line);cursor:pointer}
+.go:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.go:disabled{opacity:.6;cursor:wait}
+.bubble{position:relative}
+.who{font:500 12px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px}
+.say{font-size:19px;line-height:1.45;margin:0;white-space:pre-wrap}
+.verdict{font:700 24px/1.2 "Caveat",cursive;color:var(--red);margin:14px 0 0;transform:rotate(-1deg)}
+.meter{margin-top:6px}
+.bar{height:14px;border:2px solid var(--line);border-radius:7px;overflow:hidden;background:var(--paper)}
+.fill{height:100%;background:repeating-linear-gradient(45deg,var(--hl) 0 8px,#e9a62a 8px 16px);width:0;transition:width .6s ease}
+.mrow{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;gap:8px}
+.mlabel{font-weight:800}
+.mscore{font:500 13px "JetBrains Mono",monospace;color:var(--muted)}
+.terms{list-style:none;padding:0;margin:0}
+.terms li{border-top:1px dashed var(--grid);padding:10px 0}
+.terms li:first-child{border-top:0}
+.term{font:500 14px "JetBrains Mono",monospace;background:var(--hl);color:#14213D;padding:1px 6px;border-radius:4px}
+.aline{margin:6px 0 2px}
+.plain{font-size:14px;color:var(--muted);margin:0}
+.orig{font-size:15px;color:var(--muted);white-space:pre-wrap;margin:0}
+mark{background:var(--hl);color:#14213D;border-radius:3px;padding:0 2px}
+.btn2{display:inline-block;margin-top:6px;border:2px solid var(--line);color:var(--ink);text-decoration:none;font-weight:800;padding:9px 14px;border-radius:8px;box-shadow:3px 3px 0 var(--line);background:var(--card);cursor:pointer;font-family:inherit;font-size:15px}
+.fine{font-size:13px;color:var(--muted);margin:8px 0 0}
+.full p{margin:0}
+.h3{font:500 12px "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px}
+.err{color:var(--red);font-weight:600}
+
+</style>
+</head>
+<body>
+<main class="wrap">
+  <a class="back" href="../../#play">← Play</a>
+  <header class="hero">
+    <h1><span class="hl">Aunty,</span> Help me please!</h1>
+    <p class="sub">Paste office jargon. An aunty tells you what it really means.</p>
+    <p class="pen">no sign-in, no nonsense (only yours)</p>
+  </header>
+
+  <section class="card controls">
+    <div class="seg" role="tablist" aria-label="Direction">
+      <button class="on" data-mode="to_aunty" role="tab">Office → Aunty</button>
+      <button data-mode="to_corporate" role="tab">Aunty → Office</button>
+    </div>
+
+    <p class="lbl">Pick your aunty</p>
+    <div class="chips" id="aunties">
+      <button class="chip on" data-a="p">🥛 Punjabi aunty</button>
+      <button class="chip" data-a="t">☕ Tamil mami</button>
+      <button class="chip" data-a="b">🐟 Bengali mashima</button>
+      <button class="chip" data-a="g">🫓 Gujarati masi</button>
+    </div>
+
+    <p class="lbl">She speaks</p>
+    <div class="seg small" id="lang">
+      <button class="on" data-l="hi">Hinglish</button>
+      <button data-l="en">English</button>
+    </div>
+
+    <label class="lbl" for="txt" id="txtLbl">Paste the office message</label>
+    <textarea id="txt" rows="5" maxlength="1200" placeholder="Let's take this offline and circle back EOD once we're aligned on the low-hanging fruit."></textarea>
+    <div class="samples" id="samples"></div>
+    <p class="privacy">Don't paste real names, client names or confidential emails. Aunty talks.</p>
+    <button class="go" id="go">Aunty, help me please!</button>
+  </section>
+
+  <section id="out" class="out" hidden></section>
+
+  <section class="card full">
+    <p><strong>Want her to rewrite your whole email?</strong> The full version handles any text, adds spice levels (Mild, Masala, Full tadka) and keeps a Hall of Fame.</p>
+    <a class="btn2" href="https://claude.ai/artifact/WAGQLkvLM4CxqEV3BqzG6q" rel="noopener">Open the full version →</a>
+    <p class="fine">Runs on your own Claude sign-in.</p>
+  </section>
+</main>
+
+<script>
+// Aunty, Help me please! — curated dictionary (no LLM). Keys: p=Punjabi, t=Tamil, b=Bengali, g=Gujarati. Each: [hinglish, english].
+const AUNTIES = {
+  p: { name: "Punjabi aunty", word: "puttar", hi: "Oye puttar", en: "Oye puttar" },
+  t: { name: "Tamil mami", word: "kanna", hi: "Aiyyo kanna", en: "Aiyyo kanna" },
+  b: { name: "Bengali mashima", word: "shona", hi: "Eki shona", en: "Eki shona" },
+  g: { name: "Gujarati masi", word: "beta", hi: "Kem cho beta", en: "Kem cho beta" }
+};
+
+const JARGON = [
+  { re: /circl(?:e|ing|ed) back/gi, plain: "We'll discuss later (maybe never).",
+    p: ["Baad mein baat karenge. Matlab jab tak shaadi ka card na aaye, tab tak nahi.", "Later, puttar, later. Same 'later' as your promise to call me back."],
+    t: ["Baad mein dekhenge. Jaise tumhara Carnatic class 'next month se' shuru hone wala tha.", "We'll see later, kanna. Same later as 'I'll restart Carnatic class next month'."],
+    b: ["Porey dekhbo. Matlab Durga Puja ke baad. Agle saal wali.", "Later, shona. In this house 'later' means after Puja. Next year's Puja."],
+    g: ["Pachhi vaat karishu. Navratri ke baad. Aur Navratri toh har saal aati hai.", "Chalo, later. After Navratri. Which comes every year, so, you understand."] },
+  { re: /\boffline\b/gi, plain: "Not in front of everyone.",
+    p: ["Haaye, sabke saamne nahi! Andar kamre mein aa, wahan daantungi.", "Not in front of the guests! Come inside, I'll scold you properly there."],
+    t: ["Enna idhu, sabke saamne? Kitchen mein aao, decoction banate-banate baat karenge.", "In front of everyone? Come to the kitchen, we'll talk while the decoction drips."],
+    b: ["Ki holo, adda mein yeh baat nahi. Baad mein, ghar pe, luchi ke saath.", "Not at the adda, baba. At home. With luchi. Privately."],
+    g: ["Su che? Sabke saamne nahi. Ghar aao, baat karte hain, thepla bhi kha lena.", "Not in public, beta. Come home, we'll talk. Take thepla also."] },
+  { re: /\bbandwidth\b/gi, plain: "I'm too busy.",
+    p: ["Is hafte teen shaadiyan, do sangeet, ek kitty. Bandwidth ki toh baat hi mat kar.", "Three weddings, two sangeets and a kitty party this week. Don't talk to me about bandwidth."],
+    t: ["Subah kolam, phir tiffin, phir tuition ka pickup. Time kahaan hai?", "Morning kolam, then tiffin, then tuition pickup. Where is the time, kanna?"],
+    b: ["Puja committee, Rabindrasangeet rehearsal, aur macher bazaar. Bandwidth? Kichhu nei.", "Puja committee, Rabindrasangeet rehearsal, fish market. Bandwidth? Nothing left, baba."],
+    g: ["Garba practice roz raat ko hai. Bandwidth nahi, bas dandiya hai.", "Garba practice every night, beta. No bandwidth. Only dandiya."] },
+  { re: /quick (?:sync|call|chat)/gi, plain: "A meeting that won't be quick.",
+    p: ["Bas paanch minute. Lassi pi le, paratha kha le, phir dedh ghante baad jaana.", "Just five minutes. Have lassi, have a paratha, then leave in ninety minutes."],
+    t: ["Two minutes only. Filter coffee thanda hone se pehle. Phir doosra coffee.", "Two minutes only, kanna. Before the coffee gets cold. Then the second coffee."],
+    b: ["Ek minute. Bengali ek minute: chaar cup cha aur poori political adda.", "One minute, shona. A Bengali minute: four cups of tea and a full political adda."],
+    g: ["Paanch minute. Fafda-jalebi aa raha hai, toh phir paanch aur.", "Five minutes, beta. Fafda-jalebi is coming, so five more after that."] },
+  { re: /\balign(?:ed|ment|ing)?\b/gi, plain: "Make sure everyone agrees.",
+    p: ["Saare rishtedaaron se pehle pooch lo, varna bua poori shaadi mein naraz baithi rahegi.", "Ask all the relatives first, or bua will sit sulking through the whole wedding."],
+    t: ["Pehle jathagam match karo. Saare grah aligned hone chahiye, warna kuch nahi hoga.", "First match the horoscopes, kanna. All planets must be aligned, otherwise nothing happens."],
+    b: ["Shobai ke ek saath bithao. Teen Bengali, paanch opinion. Best of luck.", "Get everyone in one room. Three Bengalis, five opinions. Best of luck, baba."],
+    g: ["Poore khandaan ka WhatsApp group bana do. Wahan sab agree karenge. (Kabhi nahi.)", "Make a family WhatsApp group, beta. Everyone will agree there. (Never.)"] },
+  { re: /synerg(?:y|ies|istic|ise|ize)/gi, plain: "Two teams working together (hopefully).",
+    p: ["Dono families mil ke ek hall mein shaadi karein toh kharcha aadha. Yahi hai synergy.", "Two families share one wedding hall, cost becomes half. That is synergy, puttar."],
+    t: ["Idli aur sambar. Alag alag kuch nahi, saath mein perfect. Yeh hai synergy.", "Idli and sambar. Separately nothing, together perfect. That is synergy, kanna."],
+    b: ["Luchi aur aloor dom. Ekla kichhu na. Synergy humne invent kiya, shona.", "Luchi and aloor dom. Alone, nothing. Together, poetry. We invented synergy, shona."],
+    g: ["Dhokla aur chutney. Ek ke bina doosra adhoora. Synergy.", "Dhokla and chutney, beta. One without the other is incomplete. Synergy."] },
+  { re: /low[- ]hanging fruits?/gi, plain: "The easy wins first.",
+    p: ["Pehle aasaan kaam kar. Sharma ji ka beta bhi wahi karta hai, phir bhi topper hai.", "Do the easy work first. Sharma ji's son does that and still tops."],
+    t: ["Pehle easy questions solve karo. Sharma ji ka beta bhi aise hi rank laaya.", "Solve the easy questions first, kanna. That's how Sharma ji's son got his rank."],
+    b: ["Neeche wala aam pehle tod. Upar wale ke liye ladder kal aayega.", "Pick the low mangoes first, baba. The ladder for the high ones comes tomorrow."],
+    g: ["Pehle dhokla banao, aasaan hai. Undhiyu ke liye poora din chahiye.", "Make dhokla first, beta, it's easy. Undhiyu needs a full day."] },
+  { re: /deep[- ]dive/gi, plain: "Look into it in detail.",
+    p: ["Poori kundli nikaal! Kaun hai, kya karta hai, kitna kamaata hai, gaadi kaunsi hai.", "Pull out the full biodata. Who, what, salary, which car."],
+    t: ["Poora jathagam nikaalo. Nakshatra, rashi, tenth ke marks, sab.", "Full horoscope, kanna. Star, rashi, tenth-standard marks, everything."],
+    b: ["Eta niye ek ghanta adda hobe. Phir bhi conclusion nahi niklega.", "This needs a one-hour adda, baba. There will still be no conclusion."],
+    g: ["Poori family tree nikaalo. Kaun kiska kya lagta hai, sab.", "Pull out the whole family tree, beta. Who is whose what, all of it."] },
+  { re: /move[sd]? the needle/gi, plain: "Make a real difference.",
+    p: ["Sirf baatein mat bana. Kuch karke dikha, phir poore mohalle ko bataungi.", "Stop talking, puttar. Do something. Then I'll tell the whole colony."],
+    t: ["Sirf 90 se kya hoga? 98 laao, tab needle hilega.", "What will 90 do, kanna? Bring 98, then the needle moves."],
+    b: ["Kichhu korbe na shudhu bolbe? Sirf kavita likhne se needle nahi hilta.", "Will you do something or just talk? Poetry alone doesn't move the needle, shona."],
+    g: ["Needle hilana hai toh pehle sui mein dhaaga daalo. Seedhi baat.", "Want to move the needle, beta? First thread it. Simple."] },
+  { re: /(?:as )?per my (?:last|previous|earlier) (?:e-?mail|mail|message|note)/gi, plain: "I already told you. Read it.",
+    p: ["Maine pehle hi bola tha na? Is ghar mein koi meri sunta hi nahi!", "I told you already, no? Nobody in this house listens to me!"],
+    t: ["Aiyyo, pichle hafte hi bola tha. Kaan mein kya daala hai?", "Aiyyo, I said this last week only. Kanna, what is in your ears?"],
+    b: ["Ami toh agei bolechhilam. Kintu mashima ki kaun sunta hai?", "I said it before, shona. But who listens to mashima?"],
+    g: ["Family group pe forward kiya tha. Padha nahi? Blue tick dikh raha hai.", "I forwarded it on the family group, beta. Didn't read? I can see the blue ticks."] },
+  { re: /\bpivot(?:ing|ed|s)?\b/gi, plain: "The plan failed; new plan.",
+    p: ["Engineering nahi chali toh MBA kar le. Sab wahi karte hain.", "Engineering didn't work out? Do an MBA. Everyone does, puttar."],
+    t: ["Medical nahi mila? Engineering. Woh bhi nahi? CA. Mami ke paas plan B se Z tak hai.", "No medical seat? Engineering, kanna. Not that also? CA. Mami has plan B to Z."],
+    b: ["Engineer na hole, poet hoye jao. Dono respectable hain.", "Not an engineer? Become a poet, shona. Both are respectable."],
+    g: ["Khaman nahi phoola? Sev khamani bol do. Naam naya, dish wahi.", "Khaman didn't rise, beta? Call it sev khamani. New name, same dish."] },
+  { re: /\bleverag(?:e|es|ed|ing)\b/gi, plain: "Use what you already have.",
+    p: ["Mama ji ki pehchaan hai na, use kar. Itni badi family kis kaam ki?", "Your mama ji knows people, use him. What's the point of such a big family?"],
+    t: ["Periyappa ki jaan-pehchaan use karo. Sab karte hain, bas bolte nahi.", "Use periyappa's contacts, kanna. Everyone does it, they just don't say it."],
+    b: ["Mama-r chena-jana ache. Thoda use koro. Lajja ki baat nahi.", "Your mama knows people. Use a little, shona. Nothing to be shy about."],
+    g: ["Masa ji ki pehchaan hai. Ek phone, kaam ho jaayega.", "Masa ji knows someone, beta. One phone call, work done."] },
+  { re: /\bstakeholders?\b/gi, plain: "Everyone who can complain later.",
+    p: ["Woh saare rishtedaar jinko bulana padega, varna das saal naraz rahenge.", "All the relatives you must invite, or they'll be offended for ten years."],
+    t: ["Sabko invitation do. Ek bhi chhoota toh shikayat naam lekar aayegi.", "Invite everyone, kanna. Miss even one and the complaint comes with your name in it."],
+    b: ["Shobai. Para-r shob mashima. Ek bhi chhooti toh pandal mein charcha.", "Every mashima in the neighbourhood. Miss one and it's discussed at the pandal."],
+    g: ["Poori society. Ek ko bhi bhoole toh garba mein sab poochhenge.", "The whole society, beta. Forget one and everyone asks at garba."] },
+  { re: /touch(?:ing)? base/gi, plain: "A short check-in.",
+    p: ["Bas haal-chaal poochhna tha. Aur shaadi kab kar raha hai, woh bhi.", "Just checking how you are, puttar. Also, when is the wedding?"],
+    t: ["Simply phone kiya. Khana khaya? Sweater pehna?", "Simply calling, kanna. Did you eat? Wearing a sweater?"],
+    b: ["Emni phone korlam. Kheyechho? Thik achho? Achha, aur kuch nahi. (Bees minute.)", "Just calling, shona. Eaten? Fine? Okay, nothing else. (Twenty minutes.)"],
+    g: ["Bas aise hi. Achha sun, Navratri mein aa rahe ho na?", "Just like that, beta. Listen, you're coming for Navratri, no?"] },
+  { re: /(?:going|moving) forward/gi, plain: "From now on (until we forget).",
+    p: ["Aaj se pakka. Bilkul 'kal se jaldi uthungi' wala pakka.", "From today, pakka. Same pakka as 'I'll wake up early from tomorrow'."],
+    t: ["Ab se sab theek. Naya diary bhi kharid liya hai.", "From now on all will be proper, kanna. I've even bought a new diary."],
+    b: ["Ekhon theke shob thik. Agle Poila Boishakh se pakka.", "From now on, everything proper, shona. Pakka from next Bengali New Year."],
+    g: ["Aaj se. Navratri ke baad wala 'aaj'.", "From today, beta. The 'today' that comes after Navratri."] },
+  { re: /value[- ]add(?:ed|s|ition)?/gi, plain: "What do you actually contribute?",
+    p: ["Khaali haath shaadi mein aaya? Shagun kahaan hai?", "You came to the wedding empty-handed? Where is the shagun, puttar?"],
+    t: ["Function mein aaye toh kuch laao. Kam se kam ek dabba murukku.", "Coming to the function? Bring something, kanna. At least one box of murukku."],
+    b: ["Shudhu khete eshechho? Ek baksha mishti laate toh kya ho jaata?", "Came only to eat? Would a box of mishti have hurt, shona?"],
+    g: ["Khaali haath nahi aate. Ek dabba farsan toh laao.", "Nobody comes empty-handed, beta. Bring one box of farsan at least."] },
+  { re: /\bping(?:ed|ing)?\b/gi, plain: "Message me.",
+    p: ["Missed call de dena. Main call back karungi, tera balance bachega.", "Give me a missed call, puttar. I'll call back, save your balance."],
+    t: ["WhatsApp karo. Main good morning flowers bhejungi, reply bhi karna.", "WhatsApp me, kanna. I'll send good-morning flowers. Reply also."],
+    b: ["Message korbe. Main teen minute ka voice note bhejungi.", "Message me, shona. I'll reply with a three-minute voice note."],
+    g: ["Ping matlab family group pe? Wahan 200 log hain, dhoondh lena.", "Ping where, beta? The family group? 200 people there, good luck finding it."] },
+  { re: /\bEOD\b|end of (?:the )?day/gi, plain: "Today, technically before midnight.",
+    p: ["Shaam tak. Punjabi shaam: raat ke gyaarah baje.", "By evening, puttar. Punjabi evening: eleven at night."],
+    t: ["Shaam tak, rahu kaalam ke baad. Obviously.", "By evening, kanna. After rahu kaalam, obviously."],
+    b: ["Shondhe-r modhye. Cha ke time se pehle. Doosre cha ke.", "By evening, shona. Before tea time. Second tea time."],
+    g: ["Shaam tak, dinner se pehle. Dinner nau baje, toh das baje tak.", "By evening, beta. Before dinner. Dinner is at nine, so by ten."] },
+  { re: /we(?:'re| are) (?:like )?(?:a|one) (?:big )?(?:happy )?family/gi, plain: "We'll ask for your weekends.",
+    p: ["Haan haan, family hai. Isiliye Sunday ko bhi bula rahe hain.", "Yes yes, family. That's why they're calling you on Sunday also."],
+    t: ["Family hai? Toh Diwali bonus bhi family size ka do.", "If we're family, kanna, give the family-size Diwali bonus also."],
+    b: ["Family? Tahole Puja-r chhuti dao. Poore paanch din.", "Family? Then give Puja leave, baba. All five days."],
+    g: ["Family hai toh Navratri mein nau din chhutti. Seedha hisaab.", "If it's family, beta, then nine days off for Navratri. Simple maths."] },
+  { re: /\b(?:KPI|OKR)s?\b/g, plain: "Your report card.",
+    p: ["Report card. Aur sirf pass hone se kuch nahi hota.", "Report card, puttar. And just passing is not enough."],
+    t: ["Report card. Maths mein 99? Ek number kahaan gaya?", "Report card, kanna. 99 in maths? Where did the one mark go?"],
+    b: ["Report card. Pehle number dekhungi, phir gaan-er class ka progress.", "Report card, shona. Marks first, then music class progress."],
+    g: ["Hisaab-kitaab. Sab diary mein likha hona chahiye.", "Accounts, beta. Everything written in the diary."] },
+  { re: /(?:think )?outside the box/gi, plain: "Be creative (within limits).",
+    p: ["Kuch alag soch. Lekin itna alag nahi ki shaadi mein naache hi nahi.", "Think differently, puttar. But not so differently that you won't dance at the wedding."],
+    t: ["Out of the box socho. Lekin engineering ke box ke andar.", "Think out of the box, kanna. But inside the engineering box."],
+    b: ["Notun kichhu bhabo. Lekin macher jhol ki recipe mat chhoona.", "Think something new, shona. But don't touch the macher jhol recipe."],
+    g: ["Naya socho. Khakhra pizza, Chinese bhel, sab chalta hai.", "Think new, beta. Khakhra pizza, Chinese bhel, everything works."] },
+  { re: /action items?/gi, plain: "Who does what.",
+    p: ["Kaam ki list: tu halwai dekh, tera bhai tent, main sabko phone karungi.", "Work list: you handle the caterer, your brother the tent, I'll call everyone."],
+    t: ["List banao: pickle, appalam, flowers. Aur tick lagao.", "Make a list, kanna: pickle, appalam, flowers. And tick it."],
+    b: ["List: mishti, maach, phool. Tumi bazaar jao.", "List: sweets, fish, flowers. Baba, you go to the market."],
+    g: ["List bana: thepla, khakhra, chakri. Train mein khana chahiye.", "Make a list, beta: thepla, khakhra, chakri. Food for the train."] }
+];
+
+// Reverse: aunty-isms -> corporate. One corporate line, shared across aunties.
+const AUNTYISMS = [
+  { re: /khana kha(?: ?lo|ya|yi)|eat something|have you eaten|did you eat/gi, corp: "Let's prioritise sustenance before the next sprint.", plain: "Eat. Now." },
+  { re: /shaadi kab|when are you getting married|wedding kab/gi, corp: "What's the roadmap for your long-term partnership strategy?", plain: "Get married." },
+  { re: /sharma ji ka beta|sharma ji's son/gi, corp: "Let's benchmark you against top-quartile peers.", plain: "Someone else is better than you." },
+  { re: /maine pehle hi bola tha|i told you so|i told you already/gi, corp: "As flagged in my previous communication.", plain: "I was right." },
+  { re: /(?:beta,? )?ek minute|just one minute/gi, corp: "Quick sync, won't take long.", plain: "Ninety minutes." },
+  { re: /kitne ka liya|how much did you pay|how much was it/gi, corp: "What was the total cost of acquisition?", plain: "Were you cheated?" },
+  { re: /hamare zamane mein|in our times|in our days/gi, corp: "Historically, our legacy processes delivered better outcomes.", plain: "Things were better before." },
+  { re: /sweater pehen|wear a sweater/gi, corp: "Let's proactively mitigate environmental risk.", plain: "It's cold, I'm worried." },
+  { re: /log kya kahenge|what will people say/gi, corp: "We need to manage reputational risk with external stakeholders.", plain: "The neighbours are watching." },
+  { re: /padhai kaisi|how are studies/gi, corp: "How are your learning-and-development OKRs tracking?", plain: "Marks?" },
+  { re: /baad mein dekhenge|we'll see later/gi, corp: "Let's park this and circle back.", plain: "No." },
+  { re: /chai piyoge|have some chai|chai lo/gi, corp: "Shall we take this offline over a beverage?", plain: "Sit. You're not leaving yet." },
+  { re: /naya phone|new phone/gi, corp: "I see you've upgraded your tech stack.", plain: "Show me. How much?" },
+  { re: /good morning/gi, corp: "Sharing a daily alignment touchpoint.", plain: "Forwarded flowers incoming." },
+  { re: /settle (?:kab|ho)|when will you settle/gi, corp: "Let's discuss your path to steady state.", plain: "Job, house, marriage. In that order." }
+];
+
+const METER = [ // score bands -> [hinglish, english]
+  { max: 2, label: ["Seedha-saadha bachcha", "Straight talker"] },
+  { max: 4, label: ["Thoda MBA ho gaya hai", "A little bit MBA"] },
+  { max: 6, label: ["LinkedIn pe active hai", "Very active on LinkedIn"] },
+  { max: 8, label: ["Consultant ban gaya", "Has become a consultant"] },
+  { max: 10, label: ["Sharma ji ka beta", "Sharma ji's son"] }
+];
+const meterLabel = (s, lang) => METER.find(m => s <= m.max).label[lang === "en" ? 1 : 0];
+
+const VERDICTS = { // by band index -> [hinglish, english]
+  0: ["Seedhi baat. Kisne sikhaaya? Mujhe bhi milwao.", "Straight talk. Who taught you? Introduce me also."],
+  1: ["Thoda kam karo yeh angrezi. Ghar pe aise baat karte ho?", "Reduce this angrezi a little. You talk like this at home?"],
+  2: ["Itne words, aur kehna kya tha? Chai thandi ho gayi.", "So many words, and what did you want to say? The chai went cold."],
+  3: ["Haaye, poora email padh liya aur ab bhi nahi pata kaam kya hai.", "I read the full email and still don't know what the work is."],
+  4: ["Sharma ji ka beta bhi itna jargon nahi bolta. Sharam karo.", "Even Sharma ji's son doesn't use this much jargon. Shame."]
+};
+
+</script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const state = { mode: "to_aunty", a: "p", l: "hi" };
+  const SAMPLES = {
+    to_aunty: [
+      "Let's take this offline and circle back EOD.",
+      "I don't have the bandwidth, but let's leverage synergies and grab the low-hanging fruit.",
+      "Per my last email, we need to align stakeholders on the KPIs going forward.",
+      "We're one big family here, so let's do a quick sync on Sunday."
+    ],
+    to_corporate: [
+      "Beta, khana kha lo. Shaadi kab kar rahe ho?",
+      "Sharma ji ka beta dekho. Maine pehle hi bola tha.",
+      "Ek minute, chai piyoge? Log kya kahenge?",
+      "Sweater pehen lo. Hamare zamane mein..."
+    ]
+  };
+  const REV_VERDICTS = [
+    ["Itna lamba? Seedha bol na, khana kha le.", "So long? Just say it straight: eat."],
+    ["Haaye, meri baat ko PowerPoint bana diya.", "You turned my love into a PowerPoint."],
+    ["Yeh angrezi sunke toh mera BP badh gaya.", "Hearing this English, my BP has gone up."]
+  ];
+  const esc = s => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function findHits(text, list) {
+    const hits = [];
+    list.forEach((entry, i) => {
+      entry.re.lastIndex = 0;
+      let m;
+      while ((m = entry.re.exec(text))) {
+        hits.push({ i, start: m.index, end: m.index + m[0].length, str: m[0] });
+        if (!entry.re.global) break;
+      }
+    });
+    hits.sort((x, y) => x.start - y.start || (y.end - y.start) - (x.end - x.start));
+    const kept = []; let lastEnd = -1;
+    for (const h of hits) if (h.start >= lastEnd) { kept.push(h); lastEnd = h.end; }
+    return kept;
+  }
+  function highlight(text, hits) {
+    let out = "", pos = 0;
+    for (const h of hits) { out += esc(text.slice(pos, h.start)) + "<mark>" + esc(h.str) + "</mark>"; pos = h.end; }
+    return out + esc(text.slice(pos));
+  }
+  const band = s => METER.findIndex(m => s <= m.max);
+
+  function render() {
+    const text = $("#txt").value.trim();
+    const out = $("#out");
+    out.hidden = false;
+    const lang = state.l, L = lang === "en" ? 1 : 0, A = AUNTIES[state.a];
+    if (!text) { out.innerHTML = `<div class="card"><p class="err">Beta, kuch toh likho. Khaali kaagaz pe main kya bolun?</p></div>`; return; }
+    const words = text.split(/\s+/).filter(Boolean).length;
+
+    if (state.mode === "to_aunty") {
+      const hits = findHits(text, JARGON);
+      const uniq = [...new Map(hits.map(h => [h.i, h])).values()];
+      if (!uniq.length) {
+        out.innerHTML = card(`<p class="who">${A.name} says</p><p class="say">${esc(A[lang])}, ${lang === "en" ? "there's no jargon in this. Straight talk! Who taught you? (Or I don't know this word yet. Try the full version below.)" : "ismein toh koi jargon nahi hai. Seedhi baat! Kisne sikhaaya? (Ya yeh word mujhe abhi nahi pata. Neeche full version try karo.)"}</p>`) + meter(0, lang, "Buzzword-o-meter");
+        return;
+      }
+      const score = Math.min(10, Math.max(1, Math.round(uniq.length * 125 / Math.max(words, 25))));
+      const speech = esc(A[lang]) + "! " + uniq.map(h => esc(JARGON[h.i][state.a][L])).join(" ");
+      out.innerHTML =
+        card(`<p class="who">${A.name} says</p><p class="say">${speech}</p><p class="verdict">${esc(VERDICTS[band(score)][L])}</p>`) +
+        meter(score, lang, "Buzzword-o-meter") +
+        card(`<p class="h3">Jargon caught (${uniq.length})</p><ul class="terms">${uniq.map(h => `<li><span class="term">${esc(h.str)}</span><p class="aline">${esc(JARGON[h.i][state.a][L])}</p><p class="plain">Plain English: ${esc(JARGON[h.i].plain)}</p></li>`).join("")}</ul>`) +
+        card(`<p class="h3">What you pasted</p><p class="orig">${highlight(text, hits)}</p>`);
+    } else {
+      const hits = findHits(text, AUNTYISMS);
+      const uniq = [...new Map(hits.map(h => [h.i, h])).values()];
+      if (!uniq.length) {
+        out.innerHTML = card(`<p class="who">Office translation</p><p class="say">${lang === "en" ? "I couldn't find an aunty-ism here. Try “Beta, khana kha lo” or “Shaadi kab?”, or open the full version below." : "Isme koi aunty wali baat nahi mili. “Beta, khana kha lo” ya “Shaadi kab?” try karo, ya neeche full version kholo."}</p>`);
+        return;
+      }
+      const score = Math.min(10, uniq.length * 3 + 1);
+      const corp = "Hi team,\n\n" + uniq.map(h => AUNTYISMS[h.i].corp).join(" ") + "\n\nBest,\nAunty (Chief Family Officer)";
+      out.innerHTML =
+        card(`<p class="who">Office translation</p><p class="say">${esc(corp)}</p><p class="verdict">${esc(A[lang])}: ${esc(REV_VERDICTS[uniq.length % 3][L])}</p>`) +
+        meter(score, lang, "Corporate-o-meter") +
+        card(`<p class="h3">Aunty-isms caught (${uniq.length})</p><ul class="terms">${uniq.map(h => `<li><span class="term">${esc(h.str)}</span><p class="aline">${esc(AUNTYISMS[h.i].corp)}</p><p class="plain">What she means: ${esc(AUNTYISMS[h.i].plain)}</p></li>`).join("")}</ul>`) +
+        card(`<p class="h3">What you pasted</p><p class="orig">${highlight(text, hits)}</p>`);
+    }
+    requestAnimationFrame(() => document.querySelectorAll(".fill").forEach(f => f.style.width = f.dataset.w));
+    out.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  const card = h => `<div class="card bubble">${h}</div>`;
+  const meter = (s, lang, title) => card(`<p class="h3">${title}</p><div class="meter"><div class="bar"><div class="fill" data-w="${s * 10}%"></div></div><div class="mrow"><span class="mlabel">${esc(meterLabel(s, lang))}</span><span class="mscore">${s}/10</span></div></div>`);
+
+  function setSamples() {
+    $("#samples").innerHTML = SAMPLES[state.mode].map(s => `<button type="button">${esc(s)}</button>`).join("");
+    $("#txtLbl").textContent = state.mode === "to_aunty" ? "Paste the office message" : "Type what aunty said";
+    $("#txt").placeholder = SAMPLES[state.mode][0];
+  }
+  function toggle(group, sel, attr, key) {
+    document.querySelectorAll(group + " button").forEach(b => b.addEventListener("click", () => {
+      document.querySelectorAll(group + " button").forEach(x => x.classList.remove("on"));
+      b.classList.add("on"); state[key] = b.dataset[attr];
+      if (key === "mode") { setSamples(); $("#out").hidden = true; }
+      else if (!$("#out").hidden && $("#txt").value.trim()) render();
+    }));
+  }
+  toggle(".seg[role=tablist]", null, "mode", "mode");
+  toggle("#aunties", null, "a", "a");
+  toggle("#lang", null, "l", "l");
+  $("#samples").addEventListener("click", e => { if (e.target.tagName === "BUTTON") { $("#txt").value = e.target.textContent; render(); } });
+  $("#go").addEventListener("click", render);
+  $("#txt").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) render(); });
+  setSamples();
+})();
+
+</script>
+<script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
