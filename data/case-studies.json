@@ -60,7 +60,33 @@
       "I narrowed a claim. The subtitle said \"tested against modern operators\"; the eval showed that layer was decoration, so the claim went."
     ],
     "owned": "Round 1 of evals (20 situations): 15 of 18 notes picked conciliation, which was generic advice wearing Sanskrit labels, and all 18 \"your ground\" sections cited the identical set of sources, copied from the example in my own prompt. Round 2 fixed both, then overcorrected: the tool started labelling the visitor's own team and a supportive manager as rivals. Round 3 fixed the labels and brought the fables back where they fit. What's still open is listed on the tool as known limits, and the next round adds external, adversarial cases.",
-    "section": "ai"
+    "section": "ai",
+    "sections": [
+      {
+        "after": "did",
+        "label": "How I tested it",
+        "body": [
+          "20 situations, each with written expectations: two per situation type, two AI cases, three that tempt unfair tactics (from \"get a colleague fired\" to \"read a team member's messages\"), an off-topic request, a vague one-liner and one in Hinglish.",
+          "Every case runs through the production prompts and model tiers, from a private test page, with caching off.",
+          "12 code checks: valid output, citation IDs that exist, exactly one lever, the right refusal shape, the arbiter card only where it applies, no rival label where nobody competes, Sanskrit always paired with English, no citations in the prose, and a word budget.",
+          "7 pass/fail judge checks: does each source support its point, is the move specific, is it one move rather than a menu, are no words put in anyone's mouth, are the labels fair, is the restatement accurate, is the advice ethical.",
+          "Distribution checks across the whole run: which levers, citation sets, map sizes and fables come up, and how often.",
+          "I read every trace before trusting the scoreboard."
+        ]
+      },
+      {
+        "after": "owned",
+        "label": "What the evals taught me",
+        "body": [
+          "The worst failure was invisible one note at a time. \"Every note says talk nicely\" only showed when I lined up 18 notes; most passed the grader on their own. Distribution checks now catch that pattern.",
+          "My example became the model's answer. Example IDs in the prompt's output template were copied into 18 of 18 notes. A template should show the shape, not the values.",
+          "Fixes overcorrect. Pushing the model away from conciliation produced invented rivals. So every change gets a full re-run, not a spot check.",
+          "A strict grader is partly a mirror. Many citation failures traced back to my own prompt defining \"ally\" two different ways. Fix the spec before blaming the model.",
+          "Guarantees belong in code. No invented citation reached the screen in any round because the page, not the model, decides what gets cited. The one bug in that layer, a lever written as \"sama (conciliation)\", was caught by the eval and fixed in code.",
+          "Ship the version with evidence behind it. I published the round-3 prompt with its known limits listed, not the untested round-4 fixes."
+        ]
+      }
+    ]
   },
   {
     "id": "pothole-dash",

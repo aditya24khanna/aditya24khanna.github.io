@@ -59,12 +59,18 @@
       box.appendChild(el("h1", null, c.title));
       if (filled(c.summary)) box.appendChild(el("p", "cs-sum", c.summary));
       var blocks = el("div", "cs-blocks");
-      [[L.problem || "The problem", c.problem], [L.research || "What research showed", c.research], [L.did || "What I did", c.did], [L.owned || "What I owned", c.owned]].forEach(function (b) {
-        if (!filled(b[1])) return;
-        var w = el("div"); w.appendChild(el("h4", null, b[0]));
-        if (Array.isArray(b[1])) { var ul = el("ul"); b[1].forEach(function (t) { ul.appendChild(el("li", null, t)); }); w.appendChild(ul); }
-        else w.appendChild(el("p", null, b[1]));
+      // Optional extra sections: { after: "problem|research|did|owned", label, body (string or list) }
+      var extra = Array.isArray(c.sections) ? c.sections : [];
+      var addBlock = function (label, body) {
+        if (!filled(body)) return;
+        var w = el("div"); w.appendChild(el("h4", null, label));
+        if (Array.isArray(body)) { var ul = el("ul"); body.forEach(function (t) { ul.appendChild(el("li", null, t)); }); w.appendChild(ul); }
+        else w.appendChild(el("p", null, body));
         blocks.appendChild(w);
+      };
+      [["problem", L.problem || "The problem", c.problem], ["research", L.research || "What research showed", c.research], ["did", L.did || "What I did", c.did], ["owned", L.owned || "What I owned", c.owned]].forEach(function (b) {
+        addBlock(b[1], b[2]);
+        extra.filter(function (x) { return x && x.after === b[0]; }).forEach(function (x) { addBlock(x.label, x.body); });
       });
       box.appendChild(blocks);
       if (filled(c.differently)) { var df = el("div", "cs-diff"); df.appendChild(el("b", null, L.differently || "What I'd do differently")); df.appendChild(el("p", null, c.differently)); box.appendChild(df); }
