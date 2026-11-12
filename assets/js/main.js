@@ -180,7 +180,14 @@
         if (filled(t.d)) d.appendChild(el("p", null, t.d));
         if (filled(t.tags)) { var tg = el("div", "tags"); t.tags.forEach(function (x) { tg.appendChild(el("span", "chip", x)); }); d.appendChild(tg); }
         var act = el("div", "proj-actions");
-        if (filled(t.url)) { var a = el("a", "btn btn-ink", t.linkLabel || "Try it ↗"); a.href = t.url; if (external) { a.target = "_blank"; a.rel = "noopener"; } act.appendChild(a); }
+        if (filled(t.url)) {
+          var a = el("a", "btn btn-ink", t.linkLabel || "Try it ↗"); a.href = t.url;
+          if (external) { a.target = "_blank"; a.rel = "noopener"; }
+          var tp = trackPath(t);
+          if (tp && tp.event) a.addEventListener("click", function () { countEvent(tp.path, t.title); });
+          if (tp) tracked.push({ title: t.title, path: tp.path });
+          act.appendChild(a);
+        }
         if (filled(t.note)) { var n = el("a", "btn", "Build note →"); n.href = "notes/?n=" + encodeURIComponent(t.note); act.appendChild(n); }
         if (act.children.length) d.appendChild(act);
         box.appendChild(d);
@@ -242,6 +249,48 @@
       if (filled(c.calendarLabel)) card("Book a call", c.calendarLabel, "Book ↗", c.calendarUrl);
     }
   };
+
+  /* ---------- usage metrics (GoatCounter) ---------- */
+  // Internal pages (play/, moments/) already log page views, so their opens = views of that path.
+  // External tools (Claude artifacts) can't run GoatCounter, so the Try-it click is logged as an event.
+  var tracked = [];
+  function slug(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function trackPath(t) {
+    if (filled(t.track)) return { path: t.track, event: !/^\//.test(t.track) };
+    if (/^https?:/i.test(t.url)) return { path: "open-" + slug(t.title), event: true };
+    var p = "/" + String(t.url).replace(/^\.?\//, "").replace(/index\.html$/, "");
+    return { path: p, event: false };
+  }
+  function countEvent(path, title) {
+    try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: path, title: "Opened: " + title, event: true }); } catch (e) {}
+  }
+  function num(v) { var n = parseInt(String(v == null ? "" : v).replace(/[^0-9]/g, ""), 10); return isNaN(n) ? 0 : n; }
+  function fmt(n) { return n.toLocaleString("en-US"); }
+  function counter(base, path) {
+    return fetch(base + "/counter/" + encodeURIComponent(path) + ".json")
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+  function renderMetrics(site) {
+    var m = site.metrics, box = $("#siteMetrics");
+    if (!box || !m || !m.enabled || !filled(m.endpoint)) return;
+    var base = m.endpoint.replace(/\/+$/, ""), f = m.floors || {};
+    Promise.all([counter(base, "TOTAL")].concat(tracked.map(function (t) { return counter(base, t.path); }))).then(function (res) {
+      var total = res[0] || {}, parts = [];
+      // GoatCounter returns "count" and, on some versions, "count_unique"; numbers come formatted ("1,234").
+      var visits = num(total.count), visitors = num(total.count_unique);
+      if (visits >= (f.visits || 0) && visits > 0) parts.push(fmt(visits) + " visits");
+      if (visitors >= (f.visitors || 0) && visitors > 0) parts.push(fmt(visitors) + " visitors");
+      var opens = 0, top = null, topN = 0;
+      tracked.forEach(function (t, i) { var n = num(res[i + 1] && res[i + 1].count); opens += n; if (n > topN) { topN = n; top = t.title; } });
+      if (opens >= (f.opens || 0) && opens > 0) parts.push(fmt(opens) + " tool opens" + (top ? " (most: " + top + ")" : ""));
+      if (!parts.length) return;
+      box.innerHTML = "";
+      if (filled(m.label)) box.appendChild(el("span", "fm-label", m.label + " "));
+      box.appendChild(document.createTextNode(parts.join(" · ")));
+      box.hidden = false;
+    });
+  }
 
   function selectText(node) { var r = document.createRange(); r.selectNodeContents(node); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 
@@ -306,5 +355,6 @@
     // hide nav links for hidden sections
     document.querySelectorAll("#navLinks a").forEach(function (a) { var t = document.getElementById(a.getAttribute("href").slice(1)); if (!t || t.hidden) a.parentNode.hidden = true; });
     spy();
+    renderMetrics(site);
   });
 })();

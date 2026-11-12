@@ -70,6 +70,17 @@
     "calendarUrl": ""
   },
   "footer": "Aditya Khanna · drawn on graph paper",
+  "metrics": {
+    "_note": "Public counts from GoatCounter. Each number shows only once it passes its floor; if none do, the line stays hidden. Needs 'Allow adding visitor counts' on in GoatCounter settings.",
+    "enabled": true,
+    "endpoint": "https://adikhanna.goatcounter.com",
+    "label": "site in numbers:",
+    "floors": {
+      "visits": 1000,
+      "visitors": 500,
+      "opens": 200
+    }
+  },
   "sections": {
     "caseStudies": false,
     "screens": false,

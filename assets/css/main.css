@@ -254,6 +254,9 @@ mark, .hl { color: inherit; background: linear-gradient(100deg, transparent 1%, 
 /* footer */
 .footer { border-top: 2px solid var(--ink); padding-block: 28px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); background: color-mix(in srgb, var(--paper) 92%, transparent); }
 .footer-inner { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.footer-metrics { flex-basis: 100%; margin: 0; font-size: 12px; color: var(--ink-2); }
+.footer-metrics[hidden] { display: none; }
+.footer-metrics .fm-label { color: var(--ink); background: linear-gradient(transparent 55%, color-mix(in srgb, var(--hi) 55%, transparent) 55%); padding-inline: 2px; }
 
 /* responsive */
 @media (max-width: 960px) {
