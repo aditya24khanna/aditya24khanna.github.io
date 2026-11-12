@@ -152,7 +152,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
           <button class="primary" id="bDaily">Ride today’s road</button>
           <button id="bEndless">Endless commute</button>
         </div>
-        <p class="controls">Tap the left or right half of the road to switch lanes; swipe up to speed up, down to slow down. On a keyboard: <kbd>←</kbd> <kbd>→</kbd> to steer, <kbd>↑</kbd> <kbd>↓</kbd> for speed. Faster earns bonus metres; too slow and the bus behind starts honking. Use the horn (or <kbd>H</kbd> / <kbd>Space</kbd>) to make vehicles move, though nobody promises they'll move the right way. Three shock absorbers. Where the footpath is broken, people walk on the road. Filter coffee adds 50 m.</p>
+        <p class="controls">Tap the left or right half of the road to switch lanes; swipe up to speed up, down to slow down. On a keyboard: <kbd>←</kbd> <kbd>→</kbd> to steer, <kbd>↑</kbd> <kbd>↓</kbd> for speed. Faster earns bonus metres; too slow and the bus behind starts honking. Use the horn (or <kbd>H</kbd> / <kbd>Space</kbd>) to make vehicles move, though nobody promises they'll move the right way. Three shock absorbers. Where the footpath is broken, people walk on the road. The weather changes as you ride: rain makes puddles and slippery steering, fog hides what's ahead. Filter coffee adds 50 m.</p>
       </div>
     </div>
 
@@ -315,16 +315,45 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   };
   const pickM = a => a[Math.floor(Math.random()*a.length)];
 
+  // ---------- weather ----------
+  // A chain of weather spells along the ride, measured in metres, so the daily road's weather is the same for everyone.
+  const WX = {
+    clear:    { cloud:0.1,  rain:0,    dark:0,    fog:0,    wet:0,    name:'Sunny',    msg:['Sun’s out. Enjoy it while it lasts.','Clear skies. Suspicious.'] },
+    cloudy:   { cloud:0.85, rain:0,    dark:0.25, fog:0.08, wet:0,    name:'Cloudy',   msg:['Clouds rolling in.','Sky’s turning grey.'] },
+    drizzle:  { cloud:0.95, rain:0.35, dark:0.35, fog:0.15, wet:0.55, name:'Drizzle',  msg:['Drizzle. Roads getting slippery.','Light rain. Visor’s fogging up.'] },
+    downpour: { cloud:1,    rain:1,    dark:0.55, fog:0.3,  wet:1,    name:'Downpour', msg:['Downpour! Puddles everywhere.','Classic 4 p.m. Bangalore rain.'] },
+    fog:      { cloud:0.6,  rain:0,    dark:0.12, fog:0.85, wet:0.25, name:'Fog',      msg:['Fog. Can’t see a thing.','Thick fog. Trust your horn.'] }
+  };
+  const WX_NEXT = { clear:['cloudy','cloudy','drizzle','fog'], cloudy:['drizzle','drizzle','downpour','fog','clear'], drizzle:['downpour','downpour','cloudy','clear'], downpour:['drizzle','cloudy','clear'], fog:['clear','cloudy','drizzle'] };
+  const WX_F = ['cloud','rain','dark','fog','wet'], WX_BLEND = 80;
+  function buildWeather(seed, wetStart){
+    const r = seed ? mulberry32(seed) : Math.random;
+    let k = wetStart ? 'drizzle' : (r() < 0.6 ? 'clear' : 'cloudy');
+    const list = []; let m = 0;
+    for (let i = 0; i < 100; i++){ const len = 160 + r()*140; list.push({ k, start:m, len }); m += len; const n = WX_NEXT[k]; k = n[Math.floor(r()*n.length)]; }
+    return list;
+  }
+  function weatherAt(m){
+    const L = G.wx; let i = 0; while (i < L.length - 1 && m >= L[i+1].start) i++;
+    const j = Math.min(i + 1, L.length - 1), a = WX[L[i].k], b = WX[L[j].k];
+    const t = Math.max(0, Math.min(1, (m - L[i].start - (L[i].len - WX_BLEND))/WX_BLEND)), e = t*t*(3 - 2*t), o = {};
+    for (const f of WX_F) o[f] = a[f] + (b[f] - a[f])*e;
+    o.idx = t > 0.5 ? j : i; o.key = L[o.idx].k;
+    return o;
+  }
+
   // ---------- game state ----------
   let state = 'idle', mode = 'daily', G, lockUntil = 0, rng = Math.random;
   function newGame(m){
     mode = m;
+    const wx = buildWeather(m === 'daily' ? ((DAY*7919 + 13) >>> 0) : 0, m === 'daily' && !!TODAY.rain);
     rng = m === 'daily' ? mulberry32(DAY * 2654435761 >>> 0) : Math.random;
     G = { lane:1, x:1.5, shocks:3, inv:0, meters:0, bonus:0, scroll:0, v:1.6, top:0, dodged:0,
           obs:[], deco:[], signs:[], fx:[], spawnAcc:4, decoAcc:0, signAcc:1, markAcc:20, markI:0,
           t:0, shake:0, holeNo: 1000 + Math.floor(rng()*8000), stretch:-1,
           callout:null, lastMark:null, hits:[], rain:[], gear:0, honk:0, hornCd:0, horns:[],
-          peds:[], gaps:[], decals:[], decalAcc:0, pedAcc:1.2, gapAcc:0.6, pillarNo: 100 + Math.floor(rng()*300) };
+          peds:[], gaps:[], decals:[], flash:0, wxToast:null, decalAcc:0, pedAcc:1.2, gapAcc:0.6, pillarNo: 100 + Math.floor(rng()*300) };
+    G.wx = wx; G.sky = weatherAt(0);
   }
   // fill the visible road before the ride starts (same seed, so the daily road stays identical)
   function warm(){
@@ -363,7 +392,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   function pickType(d, road){
     const h = road.haz || {};
     const base = [['pothole',0.5],['puddle',0.11+0.1*d],['barricade',0.11],['cow',0.06+0.04*d],['auto',0.08],['tanker',0.05],['bus',0.05],['pillar',0.025]];
-    const w = base.map(([t,p]) => [t, p*(h[t]||1)*(t==='puddle' && road.rain ? 1.3 : 1)]);
+    const w = base.map(([t,p]) => [t, p*(h[t]||1)*(t==='puddle' ? (road.rain ? 1.3 : 1)*(1 + 1.3*G.sky.rain) : 1)]);
     let r = rng() * w.reduce((s,x)=>s+x[1],0);
     for (const [t,p] of w){ if ((r -= p) <= 0) return t; }
     return 'pothole';
@@ -419,6 +448,12 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     const dy = G.v*dt;
     G.scroll += dy;
     if (running) G.meters += dy*3.5;
+    const prevWx = G.sky.idx;
+    G.sky = weatherAt(G.meters);
+    if (running && G.sky.idx !== prevWx) G.wxToast = { text: pickM(WX[G.sky.key].msg), t:0 };
+    if (G.wxToast){ G.wxToast.t += dt; if (G.wxToast.t > 3.2) G.wxToast = null; }
+    if (G.sky.rain > 0.8 && !reduce && Math.random() < dt*0.22) G.flash = 1;
+    if (G.flash > 0) G.flash = Math.max(0, G.flash - dt*2.5);
     for (const o of G.obs){
       o.y += dy - (o.slow ? o.slow*dt*(running?1:0.5) : 0);
       if (o.tx != null){ const k = Math.min(1, dt*3.2); o.x += (o.tx - o.x)*k; if (Math.abs(o.tx - o.x) < 0.01){ o.x = o.tx; o.tx = null; } }
@@ -489,10 +524,10 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
       G.decalAcc = 0.6 + Math.random()*1.4;
     }
     // rain
-    if (road.rain && !reduce){
-      while (G.rain.length < 60) G.rain.push({ x:Math.random()*W, y:Math.random()*H, l:8+Math.random()*10 });
-      for (const r of G.rain){ r.y += (520 + G.v*40)*dt; r.x -= 90*dt; if (r.y > H){ r.y = -10; r.x = Math.random()*(W+60); } }
-    } else G.rain.length = 0;
+    const want = reduce ? 0 : Math.round(130*G.sky.rain);
+    while (G.rain.length < want) G.rain.push({ x:Math.random()*(W + 60), y:Math.random()*H, l:8 + Math.random()*10 });
+    if (G.rain.length > want) G.rain.length = want;
+    for (const r of G.rain){ r.y += (520 + 320*G.sky.rain + G.v*40)*dt; r.x -= (60 + 90*G.sky.rain)*dt; if (r.y > H){ r.y = -10; r.x = Math.random()*(W + 60); } }
 
     const py = pY();
     if (state === 'idle'){
@@ -502,7 +537,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
         if (opts.length) G.lane = opts[Math.floor(Math.random()*opts.length)];
       }
     }
-    G.x += (G.lane+0.5 - G.x) * Math.min(1, dt*16);
+    G.x += (G.lane+0.5 - G.x) * Math.min(1, dt*16*(1 - 0.35*G.sky.wet));
     if (G.inv > 0) G.inv -= dt;
     if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
 
@@ -576,23 +611,38 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   }
   const ZN = -0.35; // nearest drawn depth
 
+  function mix(a, b, t){
+    const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16), f = (x, sh) => (x >> sh) & 255;
+    const c = sh => Math.round(f(pa, sh) + (f(pb, sh) - f(pa, sh))*t);
+    return 'rgb(' + c(16) + ',' + c(8) + ',' + c(0) + ')';
+  }
   function drawSky(){
-    const g = ctx.createLinearGradient(0, 0, 0, hy);
-    if (NIGHT){ g.addColorStop(0, '#050914'); g.addColorStop(1, '#22304f'); }
-    else { g.addColorStop(0, '#6fa6d8'); g.addColorStop(0.7, '#c7dbe8'); g.addColorStop(1, '#e8ece6'); }
+    const S = G.sky, cl = S.cloud, g = ctx.createLinearGradient(0, 0, 0, hy);
+    if (NIGHT){ g.addColorStop(0, mix('#050914', '#0b0e15', cl)); g.addColorStop(1, mix('#22304f', '#262c38', cl)); }
+    else { g.addColorStop(0, mix('#6fa6d8', '#7e8790', cl)); g.addColorStop(0.7, mix('#c7dbe8', '#a9b0b6', cl)); g.addColorStop(1, mix('#e8ece6', '#c6cacc', cl)); }
     ctx.fillStyle = g; ctx.fillRect(-20, -20, W + 40, hy + 22);
+    if (NIGHT && cl > 0.3){
+      ctx.fillStyle = 'rgba(40,46,60,' + (cl*0.8) + ')';
+      for (let i = 0; i < 9; i++){ const cx = ((hash(i*5)*1.4 + G.t*0.006) % 1.4 - 0.2)*W, cy = hy*(0.1 + hash(i*5+1)*0.55), r = W*(0.05 + hash(i*5+2)*0.05); ctx.beginPath(); ctx.ellipse(cx, cy, r*2.4, r*0.6, 0, 0, Math.PI*2); ctx.fill(); }
+    }
     if (NIGHT){
-      ctx.fillStyle = '#ffffff';
+      ctx.save(); ctx.globalAlpha = 1 - cl; ctx.fillStyle = '#ffffff';
       for (let i = 0; i < 40; i++){ const a = 0.3 + 0.7*hash(i*13); ctx.globalAlpha = a*0.7; ctx.fillRect(hash(i*13+1)*W, hash(i*13+2)*hy*0.8, 1.2, 1.2); }
       ctx.globalAlpha = 1;
+      ctx.globalAlpha = 1 - cl;
       ctx.fillStyle = '#f3efe2'; ctx.beginPath(); ctx.arc(W*0.17, hy*0.3, Math.max(8, W*0.025), 0, Math.PI*2); ctx.fill();
+      ctx.restore();
     } else {
-      ctx.fillStyle = 'rgba(255,255,255,0.75)';
-      for (let i = 0; i < 5; i++){
+      const n = 5 + Math.round(9*cl);
+      ctx.fillStyle = mix('#ffffff', '#8c939a', S.dark*1.4 > 1 ? 1 : S.dark*1.4);
+      ctx.globalAlpha = 0.75 + 0.2*cl;
+      for (let i = 0; i < n; i++){
         const cx = ((hash(i*5)*1.4 + G.t*0.004*(1 + i%2)) % 1.4 - 0.2)*W, cy = hy*(0.15 + hash(i*5+1)*0.45), r = W*(0.04 + hash(i*5+2)*0.04);
-        ctx.beginPath(); ctx.ellipse(cx, cy, r*2.2, r*0.55, 0, 0, Math.PI*2); ctx.ellipse(cx + r, cy - r*0.25, r*1.2, r*0.5, 0, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(cx, cy, r*2.2*(1 + cl*0.6), r*0.55*(1 + cl), 0, 0, Math.PI*2); ctx.ellipse(cx + r, cy - r*0.25, r*1.2, r*0.5, 0, 0, Math.PI*2); ctx.fill();
       }
+      ctx.globalAlpha = 1;
     }
+    ctx.globalAlpha = 1 - 0.75*S.fog;
     // city skyline, slight parallax with the camera
     const off = -(camX - 1.5)*W*0.02 - W*0.1, span = W*1.25;
     for (const b of skyline){
@@ -605,6 +655,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
         for (let yy = hy - h + 4; yy < hy - 4; yy += 6) for (let xx = x + 2; xx < x + w - 2; xx += 5) if (hash((xx*31 + yy*17)|0) > 0.62) ctx.fillRect(xx, yy, 2, 2);
       }
     }
+    ctx.globalAlpha = 1;
     ctx.fillStyle = NIGHT ? '#1a1d22' : C.dirt; ctx.fillRect(-20, hy, W + 40, H - hy + 20);
   }
 
@@ -688,7 +739,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
             if (w1 <= w0) continue;
             const lit = NIGHT && hash(k*97 + f*7 + (u0 > 0.5 ? 1 : 0)) > 0.45;
             wq(x, w0, w1, h0, h0 + 0.3, lit ? '#f6c66b' : (NIGHT ? '#1d2433' : '#5f7486'));
-            if (lit) { const c = P(x, (w0 + w1)/2, h0 + 0.15); LIGHTS.push({ x:c.x, y:c.y, r:c.s*0.45, c:'255,190,100' }); }
+            if (lit) { const c = P(x, (w0 + w1)/2, h0 + 0.15); LIGHTS.push({ x:c.x, y:c.y, r:c.s*0.28, c:'255,190,100' }); }
           }
         }
       }
@@ -738,7 +789,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     const g = ctx.createLinearGradient(0, top, 0, bot);
     if (NIGHT){ g.addColorStop(0, '#2a3a5c'); g.addColorStop(1, '#101624'); } else { g.addColorStop(0, '#d6e6f0'); g.addColorStop(1, '#7fa7c6'); }
     poly(pts, g);
-    if (curRoad().rain){ const c = P(o.x, z); ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1; const ph = (G.t*1.5) % 1; ctx.beginPath(); ctx.ellipse(c.x, c.y, o.rx*c.s*0.6*ph, o.ry*c.s*0.25*ph, 0, 0, Math.PI*2); ctx.stroke(); }
+    if (G.sky.rain > 0.15){ const c = P(o.x, z); ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1; const ph = Math.abs(G.t*1.5) % 1; ctx.beginPath(); ctx.ellipse(c.x, c.y, o.rx*c.s*0.6*ph, o.ry*c.s*0.25*ph, 0, 0, Math.PI*2); ctx.stroke(); }
   }
   function sBarricade(o, z){
     const b = P(o.x, z), s = b.s, hw = o.hw;
@@ -948,6 +999,12 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     if (G.shake > 0) ctx.translate((Math.random() - 0.5)*G.shake, (Math.random() - 0.5)*G.shake*0.6);
     drawSky();
     drawGround(road);
+    if (G.sky.wet > 0.02){
+      gq(0, 3, ZN, FAR + 1, 'rgba(12,18,30,' + (0.3*G.sky.wet) + ')');
+      const top = P(1.5, FAR*0.6), bot = P(1.5, ZN), sh = ctx.createLinearGradient(0, top.y, 0, bot.y);
+      sh.addColorStop(0, 'rgba(200,215,230,' + (0.22*G.sky.wet) + ')'); sh.addColorStop(1, 'rgba(200,215,230,0)');
+      gq(0, 3, ZN, FAR*0.6, sh);
+    }
     drawWalls();
     if (road.metro) drawViaduct();
 
@@ -987,11 +1044,13 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     ctx.globalAlpha = 1;
 
     // haze at the horizon hides things appearing in the distance
-    const ht = hy - (yP - hy)*0.1, hb = hy + (yP - hy)*0.22;
+    const FG = G.sky.fog, ht = hy - (yP - hy)*(0.1 + 0.25*FG), hb = hy + (yP - hy)*(0.22 + 0.4*FG);
     const hz = ctx.createLinearGradient(0, ht, 0, hb);
-    const hc = NIGHT ? '28,36,58' : '226,232,230';
+    const hc = NIGHT ? '28,36,58' : (G.sky.cloud > 0.5 ? '205,210,212' : '226,232,230');
     hz.addColorStop(0, 'rgba(' + hc + ',0)'); hz.addColorStop(0.32, 'rgba(' + hc + ',0.92)'); hz.addColorStop(0.5, 'rgba(' + hc + ',0.6)'); hz.addColorStop(1, 'rgba(' + hc + ',0)');
     ctx.fillStyle = hz; ctx.fillRect(-20, ht, W + 40, hb - ht);
+    if (FG > 0.02){ ctx.fillStyle = 'rgba(' + hc + ',' + (0.22*FG) + ')'; ctx.fillRect(-20, -20, W + 40, H + 40); }
+    if (!NIGHT && G.sky.dark > 0.02){ ctx.fillStyle = 'rgba(28,34,46,' + (0.3*G.sky.dark) + ')'; ctx.fillRect(-20, -20, W + 40, H + 40); }
 
     if (NIGHT){
       ctx.fillStyle = 'rgba(6,10,26,0.38)'; ctx.fillRect(-20, -20, W + 40, H + 40);
@@ -1018,6 +1077,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
       for (const r of G.rain){ ctx.moveTo(r.x, r.y); ctx.lineTo(r.x - r.l*0.2, r.y + r.l*1.4); }
       ctx.stroke();
     }
+    if (G.flash > 0){ ctx.fillStyle = 'rgba(235,240,255,' + (0.55*G.flash*(G.flash > 0.7 ? 1 : 0.6)) + ')'; ctx.fillRect(-20, -20, W + 40, H + 40); }
 
     // horn waves and reactions
     for (const h of G.horns){
@@ -1035,7 +1095,11 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     }
 
     // road sign + landmark callout
-    roadSign(road.name.toUpperCase() + (road.rain ? '  ·  RAIN' : ''), 10);
+    roadSign(road.name.toUpperCase() + '  ·  ' + WX[G.sky.key].name.toUpperCase(), 10);
+    if (G.wxToast && !(state === 'run' && G.t < 3.5)){
+      const a = Math.min(1, (3.2 - G.wxToast.t)*1.5, G.wxToast.t*4);
+      label(G.wxToast.text, W/2, 92, 15, T.ink, a);
+    }
     if (G.callout){
       const a = Math.min(1, (3 - G.callout.t)*1.5, G.callout.t*4);
       label(G.callout.text, W/2, G.callout.big ? 68 : 62, G.callout.big ? 19 : 15, G.callout.big ? T.ink : T.muted, a);
@@ -1258,7 +1322,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   // ---------- loop ----------
   let last = performance.now();
   function loop(now){
-    const dt = Math.min(0.033, (now - last)/1000); last = now;
+    const dt = Math.max(0, Math.min(0.033, (now - last)/1000)); last = now;
     if (state === 'run' || state === 'idle') update(dt);
     else if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
     draw(); hud(); $('bHorn').classList.toggle('cool', G.hornCd > 0);
