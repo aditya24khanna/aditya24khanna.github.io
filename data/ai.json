@@ -54,6 +54,19 @@
       ],
       "url": "https://claude.ai/artifact/PSRUrhpz9vF4SxqCCWCP6N",
       "linkLabel": "Start talking ↗"
+    },
+    {
+      "title": "Hisaab",
+      "status": "Beta",
+      "q": "Who owes whom after the trip?",
+      "d": "A shared expense log for trips and flatmates. Log who paid, split equally or by exact amounts, and get the fewest payments to settle up. Or paste a message like \"Rohan paid 600 for the cab\" and it fills in the expense, asking if anything's missing. Runs on Claude, so it needs a Claude sign-in.",
+      "tags": [
+        "Claude artifact",
+        "Natural-language input",
+        "Settle-up maths"
+      ],
+      "url": "https://claude.ai/artifact/WfjQAVnVJgW4AJgM25Thym",
+      "linkLabel": "Split a bill ↗"
     }
   ]
 }
