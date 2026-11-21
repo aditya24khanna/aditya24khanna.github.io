@@ -14,7 +14,7 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif}[hidden]{display:none!important}html{height:100%}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
 /* Layout: one-screen notebook page — ink stat strip, then a hard-shadow paper card holding a canvas road drawn on graph paper. Tokens follow the portfolio's Graph Paper system, plus Namma Metro purple and rain-tree green. */
 :root{
@@ -67,7 +67,13 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-be
   box-shadow:6px 6px 0 var(--shadow);background:var(--paper);overflow:hidden;
   touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
 }
-canvas{display:block;width:100%;height:100%}
+canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
+#gl{display:none}
+.stage.three #gl{display:block}
+.stage.three .horn{bottom:calc(128px + env(safe-area-inset-bottom, 0px))}
+.sndbar{position:absolute;top:10px;left:calc(10px + env(safe-area-inset-left, 0px));display:flex;gap:6px;z-index:2}
+.sndbar button{font:700 10px var(--mono);letter-spacing:.06em;padding:6px 9px;background:rgba(8,10,14,.68);color:#fff;border:1px solid rgba(255,255,255,.35);box-shadow:none;border-radius:4px;touch-action:none}
+.sndbar button:active{transform:none}
 .horn{
   position:absolute;right:calc(10px + env(safe-area-inset-right, 0px));bottom:calc(12px + env(safe-area-inset-bottom, 0px));
   width:58px;height:58px;border-radius:50%;padding:0;display:grid;place-items:center;
@@ -137,7 +143,12 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   </header>
 
   <div class="stage" id="stage">
+    <canvas id="gl" aria-hidden="true"></canvas>
     <canvas id="cv" aria-label="Pothole Dash game road"></canvas>
+    <div class="sndbar" id="sndbar" hidden>
+      <button id="bSound" type="button" aria-pressed="true">SOUND ON</button>
+      <button id="bRadio" type="button">RADIO</button>
+    </div>
     <button class="horn" id="bHorn" type="button" aria-label="Horn" hidden>
       <span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 10v4h3l6 4V6L6 10H3z" fill="currentColor"/><path d="M16 9c1.2 1.6 1.2 4.4 0 6M19 6.5c2.4 3 2.4 8 0 11"/></svg>HORN</span>
     </button>
@@ -152,7 +163,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
           <button class="primary" id="bDaily">Ride today’s road</button>
           <button id="bEndless">Endless commute</button>
         </div>
-        <p class="controls">Tap the left or right half of the road to switch lanes; swipe up to speed up, down to slow down. On a keyboard: <kbd>←</kbd> <kbd>→</kbd> to steer, <kbd>↑</kbd> <kbd>↓</kbd> for speed. Faster earns bonus metres; too slow and the bus behind starts honking. Use the horn (or <kbd>H</kbd> / <kbd>Space</kbd>) to make vehicles move, though nobody promises they'll move the right way. Three shock absorbers. Where the footpath is broken, people walk on the road. The weather changes as you ride: rain makes puddles and slippery steering, fog hides what's ahead. Filter coffee adds 50 m.</p>
+        <p class="controls">Tap the left or right half of the road to switch lanes; swipe up to speed up, down to slow down. On a keyboard: <kbd>←</kbd> <kbd>→</kbd> to steer, <kbd>↑</kbd> <kbd>↓</kbd> for speed. Faster earns bonus metres; too slow and the bus behind starts honking. Use the horn (or <kbd>H</kbd> / <kbd>Space</kbd>) to make vehicles move, though nobody promises they'll move the right way. Three shock absorbers. Where the footpath is broken, people walk on the road. The weather changes as you ride: rain makes puddles and slippery steering, fog hides what's ahead. Filter coffee adds 50 m. Sound: <kbd>M</kbd>, radio: <kbd>R</kbd>.</p>
       </div>
     </div>
 
@@ -415,7 +426,8 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   const pedX = p => p.side < 0 ? -0.55 + 0.85*p.off : 3.55 - 0.85*p.off;
 
   function fx(txt, color){ G.fx.push({ x: W/2 + (G.x - camX)*LP, y: yP - LP*1.0, txt, color, t:0 }); }
-  function damage(msg){
+  function damage(msg, type){
+    G.lastHit = type || 'pothole'; SND.hit();
     G.shocks--; G.inv = 1.2; G.shake = reduce ? 0 : 10;
     G.hits.push(G.meters);
     fx(msg, T.red);
@@ -441,7 +453,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
       else G.honk = Math.max(0, G.honk - dt/4);
       if (G.honk >= 1){
         G.honk = 0;
-        if (G.inv <= 0) damage(pickM(MSG.honk));
+        if (G.inv <= 0) damage(pickM(MSG.honk), 'honk');
         else fx('HONK HONK', T.red);
       }
     }
@@ -554,12 +566,12 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
           continue;
         }
         o.done = true;
-        if (o.type==='coffee'){ G.bonus += 50; fx('+50 m · filter coffee', T.ink); }
-        else if (o.type==='repair'){ G.shocks = Math.min(3, G.shocks+1); fx('Road fixed?! Rare sighting.', T.ink); }
+        if (o.type==='coffee'){ G.bonus += 50; fx('+50 m · filter coffee', T.ink); SND.coffee(); }
+        else if (o.type==='repair'){ G.shocks = Math.min(3, G.shocks+1); fx('Road fixed?! Rare sighting.', T.ink); SND.repair(); }
         else if (o.type==='puddle' && !o.hidden){ fx(o.foam ? 'Just foam. Hold your breath.' : 'Just water. This time.', T.muted); }
         else if (G.inv <= 0){
           const key = o.type==='puddle' ? (o.foam ? 'foam' : 'deep') : o.type;
-          damage(pickM(MSG[key]));
+          damage(pickM(MSG[key]), key);
           if (state !== 'run') break;
         }
       }
@@ -569,7 +581,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
         if (p.hit || p.off < 0.45) continue;
         if (Math.abs(G.x - pedX(p)) < 0.13 + 0.1 && Math.abs(py - p.y) < 0.26 + 0.1){
           p.hit = true;
-          if (G.inv <= 0){ damage(pickM(MSG.ped)); if (state !== 'run') break; }
+          if (G.inv <= 0){ damage(pickM(MSG.ped), 'ped'); if (state !== 'run') break; }
         }
       }
     }
@@ -1127,6 +1139,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     shockEls.forEach((el,i) => el.classList.toggle('gone', state !== 'idle' && i >= G.shocks));
     const b = state === 'idle' ? bestToday : curBest();
     $('hBest').textContent = b ? fmtDist(b) : '—';
+    const sb = $('sndbar'), hide = state !== 'run'; if (sb.hidden !== hide) sb.hidden = hide;
   }
   function fillStart(){
     $('sKicker').textContent = 'Road of the day #' + DAYNO + ' · ' + dateLabel;
@@ -1144,7 +1157,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   // ---------- flow ----------
   const show = (id, on) => { $(id).hidden = !on; };
   function start(m){
-    newGame(m); warm(); G.v = 3; state = 'run';
+    newGame(m); warm(); G.v = 3; state = 'run'; SND.init(); soundLabel();
     if (mode === 'daily') G.callout = { text:'Welcome to ' + TODAY.name, t:0, big:true };
     $('caption').textContent = mode === 'daily' ? 'Road of the day: ' + TODAY.name : 'Endless commute, starting on MG Road';
     show('ovStart', false); show('ovOver', false); show('ovPause', false); $('bHorn').hidden = false;
@@ -1194,9 +1207,9 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     if (mode === 'daily'){ add('Streak', streak.n + (streak.n === 1 ? ' day' : ' days')); add('New road in', untilNext()); }
     $('bSwitch').textContent = mode === 'daily' ? 'Try the endless commute' : 'Back to today’s road';
     $('oCopied').textContent = ''; $('oShare').hidden = true;
-    show('ovOver', true);
-    lockUntil = performance.now() + 700;
-    setTimeout(() => { if (state === 'over') $('bAgain').focus({preventScroll:true}); }, 700);
+    G.wasted = { t: 0, word: WASTED[G.lastHit] || 'POTHOLED', line: WASTED_LINE[G.lastHit] || '', at: reduce ? 0.6 : 2.1, shown: false };
+    SND.wasted();
+    lockUntil = Infinity;   // released when the card appears
   }
   function move(dir){ if (state === 'run') G.lane = Math.max(0, Math.min(2, G.lane + dir)); }
 
@@ -1223,6 +1236,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   };
   let audio = null;
   function beep(){
+    SND.init(); if (SND.ctx){ SND.honk(); return; }
     try {
       audio = audio || new (window.AudioContext || window.webkitAudioContext)();
       const t = audio.currentTime, g = audio.createGain();
@@ -1307,6 +1321,8 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     if ((k === 'h' || k === 'H' || k === ' ') && state === 'run'){ e.preventDefault(); if (!e.repeat) horn(); return; }
     if (k === 'ArrowUp' || k === 'w' || k === 'W'){ if (state==='run'){ e.preventDefault(); if (!e.repeat) shift(1); } return; }
     if (k === 'ArrowDown' || k === 's' || k === 'S'){ if (state==='run'){ e.preventDefault(); if (!e.repeat) shift(-1); } return; }
+    if (k === 'm' || k === 'M'){ toggleSound(); return; }
+    if (k === 'r' || k === 'R'){ cycleRadio(); return; }
     if (k === 'Escape' || k === 'p' || k === 'P'){ state === 'run' ? pause() : resume(); return; }
     if ((k === ' ' || k === 'Enter') && !onButton){
       e.preventDefault();
@@ -1317,6 +1333,224 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
   window.addEventListener('blur', pause);
+  // ---------- sound: engine, rain, hits and two original radio stations (all synthesised) ----------
+  const mtof = n => 440*Math.pow(2, (n - 69)/12);
+  const STATIONS = [
+    { name:'Namma Lo-fi 91.1', bpm:78, kind:'lofi' },
+    { name:'Silk Board FM 98.3', bpm:104, kind:'synth' },
+    { name:'Radio off', kind:'off' }
+  ];
+  const SND = {
+    on: load('pd-sound', true) !== false, st: (+load('pd-radio', 0) || 0) % 3, ctx: null,
+    init(){
+      if (this.ctx){ if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+      try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return; }
+      const c = this.ctx;
+      this.master = c.createGain(); this.master.gain.value = this.on ? 0.9 : 0; this.master.connect(c.destination);
+      this.sfx = c.createGain(); this.sfx.gain.value = 0.9; this.sfx.connect(this.master);
+      this.music = c.createGain(); this.music.gain.value = 0.3; this.music.connect(this.master);
+      this.mlp = c.createBiquadFilter(); this.mlp.type = 'lowpass'; this.mlp.frequency.value = 3200; this.mlp.connect(this.music);
+      const nb = c.createBuffer(1, c.sampleRate*2, c.sampleRate), d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random()*2 - 1; this.noise = nb;
+      const e1 = c.createOscillator(), e2 = c.createOscillator(), ef = c.createBiquadFilter(), am = c.createGain(), eg = c.createGain(), lfo = c.createOscillator(), lg = c.createGain();
+      e1.type = 'sawtooth'; e2.type = 'square'; ef.type = 'lowpass'; ef.frequency.value = 520; ef.Q.value = 2.5; eg.gain.value = 0; am.gain.value = 0.65;
+      lfo.frequency.value = 22; lg.gain.value = 0.35; lfo.connect(lg); lg.connect(am.gain);
+      e1.connect(ef); e2.connect(ef); ef.connect(am); am.connect(eg); eg.connect(this.sfx); e1.start(); e2.start(); lfo.start();
+      this.eng = { e1, e2, ef, eg, lfo };
+      const rs = c.createBufferSource(); rs.buffer = nb; rs.loop = true; const rf = c.createBiquadFilter(); rf.type = 'bandpass'; rf.frequency.value = 1800; rf.Q.value = 0.4; const rg = c.createGain(); rg.gain.value = 0;
+      rs.connect(rf); rf.connect(rg); rg.connect(this.sfx); rs.start(); this.rainG = rg;
+      this.nextNote = c.currentTime + 0.15; this.step = 0;
+      setInterval(() => this.schedule(), 60);
+    },
+    setOn(v){ this.on = v; save('pd-sound', v); if (this.master) this.master.gain.setTargetAtTime(v ? 0.9 : 0, this.ctx.currentTime, 0.05); },
+    cycle(){ this.st = (this.st + 1) % STATIONS.length; save('pd-radio', this.st); this.step = 0; if (this.ctx) this.nextNote = this.ctx.currentTime + 0.05; return STATIONS[this.st]; },
+    frame(){
+      if (!this.ctx) return;
+      const t = this.ctx.currentTime, run = state === 'run', v = G.v || 3, f = 40 + v*9 + Math.max(0, G.gear || 0)*6;
+      this.eng.e1.frequency.setTargetAtTime(f, t, 0.08); this.eng.e2.frequency.setTargetAtTime(f*0.5, t, 0.08);
+      this.eng.lfo.frequency.setTargetAtTime(14 + v*2.2, t, 0.1); this.eng.ef.frequency.setTargetAtTime(380 + v*60, t, 0.1);
+      this.eng.eg.gain.setTargetAtTime(run ? 0.045 : 0, t, 0.15);
+      this.rainG.gain.setTargetAtTime((G.sky ? G.sky.rain : 0)*0.12, t, 0.3);
+      this.music.gain.setTargetAtTime(state === 'over' ? 0.08 : 0.28, t, 0.4);
+    },
+    tone(freq, dur, type, vol, when, dest){
+      const c = this.ctx; if (!c) return null; const o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (when || 0);
+      o.type = type || 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(dest || this.sfx); o.start(t); o.stop(t + dur + 0.05); return o;
+    },
+    burst(dur, f, type, vol, when, dest, q){
+      const c = this.ctx; if (!c) return; const s = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain(), t = c.currentTime + (when || 0);
+      s.buffer = this.noise; fl.type = type; fl.frequency.value = f; fl.Q.value = q || 0.7; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      s.connect(fl); fl.connect(g); g.connect(dest || this.sfx); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+    },
+    hit(){ this.burst(0.35, 320, 'lowpass', 0.7); const o = this.tone(120, 0.4, 'sine', 0.5); if (o) o.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.35); },
+    coffee(){ [880, 1320].forEach((f, i) => this.tone(f, 0.25, 'triangle', 0.12, i*0.08)); },
+    repair(){ [660, 880, 1100].forEach((f, i) => this.tone(f, 0.2, 'triangle', 0.12, i*0.07)); },
+    honk(){ [392, 494].forEach(f => this.tone(f, 0.34, 'square', 0.07)); },
+    thunder(){ this.burst(2.4, 150, 'lowpass', 0.55, 0.2); this.burst(1.3, 80, 'lowpass', 0.45, 0.45); },
+    wasted(){ const o = this.tone(220, 1.6, 'sawtooth', 0.1); if (o) o.frequency.exponentialRampToValueAtTime(55, this.ctx.currentTime + 1.5); this.burst(0.9, 500, 'lowpass', 0.5); },
+    kick(w, vol){ const c = this.ctx, o = c.createOscillator(), g = c.createGain(), t = c.currentTime + w; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3); o.connect(g); g.connect(this.music); o.start(t); o.stop(t + 0.35); },
+    pad(n, dur, w, vol, type){ const c = this.ctx, o = c.createOscillator(), g = c.createGain(), t = c.currentTime + w; o.type = type || 'triangle'; o.frequency.value = mtof(n); o.detune.value = (Math.random() - 0.5)*14; g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.4); g.gain.setValueAtTime(vol, t + Math.max(0.5, dur - 0.5)); g.gain.linearRampToValueAtTime(0.0001, t + dur); o.connect(g); g.connect(this.mlp); o.start(t); o.stop(t + dur + 0.05); },
+    schedule(){
+      const c = this.ctx; if (!c) return; const S = STATIONS[this.st];
+      if (S.kind === 'off' || document.hidden){ this.nextNote = c.currentTime + 0.1; return; }
+      const spb = 60/S.bpm/4;
+      while (this.nextNote < c.currentTime + 0.2){ this.playStep(S, this.step, this.nextNote - c.currentTime, spb); this.step++; this.nextNote += spb; }
+    },
+    playStep(S, i, w, spb){
+      const bar = Math.floor(i/16) % 4, s = i % 16, M = this.mlp;
+      if (S.kind === 'lofi'){
+        const ch = [[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]][bar];   // Fmaj7 Em7 Dm7 Cmaj7
+        if (s === 0){ ch.forEach(n => this.pad(n, spb*16*0.95, w, 0.04)); this.tone(mtof(ch[0] - 12), spb*12, 'sine', 0.13, w, M); }
+        if (s === 0 || s === 10) this.kick(w, 0.45);
+        if (s === 4 || s === 12) this.burst(0.18, 1800, 'bandpass', 0.16, w, M, 1.2);
+        if (s % 2 === 0) this.burst(0.04, 7000, 'highpass', s % 4 === 2 ? 0.05 : 0.025, w, M);
+        if ([0,3,6,8,11,14].includes(s) && Math.random() < 0.5) this.tone(mtof(ch[Math.floor(Math.random()*4)] + 12), spb*3, 'triangle', 0.045, w, M);
+      } else {
+        const ch = [[57,60,64],[53,57,60],[48,52,55],[55,59,62]][bar];               // Am F C G
+        if (s % 4 === 0) this.kick(w, 0.55);
+        if (s === 4 || s === 12) this.burst(0.2, 1500, 'bandpass', 0.2, w, M, 0.8);
+        if (s % 2 === 1) this.burst(0.03, 8000, 'highpass', 0.035, w, M);
+        if (s % 2 === 0) this.tone(mtof(ch[0] - 24), spb*1.6, 'sawtooth', 0.06, w, M);
+        this.tone(mtof(ch[s % 3] + 12*(1 + ((s >> 3) % 2))), spb*0.9, 'square', 0.022, w, M);
+        if (s === 0) ch.forEach(n => this.pad(n, spb*16, w, 0.025, 'sawtooth'));
+      }
+    }
+  };
+  let radioToast = null, thunderLatch = false;
+  function soundLabel(){ $('bSound').textContent = SND.on ? 'SOUND ON' : 'SOUND OFF'; $('bSound').setAttribute('aria-pressed', SND.on ? 'true' : 'false'); $('bRadio').textContent = '♪ ' + STATIONS[SND.st].name; }
+  function toggleSound(){ SND.init(); SND.setOn(!SND.on); soundLabel(); }
+  function cycleRadio(){ SND.init(); const s = SND.cycle(); soundLabel(); radioToast = { text: s.name, t: 0 }; }
+  const WASTED = { pothole:'POTHOLED', deep:'POTHOLED', foam:'FOAMED', barricade:'DIVERTED', cow:'MOOED', auto:'AUTO-CORRECTED', bus:'BUSTED', tanker:'TANKED', pillar:'METRO-ED', ped:'FOOTPATHED', honk:'HONKED OUT' };
+  const WASTED_LINE = { pothole:'A pothole had the final word.', deep:'That puddle was a pothole in disguise.', foam:'Lake foam. Pothole underneath.', barricade:'Metro work wins again.', cow:'The cow had right of way.', auto:'Auto braked. No indicator.', bus:'BMTC stops where it likes.', tanker:'6,000 litres of right of way.', pillar:'The pillar was here first.', ped:'Nowhere else to walk.', honk:'The bus behind lost patience.' };
+
+  // ---------- GTA-style HUD (drawn over the 3D view) ----------
+  const HUDF = "'Bebas Neue', Impact, 'Arial Narrow', sans-serif";
+  let banner = null, lastRoadName = '';
+  function hudText(txt, x, y, px, color, align, alpha, font){
+    ctx.globalAlpha = alpha == null ? 1 : alpha;
+    ctx.font = font || (px + 'px ' + HUDF); ctx.textAlign = align || 'left'; ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(3, px*0.16); ctx.strokeStyle = 'rgba(0,0,0,0.85)'; ctx.strokeText(txt, x, y);
+    ctx.fillStyle = color; ctx.fillText(txt, x, y); ctx.globalAlpha = 1; ctx.textAlign = 'start';
+  }
+  function panel(x, y, w, h, r, a){ ctx.fillStyle = 'rgba(8,10,14,' + (a == null ? 0.72 : a) + ')'; rr(x, y, w, h, r); ctx.fill(); }
+  const BLIP = { pothole:'#ff9d2e', puddle:'#4aa3ff', barricade:'#ffd23f', cow:'#ffffff', auto:'#3ddc84', bus:'#ff4d4d', tanker:'#5b8cff', pillar:'#b9b9b9', coffee:'#ffc040', repair:'#40ff90' };
+  function minimap(x0, y0, m){
+    ctx.save(); rr(x0, y0, m, m, 12); ctx.clip();
+    ctx.fillStyle = 'rgba(18,24,32,0.85)'; ctx.fillRect(x0, y0, m, m);
+    const lane = m*0.2, cx = x0 + m/2, rx = l => cx + (l - 1.5)*lane, zmax = 22, zy = z => y0 + m*0.84 - z*(m*0.8/zmax);
+    ctx.fillStyle = '#4a4438'; ctx.fillRect(x0, y0, rx(-0.05) - x0, m); ctx.fillRect(rx(3.05), y0, x0 + m - rx(3.05), m);
+    ctx.fillStyle = '#7f786c'; ctx.fillRect(rx(-0.9), y0, lane*0.85, m); ctx.fillRect(rx(3.05), y0, lane*0.85, m);
+    ctx.fillStyle = '#30353d'; ctx.fillRect(rx(0), y0, lane*3, m);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    const off = (G.scroll % 1.1)*(m*0.8/zmax);
+    for (let z = -2; z < zmax + 2; z += 1.1) for (const l of [1, 2]) ctx.fillRect(rx(l) - 0.7, zy(z) + off - 3, 1.4, 5);
+    for (const o of G.obs){
+      if (o.done && PICKUP(o.type)) continue;
+      const z = PY - o.y; if (z < -2 || z > zmax) continue;
+      const c = BLIP[o.type] || '#fff', x = rx(o.x), y = zy(z);
+      ctx.fillStyle = c;
+      if (o.type === 'bus' || o.type === 'tanker'){ rr(x - 3, y - 6, 6, 12, 2); ctx.fill(); }
+      else { ctx.beginPath(); ctx.arc(x, y, PICKUP(o.type) ? 3.2 : 2.6, 0, Math.PI*2); ctx.fill(); }
+    }
+    ctx.fillStyle = '#f08ab0'; for (const p of G.peds){ const z = PY - p.y; if (z < -2 || z > zmax) continue; ctx.fillRect(rx(pedX(p)) - 1.2, zy(z) - 1.2, 2.4, 2.4); }
+    const px = rx(G.x), py = zy(0);
+    ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(px, py - 8); ctx.lineTo(px + 5.5, py + 5); ctx.lineTo(px, py + 2.5); ctx.lineTo(px - 5.5, py + 5); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 2; rr(x0, y0, m, m, 12); ctx.stroke();
+    // health (shock absorbers) and horn charge, GTA health/armour style
+    const bw = m, bh = 7, by = y0 + m + 6;
+    panel(x0, by, bw, bh, 2, 0.75);
+    const seg = (bw - 4)/3; for (let i = 0; i < 3; i++){ ctx.fillStyle = i < G.shocks ? (G.shocks === 1 ? '#e24b3b' : '#5fbf47') : 'rgba(255,255,255,0.08)'; ctx.fillRect(x0 + 2 + i*seg + (i ? 1 : 0), by + 2, seg - 2, bh - 4); }
+    panel(x0, by + bh + 3, bw, bh, 2, 0.75);
+    ctx.fillStyle = '#4aa3ff'; ctx.fillRect(x0 + 2, by + bh + 5, (bw - 4)*clamp(1 - (G.hornCd || 0)/1.1, 0, 1), bh - 4);
+  }
+  function speedo(cx, cy, r){
+    ctx.fillStyle = 'rgba(8,10,14,0.7)'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+    const a0 = Math.PI*0.75, a1 = Math.PI*2.25, max = 140;
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(cx, cy, r - 7, a0, a1); ctx.stroke();
+    const k = clamp(kmh(G.v)/max, 0, 1);
+    const grad = ctx.createLinearGradient(cx - r, 0, cx + r, 0); grad.addColorStop(0, '#5fbf47'); grad.addColorStop(0.6, '#f4b740'); grad.addColorStop(1, '#e24b3b');
+    ctx.strokeStyle = grad; ctx.beginPath(); ctx.arc(cx, cy, r - 7, a0, a0 + (a1 - a0)*k); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1.5;
+    for (let i = 0; i <= 7; i++){ const a = a0 + (a1 - a0)*i/7; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a)*(r - 13), cy + Math.sin(a)*(r - 13)); ctx.lineTo(cx + Math.cos(a)*(r - 17), cy + Math.sin(a)*(r - 17)); ctx.stroke(); }
+    if (G.honk > 0.02){ ctx.strokeStyle = '#e24b3b'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, r - 2, -Math.PI/2, -Math.PI/2 + Math.PI*2*G.honk); ctx.stroke(); }
+    hudText(String(state === 'run' ? kmh(G.v) : 0), cx, cy + 6, Math.round(r*0.62), '#ffffff', 'center');
+    hudText('KM/H', cx, cy + r*0.42, 11, 'rgba(255,255,255,0.75)', 'center');
+    const gtxt = G.gear > 0 ? '▲'.repeat(G.gear) + ' BOOST' : G.gear < 0 ? '▼'.repeat(-G.gear) + ' SLOW' : 'CRUISE';
+    hudText(gtxt, cx, cy + r + 13, 13, G.gear > 0 ? '#f4b740' : G.gear < 0 ? '#ff7a66' : '#ffffff', 'center');
+  }
+  function wrapLines(txt, maxW){ const words = txt.split(' '), out = []; let line = ''; for (const w of words){ const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line){ out.push(line); line = w; } else line = t; } if (line) out.push(line); return out; }
+  function helpBox(txt, alpha){
+    ctx.font = '600 13px ' + DISPLAY; const maxW = Math.min(250, W - 150), lines = wrapLines(txt, maxW - 22), h = lines.length*17 + 16;
+    ctx.globalAlpha = alpha; panel(12, 44, maxW, h, 6);
+    ctx.fillStyle = '#ffffff'; lines.forEach((l, i) => ctx.fillText(l, 23, 44 + 21 + i*17)); ctx.globalAlpha = 1;
+  }
+  function subtitle(txt, y, alpha){
+    const m = /^(Passing |Welcome to |Now entering )(.*)$/.exec(txt), pre = m ? m[1] : '', key = m ? m[2] : txt;
+    ctx.font = '700 17px ' + DISPLAY; const w1 = ctx.measureText(pre).width, w2 = ctx.measureText(key).width, x = W/2 - (w1 + w2)/2;
+    ctx.globalAlpha = alpha; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,0,0,0.8)'; ctx.lineJoin = 'round';
+    ctx.strokeText(pre, x, y); ctx.fillStyle = '#ffffff'; ctx.fillText(pre, x, y);
+    ctx.strokeText(key, x + w1, y); ctx.fillStyle = '#f4c430'; ctx.fillText(key, x + w1, y); ctx.globalAlpha = 1;
+  }
+  function drawHud3(dt){
+    const R = window.PD3, road = curRoad(), sc = R.scooterScreen();
+    ctx.clearRect(-20, -20, W + 40, H + 40);
+    // horn waves and traffic reactions
+    for (const h of G.horns){
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5; ctx.globalAlpha = 1 - h.t/0.6;
+      for (let i = 0; i < 3; i++){ const r = 30 + h.t*120 + i*16; ctx.beginPath(); ctx.arc(sc.x, sc.y - 40, r, -Math.PI*0.78, -Math.PI*0.22); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+    }
+    const HT = { auto:0.62, bus:1.0, tanker:0.75, cow:0.55 };
+    for (const o of G.obs){
+      if (!o.say) continue; const z = PY - o.y; if (z < 0) continue;
+      const p = R.project(o.x, z, (HT[o.type] || 0.5) + 0.12); if (p.behind) continue;
+      label(o.say.text, clamp(p.x, 80, W - 80), p.y - o.say.t*14, 15, o.say.bad ? T.red : T.ink, Math.min(1, (1.2 - o.say.t)*3));
+    }
+    for (const f of G.fx) label(f.txt, clamp(sc.x, 110, W - 110), sc.y - 90 - f.t*40, 19, f.color, 1 - f.t/1.3);
+
+    if (state !== 'idle'){
+      // distance, GTA money-style
+      hudText(fmtDist(score()).toUpperCase(), W - 14, 40, 34, '#ffffff', 'right');
+      const b = curBest(); if (b) hudText('BEST ' + fmtDist(b).toUpperCase(), W - 14, 58, 15, 'rgba(255,255,255,0.8)', 'right');
+      const m = Math.round(clamp(W*0.25, 84, 116));
+      minimap(12, H - m - 34, m);
+      speedo(W - 54, H - 64, 40);
+    }
+    // area name, bottom right, when the road changes
+    if (road.name !== lastRoadName){ lastRoadName = road.name; banner = { t: 0 }; }
+    if (banner && state !== 'idle'){
+      banner.t += dt; const a = Math.min(1, banner.t*3, (4.5 - banner.t)*1.5);
+      if (a > 0){
+        hudText(road.name, W - 14, H - 214, 24, '#ffffff', 'right', a, 'italic 800 24px ' + DISPLAY);
+        hudText('BENGALURU · ' + WX[G.sky.key].name.toUpperCase(), W - 14, H - 196, 12, '#f4c430', 'right', a, '700 12px ' + MONO);
+      }
+    }
+    if (G.callout && !G.callout.big){ const a = Math.min(1, (3 - G.callout.t)*1.5, G.callout.t*4); subtitle(G.callout.text, H - 118, a); }
+    // help box: first-ride controls, then weather news
+    if (state === 'run' && G.t < 5) helpBox('Tap left or right to change lanes. Swipe up for speed, down to slow down. HORN moves traffic. Sometimes.', Math.min(1, (5 - G.t)*2));
+    else if (G.wxToast) helpBox(G.wxToast.text, Math.min(1, (3.2 - G.wxToast.t)*1.5, G.wxToast.t*4));
+    if (radioToast){ radioToast.t += dt; const a = Math.min(1, radioToast.t*4, (2.6 - radioToast.t)*1.5); if (a <= 0) radioToast = null; else { hudText(radioToast.text.toUpperCase(), W/2, 96, 26, '#ffffff', 'center', a); hudText('RADIO', W/2, 72, 13, '#f4c430', 'center', a); } }
+    // "wasted"-style crash stamp
+    if (G.wasted && state === 'over'){
+      const t = G.wasted.t;
+      if (t > 0.45){
+        const k = Math.min(1, (t - 0.45)/0.25), s = 1.35 - 0.35*k, px = Math.min(92, W*0.17);
+        ctx.save(); ctx.translate(W/2, H*0.45); ctx.scale(s, s); ctx.globalAlpha = k;
+        ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fillRect(-W, -px*0.75, W*2, px*1.2);
+        ctx.font = px + 'px ' + HUDF; ctx.textAlign = 'center'; ctx.lineJoin = 'round'; ctx.lineWidth = px*0.09; ctx.strokeStyle = '#000'; ctx.strokeText(G.wasted.word, 0, px*0.32);
+        ctx.fillStyle = '#c8202e'; ctx.fillText(G.wasted.word, 0, px*0.32);
+        ctx.restore(); ctx.globalAlpha = 1;
+        hudText(G.wasted.line, W/2, H*0.45 + px*0.75, 15, '#ffffff', 'center', k, 'italic 600 15px ' + DISPLAY);
+      }
+    }
+  }
+
+  for (const id of ['bSound', 'bRadio']){ const el = $(id); el.addEventListener('pointerdown', e => e.stopPropagation()); el.addEventListener('pointerup', e => e.stopPropagation()); }
+  $('bSound').addEventListener('click', e => { e.stopPropagation(); toggleSound(); });
+  $('bRadio').addEventListener('click', e => { e.stopPropagation(); cycleRadio(); });
+  soundLabel();
   setInterval(() => { if (state === 'idle') fillStart(); }, 30000);
 
   // ---------- loop ----------
@@ -1324,14 +1558,28 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   function loop(now){
     const dt = Math.max(0, Math.min(0.033, (now - last)/1000)); last = now;
     if (state === 'run' || state === 'idle') update(dt);
+    else if (state === 'over' && G.wasted){
+      const w = G.wasted; w.t += dt; if (w.t < 2.2) update(dt*0.15); if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
+      if (!w.shown && w.t >= w.at){ w.shown = true; show('ovOver', true); lockUntil = performance.now() + 450; setTimeout(() => { if (state === 'over') $('bAgain').focus({preventScroll:true}); }, 450); }
+    }
     else if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
-    draw(); hud(); $('bHorn').classList.toggle('cool', G.hornCd > 0);
+    if (G.flash > 0.95 && !thunderLatch){ thunderLatch = true; SND.thunder(); } else if (G.flash < 0.5) thunderLatch = false;
+    if (window.PD3 && window.PD3.tooSlow){ window.PD3 = null; stage.classList.remove('three'); }
+    if (window.PD3){
+      try { window.PD3.render(dt); drawHud3(dt); }
+      catch(e){ console.warn('3D renderer failed, switching to 2D', e); window.PD3 = null; stage.classList.remove('three'); }
+    } else draw();
+    SND.frame(); hud(); $('bHorn').classList.toggle('cool', G.hornCd > 0);
     requestAnimationFrame(loop);
   }
+  // read-only bridge for the 3D renderer (play/r3d.js)
+  window.PD = { get G(){ return G; }, get state(){ return state; }, get NIGHT(){ return NIGHT; }, PY, curRoad, pedX };
   warm();
   requestAnimationFrame(loop);
 })();
 </script>
+<script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
+<script type="module" src="./r3d.js?v=20261121a"></script>
 
 </body>
 </html>
