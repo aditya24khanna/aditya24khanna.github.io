@@ -122,7 +122,7 @@
     "id": "pulse",
     "tab": "Pulse",
     "eyebrow": "Build note · AI tool",
-    "title": "An AI news feed that says what changed, and how real it is",
+    "title": "A news feed that says what changed, and how real it is",
     "summary": "Two rules do most of the work: only what changed, and a reality check on every story.",
     "locked": false,
     "metrics": [],
@@ -132,7 +132,7 @@
       "did": "Decisions I made",
       "owned": "What broke, and what changed"
     },
-    "problem": "A product leader who builds with AI and wants to keep up without reading twenty newsletters: what changed today, whether it's real, and what it means for the product they're building.",
+    "problem": "A product leader who wants to keep up with AI, startups and fintech without reading twenty newsletters: what changed today, whether it's real, and what it means for the product they're building.",
     "research": [
       "It doesn't know what happened today unless you ask, and it never comes to you.",
       "Ask for \"the latest AI news\" and you get everything, with no sense of what matters.",

@@ -4,8 +4,8 @@
     {
       "title": "Pulse",
       "status": "Live",
-      "q": "What changed in AI today, and how real is it?",
-      "d": "AI news as stories, twice a day. Each card says what happened, why it matters if you build products, one thing to try, and a reality check: rumour, claim, credible, confirmed or solid. Tap any card for a one-pager. Plus the month's top 20, ranked by impact, and a board of rising trends. Quiet days get fewer stories, not filler. No sign-in.",
+      "q": "News for people who build products — how real is it?",
+      "d": "AI, startups and fintech as stories, twice a day. Each card says what happened, why it matters if you build products, one thing to try, and a reality check. Tap any card for a one-pager. Plus the month's top 20, ranked by impact, and a board of rising trends. Quiet days get fewer stories, not filler. No sign-in.",
       "tags": [
         "Scheduled agent",
         "Reality check",
@@ -13,7 +13,7 @@
       ],
       "url": "pulse/",
       "linkLabel": "Catch up ↗",
-      "s": "AI news as stories, twice a day, with a reality check.",
+      "s": "AI, startups and fintech as stories, twice a day, with a reality check.",
       "sketch": "pulse",
       "featured": true,
       "note": "pulse"
