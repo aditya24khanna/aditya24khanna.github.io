@@ -1,0 +1,55 @@
+{
+ "tldr": "Two of the seven Millennium Prize problems got claimed proofs on 20 November, both built with heavy AI help and both posted before any outside check. Treat them as serious claims, not results.",
+ "context": "The Riemann hypothesis, open since 1859, predicts where the zeros of the zeta function lie, which governs how prime numbers are spread out. Alpöge says Claude suggested the decisive step: a long chain of 'theta lifts', inspired by an older proof technique for function fields. He also says the method may extend to the Generalized Riemann Hypothesis.\n\nThe evidence so far is a four-page note and a Lean formalisation split across 14 compressed files. By his own account there is no readable paper, the informal draft runs past 250,000 pages, and he had not mastered every part of the argument before announcing.\n\nThe Navier–Stokes claim is a 79-page paper plus a roughly 600,000-line Lean 4 formalisation. It goes further than OpenAI's September result, which needed a smooth external force pushing the fluid; this one claims blow-up with no force at all. Buckmaster openly describes the write-up as rushed and heavily LLM-written, after being beaten to the earlier result.",
+ "numbers": [
+  {
+   "v": "4 pages",
+   "k": "Riemann note published; no readable paper yet"
+  },
+  {
+   "v": "250,000+",
+   "k": "pages in the informal Riemann draft"
+  },
+  {
+   "v": "79 pages",
+   "k": "Navier–Stokes paper"
+  },
+  {
+   "v": "~600k lines",
+   "k": "Lean code in the Navier–Stokes formalisation"
+  },
+  {
+   "v": "$1M",
+   "k": "Clay prize for each problem"
+  },
+  {
+   "v": "2 years",
+   "k": "Clay waiting period after publication before any award"
+  }
+ ],
+ "whyPM": "The interesting shift isn't 'AI did maths'. It's that generation got cheap and checking didn't. The same pattern shows up in claims processing, code review and support: the model's output volume outruns the people who can confirm it.\n\nThe design lesson is to invest in verifiers: tests that check the right thing, second models or rules that try to break the output, and humans placed where the stakes are highest. 'It compiled' and 'it passed the eval' are only as good as what the check covers.",
+ "bull": "Formal proof tools mean these claims can be checked mechanically, much faster than traditional peer review. If either holds, AI-assisted maths moves from 'improving bounds' to closing famous open problems.",
+ "bear": "A Lean file can compile while proving a slightly different statement. The Riemann claim has no human-readable argument, the Navier–Stokes certificate is missing, and in September 25 Fields medallists criticised rushed AI maths announcements.",
+ "unknowns": [
+  "Does the Riemann formalisation's final theorem actually state the Riemann hypothesis?",
+  "When will the Navier–Stokes numerical certificate be released, and does it check out?",
+  "Will any independent mathematician vouch for either argument?"
+ ],
+ "watch": [
+  "Outside groups rebuilding the Lean archives from scratch",
+  "Comment from the Clay Mathematics Institute or the named experts",
+  "Whether Anthropic itself stands behind the Riemann claim officially"
+ ],
+ "deeper": [
+  {
+   "label": "Anthropic: Claude's earlier Riemann zeta result (Aug 2026)",
+   "note": "Background: a proven, narrower result",
+   "url": "https://www.anthropic.com/research/riemann-zeta"
+  },
+  {
+   "label": "Scientific American on the Navier–Stokes claim",
+   "note": "Coverage with the September context",
+   "url": "https://www.scientificamerican.com/article/ai-just-solved-the-real-navier-stokes-problem/"
+  }
+ ]
+}

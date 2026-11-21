@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pulse: AI news as stories · Aditya Khanna</title>
+<meta name="description" content="AI news for people who build products. Twice a day, with a reality check on every story.">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fd:"Bricolage Grotesque",Inter,system-ui,sans-serif; --fm:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --bg:#0E0F13; --panel:#16181F; --panel2:#1D2029; --line:#2A2E3A;
+  --ink:#F3F1EA; --mute:#9BA0AE; --dim:#868B9C;
+  --accent:#C8F560; --warn:#FFB547; --bad:#FF6B5B;
+  --r:18px;
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:calc(18px + var(--safe-t)) 20px calc(40px + var(--safe-b))}
+.mono{font-family:var(--fm);letter-spacing:.02em}
+.disp{font-family:var(--fd)}
+
+/* header */
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;border-radius:11px;background:var(--accent);display:grid;place-items:center}
+.logo-mark svg{width:22px;height:22px}
+.logo-word{font-family:var(--fd);font-weight:800;font-size:24px;letter-spacing:-.02em}
+.back{margin-left:auto;font-size:12.5px;color:var(--mute);text-decoration:none;padding:10px 4px}.back:hover{color:var(--ink)}
+.status{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.dot.ok{background:var(--accent);box-shadow:0 0 0 4px rgba(200,245,96,.15)}
+.dot.bad{background:var(--bad)}
+.tagline{color:var(--mute);margin:10px 0 16px;max-width:640px}
+.tagline b{color:var(--ink);font-weight:600}
+
+/* topic chips */
+.topics{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{padding:7px 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--mute);display:flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.chip .sw{width:9px;height:9px;border-radius:3px}
+
+/* stories rail */
+.rail{display:flex;gap:16px;overflow-x:auto;padding:4px 2px 14px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.story-btn{flex:0 0 auto;width:78px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.ring{width:72px;height:72px;border-radius:50%;padding:3px;background:conic-gradient(from 210deg,var(--c1),var(--c2),var(--c1))}
+.ring.seen{background:var(--line)}
+.ring-in{width:100%;height:100%;border-radius:50%;background:var(--bg);padding:3px}
+.ring-face{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;text-align:center;line-height:1.05;background:linear-gradient(150deg,var(--c1),var(--c2));color:#0E0F13}
+.ring-face b{font-family:var(--fd);font-weight:800;font-size:17px;display:block}
+.ring-face span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.story-btn small{font-size:11px;color:var(--mute);white-space:nowrap}
+.story-btn.weekly .ring-face{background:linear-gradient(150deg,#F4F1E8,#BFC4D2)}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:8px 0 20px;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap;flex:0 0 auto;padding:10px 14px;color:var(--mute);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+
+/* feed grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.post{position:relative;aspect-ratio:4/5;min-height:300px;border-radius:var(--r);overflow:hidden;text-align:left;padding:16px;display:flex;flex-direction:column;background:var(--panel);isolation:isolate;transition:transform .15s}
+.post:hover{transform:translateY(-2px)}
+.post:focus-visible,.story-btn:focus-visible,.chip:focus-visible,.tab:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.post .bgx{position:absolute;inset:0;z-index:-1}
+.post .t{margin-top:auto;font-family:var(--fd);font-weight:700;font-size:20px;line-height:1.12;letter-spacing:-.01em}
+.post .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:11.5px;color:rgba(243,241,234,.8)}
+.trend-chip{align-self:flex-start;font-family:var(--fm);font-size:10.5px;font-weight:700;padding:4px 8px;border-radius:7px;background:rgba(14,15,19,.55);backdrop-filter:blur(6px);color:var(--ink);letter-spacing:.02em}
+.real{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:10.5px;font-weight:700}
+.pips{display:inline-flex;gap:3px}
+.pips i{width:7px;height:7px;border-radius:2px;background:rgba(243,241,234,.25)}
+.pips i.on{background:var(--ink)}
+.ago{white-space:nowrap}.ago.new::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:5px;vertical-align:1px}
+/* real chip */
+.rchip{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 8px;border-radius:7px;white-space:nowrap}
+.rchip .pips i{width:6px;height:6px;background:currentColor;opacity:.25}.rchip .pips i.on{opacity:1}
+.rchip.l1,.rchip.l2{background:rgba(255,107,91,.16);color:#FF8A7D}
+.rchip.l3{background:rgba(255,181,71,.16);color:var(--warn)}
+.rchip.l4,.rchip.l5{background:rgba(200,245,96,.16);color:var(--accent)}
+.slide .rchip,.post .rchip{background:rgba(10,11,14,.6);backdrop-filter:blur(6px)}
+.slide .rchip.l1,.slide .rchip.l2,.post .rchip.l1,.post .rchip.l2{color:#FF9C91}
+.slide .rchip.l3,.post .rchip.l3{color:#FFC56E}
+.slide .rchip.l4,.slide .rchip.l5,.post .rchip.l4,.post .rchip.l5{color:#D6FA80}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+/* catch-up */
+.catchup{display:flex;align-items:center;gap:14px;width:100%;max-width:520px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px 12px 12px;margin-bottom:6px}
+.catchup:hover{border-color:var(--mute)}
+.catchup .ring{width:52px;height:52px;flex:0 0 52px}
+.catchup .ring-face b{font-size:13px}
+.catchup b.ct{display:block;font-family:var(--fd);font-size:18px;line-height:1.15}
+.catchup span.cs{font-size:13px;color:var(--mute)}
+.catchup .go{margin-left:auto;background:var(--accent);color:#0E0F13;font-weight:700;font-size:13px;padding:8px 12px;border-radius:999px;white-space:nowrap}
+.post .w{font-size:13px;line-height:1.38;color:rgba(243,241,234,.86);margin-top:8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.post .w b{color:var(--ink);font-weight:600}
+.cover ol li button{all:unset;cursor:pointer;display:flex;gap:10px;font-size:14px;line-height:1.3;pointer-events:auto}
+.cover ol li button:hover{text-decoration:underline}
+.cover ol li button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.tap-hint{font-family:var(--fm);font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+.day-h{grid-column:1/-1;font-family:var(--fm);font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;margin-top:10px}
+.day-h:first-child{margin-top:0}
+
+/* trends */
+.trend-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.trend{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.trend h3{font-family:var(--fd);font-size:20px;line-height:1.15;margin:8px 0 6px}
+.trend p{color:var(--mute);font-size:14px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em}
+.pill.rising{background:rgba(200,245,96,.14);color:var(--accent)}
+.pill.new{background:rgba(120,180,255,.15);color:#8EC1FF}
+.pill.steady{background:rgba(155,160,174,.15);color:var(--mute)}
+.pill.fading{background:rgba(255,107,91,.13);color:var(--bad)}
+.trend .foot{display:flex;justify-content:space-between;margin-top:14px;font-size:12px;color:var(--dim)}
+.trend .links{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.trend .links button{font-size:12px;padding:5px 9px;border:1px solid var(--line);border-radius:8px;color:var(--mute);text-align:left}
+.trend .links button:hover{color:var(--ink);border-color:var(--mute)}
+
+/* top 30 */
+.top-sec{margin-bottom:28px}
+.top-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.top-head h2{font-size:22px;letter-spacing:-.01em}
+.top-head p{color:var(--mute);font-size:13px}
+.top-upd{font-family:var(--fm);font-size:11px;color:var(--dim)}
+.top-list{list-style:none;display:grid;gap:8px}
+.top-row{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.top-main{width:100%;display:flex;align-items:center;gap:14px;padding:12px 14px;text-align:left}
+.top-main:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.top-rank{flex:0 0 38px;font-size:26px;font-weight:800;color:var(--accent);text-align:center;line-height:1}
+.top-row:nth-child(n+4) .top-rank{color:var(--mute)}
+.top-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.top-t{font-weight:600;font-size:15px;line-height:1.3}
+.top-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+.top-tag{font-family:var(--fm);font-size:10.5px}
+.top-meta .pips i{width:6px;height:6px}
+.mv{font-family:var(--fm);font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px}
+.mv.new{background:rgba(120,180,255,.15);color:#8EC1FF}.mv.up{background:rgba(200,245,96,.14);color:var(--accent)}.mv.down{background:rgba(255,107,91,.13);color:var(--bad)}.mv.same{color:var(--dim)}
+.top-chev{color:var(--dim);font-size:18px;transition:transform .15s}
+.top-row.open .top-chev{transform:rotate(180deg)}
+.top-det{display:none;padding:0 14px 14px 66px;color:var(--mute);font-size:14px}
+.top-row.open .top-det{display:grid;gap:8px}
+.top-why b{color:var(--ink);font-weight:600}
+.top-real{font-family:var(--fm);font-size:11.5px;color:var(--dim)}
+.top-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.top-open{background:var(--ink);color:var(--bg);font-weight:600;font-size:12.5px;padding:6px 11px;border-radius:999px}
+.top-src{font-size:13px;color:var(--mute);text-decoration:underline;text-underline-offset:2px;display:inline-flex;align-items:center;min-height:44px;padding:0 4px}
+@media (max-width:560px){.top-det{padding-left:14px}.top-rank{flex-basis:28px;font-size:22px}.top-main{gap:10px}}
+
+/* about */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.box h3{font-family:var(--fd);font-size:19px;margin-bottom:10px}
+.box p,.box li{color:var(--mute);font-size:14px}
+.box ul{padding-left:18px;display:grid;gap:6px}
+.box li b{color:var(--ink);font-weight:600}
+.rubric{display:grid;gap:8px}
+.rubric div{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--mute)}
+.rubric .pips i{background:var(--line)} .rubric .pips i.on{background:var(--accent)}
+.box.wide{grid-column:1/-1}
+
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:34px;text-align:center;color:var(--mute)}
+.empty b{display:block;color:var(--ink);font-family:var(--fd);font-size:20px;margin-bottom:6px}
+.skel{aspect-ratio:4/5;border-radius:var(--r);background:linear-gradient(90deg,var(--panel),var(--panel2),var(--panel));background-size:200% 100%;animation:sh 1.4s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+/* ---------- story viewer ---------- */
+.viewer{position:fixed;inset:0;z-index:50;background:rgba(6,7,9,.94);display:none;align-items:center;justify-content:center}
+.viewer.open{display:flex}
+.frame{position:relative;height:min(92vh,860px);aspect-ratio:9/16;border-radius:22px;overflow:hidden;background:#111;box-shadow:0 30px 80px rgba(0,0,0,.6);user-select:none;-webkit-user-select:none;touch-action:pan-y}
+#stage{position:absolute;inset:0;z-index:4;pointer-events:none}
+.slide{pointer-events:none;position:absolute;inset:0;display:flex;flex-direction:column;padding:calc(68px + var(--safe-t)) 22px calc(20px + var(--safe-b));isolation:isolate}
+.slide .bgx{position:absolute;inset:0;z-index:-1}
+.bars{position:absolute;top:calc(10px + var(--safe-t));left:12px;right:12px;display:flex;gap:4px;z-index:5}
+.bar{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.28);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:#fff}
+.vhead{position:absolute;top:calc(20px + var(--safe-t));left:14px;right:8px;display:flex;align-items:center;gap:9px;z-index:5;font-size:12.5px}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;color:#0E0F13;font-family:var(--fd)}
+.vhead .who b{font-weight:600} .vhead .who span{color:rgba(255,255,255,.7);margin-left:6px}
+.vhead .sp{flex:1}
+.ib{width:44px;height:44px;display:grid;place-items:center;border-radius:50%}
+.ib:hover{background:rgba(255,255,255,.12)}
+.ib svg{width:20px;height:20px}
+.zone{position:absolute;top:70px;bottom:120px;z-index:3}
+.zone.l{left:0;width:33%} .zone.r{right:0;width:67%}
+.slide .content{position:relative;z-index:4;display:flex;flex-direction:column;gap:12px;height:100%;pointer-events:none}
+.slide .content a,.slide .content button{pointer-events:auto}
+.s-head{font-family:var(--fd);font-weight:800;font-size:clamp(22px,3.4vh,31px);line-height:1.06;letter-spacing:-.015em}
+.blk{background:rgba(10,11,14,.42);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;padding:11px 13px}
+.blk h4{font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.66);margin-bottom:4px}
+.blk p{font-size:clamp(14px,1.8vh,15px);line-height:1.45}
+.blk.what{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0 2px}
+.blk.what p{color:rgba(255,255,255,.88)}
+.blk.why{background:rgba(10,11,14,.55);border-left:3px solid var(--accent)}
+.blk.why p{font-size:clamp(15px,1.95vh,16.5px);font-weight:500}
+.blk.try{background:rgba(255,255,255,.92);color:#0E0F13}
+.blk.try h4{color:rgba(14,15,19,.6)}
+.blk.try a{font-weight:600}
+.s-foot{margin-top:auto;display:flex;align-items:center;gap:10px}
+.s-foot .real{font-size:11px}
+.s-foot .src{font-size:11px;color:rgba(255,255,255,.7)}
+.more{margin-left:auto;background:#fff;color:#0E0F13;font-weight:700;font-size:13px;padding:9px 13px;border-radius:999px;display:flex;align-items:center;gap:6px}
+.real-why{font-size:11px;color:rgba(255,255,255,.75);margin-top:-4px}
+.cover .content{justify-content:center;gap:16px}
+.cover .ed{font-family:var(--fm);font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.cover .big{font-family:var(--fd);font-weight:800;font-size:clamp(40px,7vh,64px);line-height:.95;letter-spacing:-.03em}
+.cover .blurb{font-size:15px;opacity:.85;max-width:90%}
+.cover ol{list-style:none;display:grid;gap:8px;margin-top:6px}
+.cover ol li{display:flex}
+.cover ol li span{font-family:var(--fm);opacity:.6;font-size:12px;padding-top:1px}
+.tr-row{display:flex;gap:12px;align-items:flex-start;background:rgba(10,11,14,.42);border-radius:14px;padding:12px}
+.tr-row .arr{font-size:20px;line-height:1}
+.tr-row b{display:block;font-family:var(--fd);font-size:17px;line-height:1.15}
+.tr-row p{font-size:13px;opacity:.85;margin-top:3px}
+.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center;color:#fff}
+.nav-arrow svg{width:22px;height:22px}
+.nav-arrow.p{left:calc(50% - min(92vh,860px)*9/32 - 64px)} .nav-arrow.n{right:calc(50% - min(92vh,860px)*9/32 - 64px)}
+.paused-tag{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;font-family:var(--fm);font-size:11px;background:rgba(0,0,0,.6);padding:5px 9px;border-radius:6px;display:none}
+.frame.paused .paused-tag{display:block}
+
+/* one-pager sheet */
+.sheet{position:absolute;inset:0;z-index:20;background:#F6F4EE;color:#14161C;transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.sheet.open{transform:none}
+.sheet-top{display:flex;align-items:center;gap:8px;padding:calc(12px + var(--safe-t)) 12px 8px 18px;border-bottom:1px solid #E2DED3}
+.sheet-top .mono{font-size:11px;color:#6B6F7A;text-transform:uppercase;letter-spacing:.1em}
+.sheet-top .ib:hover{background:#E9E5DA}
+.sheet-body{overflow-y:auto;padding:18px 20px calc(30px + var(--safe-b));-webkit-overflow-scrolling:touch}
+.sheet-body h2{font-family:var(--fd);font-weight:800;font-size:24px;line-height:1.08;letter-spacing:-.015em;margin-bottom:10px}
+.sheet-body h5{font-family:var(--fm);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#6B6F7A;margin:20px 0 6px}
+.sheet-body p{font-size:14.5px;line-height:1.55;margin-bottom:8px}
+.sheet-body ul{padding-left:18px;display:grid;gap:5px} .sheet-body li{font-size:14px;line-height:1.5}
+.tldr{background:#14161C;color:#F6F4EE;border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.5}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.num{background:#fff;border:1px solid #E2DED3;border-radius:10px;padding:10px}
+.num b{display:block;font-family:var(--fd);font-size:20px;line-height:1.1}
+.num span{font-size:12px;color:#6B6F7A}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.two > div{background:#fff;border:1px solid #E2DED3;border-radius:10px;padding:10px 12px}
+.two h6{font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.two .bull h6{color:#3D7A12} .two .bear h6{color:#B23A2B}
+.two p{font-size:13px;margin:0}
+.srcs a{display:block;padding:9px 0;border-bottom:1px solid #E2DED3;text-decoration:none;font-size:14px}
+.srcs a span{display:block;font-size:12px;color:#6B6F7A}
+.realbox{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #E2DED3;border-radius:10px;padding:10px 12px;font-size:13px}
+.realbox .pips i{background:#E2DED3} .realbox .pips i.on{background:#14161C}
+.realbox .rw{font-family:var(--fm);font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.05em;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.realbox .rw.l1,.realbox .rw.l2{background:#FBE3DF;color:#A3321F}.realbox .rw.l3{background:#FBEBCF;color:#8A5A00}.realbox .rw.l4,.realbox .rw.l5{background:#E5F3CF;color:#3D6B0F}
+.fine{font-size:11.5px;color:#6B6F7A;margin-top:18px}
+
+@media (max-width:720px){
+  .about{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr;gap:10px}
+  .post{aspect-ratio:auto;min-height:230px;padding:16px}
+  .post .t{font-size:20px}
+  .nav-arrow{display:none}
+  .tabs{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+  .status{font-size:11px}
+}
+@media (max-width:560px){
+  .frame{height:100%;width:100%;aspect-ratio:auto;border-radius:0}
+  .viewer{background:#000}
+}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}.post{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <div class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#0E0F13" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3-7 4 14 3-7h6"/></svg></div>
+      <div class="logo-word">Pulse</div>
+    </div>
+    <a class="back" href="../#ai">← Aditya Khanna</a>
+    <div class="status" id="status"><span class="dot"></span><span>Connecting…</span></div>
+  </header>
+  <p class="tagline" id="tagline">AI news for people who build products. Twice a day, no filler.</p>
+
+  <div class="topics" id="topics" role="group" aria-label="Topics"></div>
+  <div class="rail" id="rail" aria-label="Editions"></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="feed" aria-selected="true">Latest</button>
+    <button class="tab" role="tab" data-tab="top" aria-selected="false">Top 30 days</button>
+    <button class="tab" role="tab" data-tab="trends" aria-selected="false">Trends</button>
+    <button class="tab" role="tab" data-tab="about" aria-selected="false">How it works</button>
+  </div>
+  <main id="main"></main>
+</div>
+
+<!-- story viewer -->
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Story viewer">
+  <button class="nav-arrow p" id="navP" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div class="frame" id="frame">
+    <div class="bars" id="bars"></div>
+    <div class="vhead">
+      <div class="av" id="vAv">AI</div>
+      <div class="who"><b id="vWho">Pulse</b><span id="vWhen"></span></div>
+      <div class="sp"></div>
+      <button class="ib" id="vPause" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
+      <button class="ib" id="vClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div id="stage" role="region" aria-live="polite"></div>
+    <div class="zone l" id="zL"></div><div class="zone r" id="zR"></div>
+    <div class="paused-tag">PAUSED</div>
+    <div class="sheet" id="sheet" aria-hidden="true">
+      <div class="sheet-top"><span class="mono">One-pager</span><div style="flex:1"></div><button class="ib" id="sClose" aria-label="Close one-pager"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button></div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </div>
+  <button class="nav-arrow n" id="navN" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg></button>
+</div>
+
+<script>
+(() => {
+"use strict";
+/* ---------- state ---------- */
+const S = { topics:[], batches:[], cards:[], trends:[], top:{}, meta:null, topic:null, tab:"feed", loaded:{}, err:null };
+const $ = (s, r=document) => r.querySelector(s);
+const LS = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+let seen = new Set(LS.get("pulse.seen", []));
+const markSeen = id => { if(!seen.has(id)){ seen.add(id); LS.set("pulse.seen", [...seen].slice(-400)); } };
+
+/* ---------- tiny DOM builder (all text via textContent) ---------- */
+function el(tag, attrs, ...kids){
+  const n = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)){
+    if (v == null || v === false) continue;
+    if (k === "class") n.className = v;
+    else if (k === "style" && typeof v === "object") { for (const [sk,sv] of Object.entries(v)) { if (sk.startsWith("--")) n.style.setProperty(sk, sv); else n.style[sk] = sv; } }
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (k === "html") continue;
+    else n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat(Infinity)){ if (k == null || k === false) continue; n.append(k.nodeType ? k : String(k)); }
+  return n;
+}
+const str = (v, max=4000) => (typeof v === "string" ? v : v == null ? "" : String(v)).slice(0, max);
+const safeUrl = u => { try{ const x = new URL(str(u)); return (x.protocol === "https:" || x.protocol === "http:") ? x.href : null; }catch(e){ return null; } };
+const link = (u, text, cls) => { const h = safeUrl(u); return h ? el("a", {href:h, target:"_blank", rel:"noopener noreferrer", class:cls}, text) : el("span", {class:cls}, text); };
+
+/* ---------- colour ---------- */
+function hash(s){ let h = 2166136261; for (const c of str(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+const PALETTE = [["#5B3DF5","#C8F560"],["#FF5E3A","#FFB547"],["#0BA5A4","#C8F560"],["#E23E8B","#7A5CFF"],["#1F6FEB","#5EE6F0"],["#F2A20C","#FF5E3A"],["#2E8B57","#D8F36A"],["#7A5CFF","#FF8FB1"]];
+function pal(key){ return PALETTE[hash(key) % PALETTE.length]; }
+function bgFor(key, darken=.38){
+  const [a,b] = pal(key); const ang = 120 + hash(key+"a") % 120;
+  return `linear-gradient(rgba(10,11,14,${darken}),rgba(10,11,14,${darken+.32})),radial-gradient(120% 80% at ${hash(key+"x")%100}% 0%, ${b} 0%, transparent 60%),linear-gradient(${ang}deg, ${a}, #14161C 85%)`;
+}
+function topicOf(id){ return S.topics.find(t => t.id === id) || {id, name:id.toUpperCase(), short:id.slice(0,2).toUpperCase(), accent:"#C8F560"}; }
+
+/* ---------- time ---------- */
+const IST = {timeZone:"Asia/Kolkata"};
+function ago(iso){
+  const t = Date.parse(iso); if (!t) return "";
+  const m = Math.round((Date.now() - t)/60000);
+  if (m < 1) return "just now"; if (m < 60) return m + "m ago";
+  const h = Math.round(m/60); if (h < 24) return h + "h ago";
+  const d = Math.round(h/24); return d === 1 ? "yesterday" : d + "d ago";
+}
+const dayLabel = iso => { const d = new Date(iso); if (isNaN(d)) return ""; return d.toLocaleDateString("en-IN", {...IST, weekday:"long", day:"numeric", month:"short"}); };
+const timeIST = iso => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleTimeString("en-IN", {...IST, hour:"numeric", minute:"2-digit"}) + " IST"; };
+
+/* ---------- pieces ---------- */
+const REAL_WORDS = ["", "Rumour", "Claim", "Credible", "Confirmed", "Solid"];
+const REAL_HELP = ["", "Rumour, leak, or marketing with no evidence", "Big claim, unverified or disputed", "Credible announcement or research, not yet in hands", "Real and confirmed, limited access or early rollout", "Shipped and usable, or hard numbers from a primary source"];
+const lvl = r => Math.max(1, Math.min(5, Math.round(+(r && r.score) || 1)));
+function realChip(r){ if (!r) return null; const n = lvl(r); return el("span",{class:"rchip l"+n, title: REAL_HELP[n] + (r.reason ? " — " + str(r.reason,200) : ""), "aria-label": "Reality check: " + REAL_WORDS[n]}, pips(n), REAL_WORDS[n]); }
+function trendName(t){
+  if (!t) return "";
+  const doc = S.trends.find(x => x.id === t.id);
+  if (doc && doc.label) return str(doc.label, 40);
+  return str(t.label, 40).replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2").replace(/^(\S+)/, m => m).replace(/ (\w)/g, (m,c) => " " + c.toLowerCase());
+}
+const wordsIn = (...xs) => xs.join(" ").split(/\s+/).filter(Boolean).length;
+const RM = (() => { try { return matchMedia("(prefers-reduced-motion: reduce)").matches; } catch(e){ return false; } })();
+function pips(n){ n = Math.max(0, Math.min(5, Math.round(+n || 0))); return el("span",{class:"pips","aria-hidden":"true"}, [1,2,3,4,5].map(i => el("i",{class: i<=n ? "on" : ""}))); }
+function realTag(r){ if(!r) return null; return el("span",{class:"real", title: str(r.reason,300)}, "REAL", pips(r.score), (+r.score||0) + "/5"); }
+
+/* ---------- data load ---------- */
+async function boot(){
+  const stamp = Math.floor(Date.now() / 60000);
+  const get = f => fetch("data/" + f + "?t=" + stamp, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(f + " " + r.status); return r.json(); });
+  const loadTimer = setTimeout(() => { if (!S.loaded.cards) { S.err = "slow"; render(); } }, 10000);
+  try {
+    const [topics, batches, cards, trends, top, status] = await Promise.all([
+      get("topics.json"), get("batches.json"), get("cards.json"), get("trends.json"),
+      get("top.json").catch(() => ({})), get("status.json").catch(() => null)
+    ]);
+    const arr = x => Array.isArray(x) ? x.filter(o => o && typeof o === "object" && o.id) : [];
+    S.topics = arr(topics).filter(t => t.active !== false).sort((x,y) => (x.order||0)-(y.order||0));
+    S.batches = arr(batches).sort((x,y) => str(y.at).localeCompare(str(x.at)));
+    S.cards = arr(cards).sort((x,y) => str(y.publishedAt).localeCompare(str(x.publishedAt)));
+    S.trends = arr(trends).sort((x,y) => str(y.lastSeen).localeCompare(str(x.lastSeen)));
+    S.top = (top && typeof top === "object" && !Array.isArray(top)) ? top : {};
+    S.meta = status;
+    S.loaded = { cards: true, top: true, topics: true, batches: true, trends: true };
+    S.err = null;
+  } catch (e) { S.err = "load"; }
+  clearTimeout(loadTimer);
+  render();
+}
+const pagerCache = {};
+function getPager(c){
+  if (c.pager) return Promise.resolve(c.pager);
+  if (!c.hasPager) return Promise.resolve(null);
+  if (!pagerCache[c.id]) pagerCache[c.id] = fetch("data/pagers/" + encodeURIComponent(c.id) + ".json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null);
+  return pagerCache[c.id];
+}
+
+function setStatus(kind, text){ const s = $("#status"); s.replaceChildren(el("span",{class:"dot "+(kind||"")}), el("span",null,text)); }
+function renderStatus(){
+  const m = S.meta;
+  if (!m){ setStatus("", S.loaded.cards ? "Waiting for the first run" : "Connecting…"); return; }
+  const bits = ["Updated " + ago(m.lastRun)];
+  if (m.nextRun) bits.push("next " + timeIST(m.nextRun));
+  setStatus(m.ok === false ? "bad" : "ok", bits.join(" · "));
+}
+
+/* ---------- derived ---------- */
+const inTopic = x => !S.topic || x.topic === S.topic;
+function cardsOf(batchId){ return S.cards.filter(c => c.batch === batchId).sort((a,b) => (a.order||0)-(b.order||0)); }
+function visibleBatches(){ return S.batches.filter(inTopic).filter(b => cardsOf(b.id).length); }
+
+/* ---------- render ---------- */
+function render(){
+  renderStatus();
+  renderTopics();
+  renderRail();
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === S.tab)));
+  const main = $("#main");
+  if (S.tab === "about") return main.replaceChildren(viewAbout());
+  if (S.err === "load") return main.replaceChildren(el("div",{class:"empty"}, el("b",null,"Couldn't load the feed"), "Check your connection and refresh the page."));
+  if (S.err === "revoked") return main.replaceChildren(el("div",{class:"empty"}, el("b",null,"This page lost access"), "Reload to try again."));
+  if (!S.loaded.cards) return main.replaceChildren(S.err === "slow" ? el("div",{class:"empty"}, el("b",null,"Still connecting"), "The feed can't be reached yet. It will appear here once it loads.") : el("div",{class:"grid"}, [1,2,3,4].map(() => el("div",{class:"skel"}))));
+  main.replaceChildren(S.tab === "trends" ? viewTrends() : S.tab === "top" ? viewTop() : viewFeed());
+}
+
+function renderTopics(){
+  const box = $("#topics");
+  if (S.topics.length < 2){ box.replaceChildren(); box.style.display = "none"; return; }
+  box.style.display = "";
+  const all = el("button",{class:"chip","aria-pressed":String(!S.topic), onclick:() => { S.topic = null; render(); }}, "All");
+  box.replaceChildren(all, ...S.topics.map(t => el("button",{class:"chip","aria-pressed":String(S.topic===t.id), onclick:() => { S.topic = t.id; render(); }}, el("span",{class:"sw",style:{background:str(t.accent)||"#C8F560"}}), str(t.name,40))));
+}
+
+function renderRail(){
+  const rail = $("#rail");
+  const bs = visibleBatches().slice(0, 20);
+  if (!bs.length){ rail.replaceChildren(); return; }
+  const unread = bs.filter(b => !allSeen(b.id));
+  if (bs.length <= 2){
+    const target = unread[0] || bs[0];
+    const ucards = (unread.length ? unread : [bs[0]]).flatMap(b => cardsOf(b.id)).filter(c => unread.length ? !seen.has(c.id) : true);
+    const mins = Math.max(1, Math.ceil(ucards.reduce((n,c) => n + wordsIn(c.headline, c.what, c.why, c.tryThis && c.tryThis.text), 0) / 180));
+    const [c1,c2] = pal(target.id); const t = topicOf(target.topic);
+    rail.replaceChildren(el("button",{class:"catchup", onclick:() => openBatch(target.id, 0)},
+      el("div",{class:"ring"+(unread.length?"":" seen"), style:{"--c1":c1,"--c2":c2}}, el("div",{class:"ring-in"}, el("div",{class:"ring-face"}, el("b",null, str(t.short||"AI",3))))),
+      el("div",null, el("b",{class:"ct"}, unread.length ? "Catch up" : "Replay the latest edition"),
+        el("span",{class:"cs"}, (unread.length ? ucards.length + " new " + (ucards.length===1?"story":"stories") : str(target.edition||"Latest",20) + " edition") + " · ~" + mins + " min")),
+      el("span",{class:"go"}, unread.length ? "Start ▸" : "Play ▸")));
+    return;
+  }
+  const unseenFirst = [...bs].sort((a,b) => (allSeen(a.id)?1:0) - (allSeen(b.id)?1:0));
+  rail.replaceChildren(...unseenFirst.map(b => {
+    const [c1,c2] = pal(b.id); const t = topicOf(b.topic);
+    const weekly = b.edition === "Weekly";
+    const d = new Date(b.at);
+    const face = weekly ? ["Week", "trends"] : [str(t.short||"AI",3), str(b.edition||"",9)];
+    return el("button",{class:"story-btn"+(weekly?" weekly":""), "aria-label": `${t.name} ${b.edition} edition, ${dayLabel(b.at)}`, onclick:() => openBatch(b.id, 0)},
+      el("div",{class:"ring"+(allSeen(b.id)?" seen":""), style:{"--c1":c1,"--c2":c2}}, el("div",{class:"ring-in"}, el("div",{class:"ring-face"}, el("div",null, el("b",null,face[0]), el("span",null,face[1]))))),
+      el("small",null, isNaN(d) ? "" : d.toLocaleDateString("en-IN",{...IST, weekday:"short"}) + " · " + d.toLocaleTimeString("en-IN",{...IST,hour:"numeric"}).replace(" ","")));
+  }));
+}
+const allSeen = bid => cardsOf(bid).every(c => seen.has(c.id));
+
+function viewFeed(){
+  const cards = S.cards.filter(inTopic);
+  if (!cards.length) return el("div",{class:"empty"}, el("b",null,"No stories yet"), "The first edition lands at the next scheduled run (7:44 or 18:44 IST).");
+  const out = []; let lastDay = "";
+  for (const c of cards){
+    const day = dayLabel(c.publishedAt);
+    if (day !== lastDay){ out.push(el("div",{class:"day-h"}, day)); lastDay = day; }
+    out.push(postCard(c));
+  }
+  return el("div",{class:"grid"}, out);
+}
+function postCard(c){
+  const key = (c.trend && c.trend.id) || c.id;
+  return el("button",{class:"post", onclick:() => openCard(c), "aria-label": str(c.headline,200)},
+    el("div",{class:"bgx", style:{background:bgFor(key,.2)}}),
+    el("div",{class:"chips"}, c.trend ? el("span",{class:"trend-chip"}, trendName(c.trend)) : c.kind === "trends" ? el("span",{class:"trend-chip"}, "Weekly trends") : null),
+    el("div",{class:"t"}, str(c.headline,140)),
+    c.why ? el("div",{class:"w"}, el("b",null,"Why it matters: "), str(c.why,240)) : null,
+    el("div",{class:"meta"}, c.real ? realChip(c.real) : el("span"), el("span",{class: seen.has(c.id) ? "ago" : "ago new"}, ago(c.publishedAt))));
+}
+
+function viewTop(){
+  const lists = Object.entries(S.top).filter(([id, t]) => t && Array.isArray(t.items) && (!S.topic || (t.topic || id) === S.topic));
+  if (!lists.length) return el("div",{class:"empty"}, el("b",null,"No top list yet"), "The 30-day list is rebuilt every morning.");
+  return el("div",null, lists.map(([id, t]) => {
+    const items = t.items.slice(0, 20).sort((a,b) => (a.rank||99)-(b.rank||99));
+    const tp = topicOf(t.topic || id);
+    return el("section",{class:"top-sec"},
+      el("div",{class:"top-head"},
+        el("div",null, el("h2",{class:"disp"}, (lists.length > 1 ? str(tp.name,30) + ": " : "") + "Top stories, last 30 days"),
+          el("p",null, items.length + " of max 20 · ranked by impact, not date" + (t.window && t.window.from ? " · " + new Date(t.window.from).toLocaleDateString("en-IN",{...IST,day:"numeric",month:"short"}) + " – " + new Date(t.window.to).toLocaleDateString("en-IN",{...IST,day:"numeric",month:"short"}) : ""))),
+        el("span",{class:"top-upd"}, "Refreshed " + ago(t.updatedAt) + " · daily")),
+      el("ol",{class:"top-list"}, items.map(it => topRow(it, items.every(x => x.prevRank == null)))));
+  }));
+}
+function topRow(it, first){
+  const prev = it.prevRank, r = it.rank || 0;
+  const mv = first ? null : prev == null ? el("span",{class:"mv new"},"NEW") : prev > r ? el("span",{class:"mv up"}, "▲" + (prev - r)) : prev < r ? el("span",{class:"mv down"}, "▼" + (r - prev)) : el("span",{class:"mv same"},"–");
+  const card = it.cardId ? S.cards.find(c => c.id === it.cardId) : null;
+  const srcs = Array.isArray(it.sources) ? it.sources.slice(0,3) : [];
+  const d = new Date(it.date);
+  const det = el("div",{class:"top-det"},
+    it.summary ? el("p",null, str(it.summary,400)) : null,
+    it.why ? el("p",{class:"top-why"}, el("b",null,"Why it matters: "), str(it.why,300)) : null,
+    it.real && it.real.label ? el("p",{class:"top-real"}, REAL_WORDS[lvl(it.real)] + " · " + str(it.real.label,60)) : null,
+    el("div",{class:"top-links"},
+      card ? el("button",{class:"top-open", onclick:e => { e.stopPropagation(); openCard(card); }}, "Open story ↗") : null,
+      srcs.map(s => link(s.url, str(s.outlet || s.title, 40), "top-src"))));
+  const row = el("li",{class:"top-row"},
+    el("button",{class:"top-main", "aria-expanded":"false", onclick:e => { const open = row.classList.toggle("open"); e.currentTarget.setAttribute("aria-expanded", String(open)); }},
+      el("span",{class:"top-rank disp"}, String(r)),
+      el("span",{class:"top-body"},
+        el("span",{class:"top-t"}, str(it.headline,140)),
+        el("span",{class:"top-meta"}, mv, isNaN(d) ? null : el("span",null, d.toLocaleDateString("en-IN",{...IST,day:"numeric",month:"short"})), it.real ? realChip(it.real) : null, it.trend ? el("span",{class:"top-tag"}, trendName(it.trend)) : null)),
+      el("span",{class:"top-chev","aria-hidden":"true"},"⌄")),
+    det);
+  return row;
+}
+
+function viewTrends(){
+  const ts = S.trends.filter(inTopic);
+  if (!ts.length) return el("div",{class:"empty"}, el("b",null,"No trends tracked yet"), "Trends build up as stories get tagged across editions.");
+  const order = {rising:0,new:1,steady:2,fading:3};
+  ts.sort((a,b) => (order[a.status]??9)-(order[b.status]??9) || (b.mentions||0)-(a.mentions||0));
+  return el("div",{class:"trend-list"}, ts.map(t => {
+    const related = S.cards.filter(c => c.trend && c.trend.id === t.id).slice(0,4);
+    const st = ["rising","new","steady","fading"].includes(t.status) ? t.status : "steady";
+    const arrow = {rising:"↗",new:"✦",steady:"→",fading:"↘"}[st];
+    return el("div",{class:"trend"},
+      el("span",{class:"pill "+st}, arrow + " " + st),
+      el("h3",null, str(t.label,80)),
+      el("p",null, str(t.summary,600)),
+      related.length ? el("div",{class:"links"}, related.map(c => el("button",{onclick:() => openCard(c)}, (h => h.length > 68 ? h.slice(0,66).trimEnd() + "…" : h)(str(c.headline,200))))) : null,
+      el("div",{class:"foot"}, el("span",null, (n => n + (n === 1 ? " story" : " stories"))(t.mentions||related.length)), el("span",null, "since " + (t.firstSeen ? new Date(t.firstSeen).toLocaleDateString("en-IN",{...IST,day:"numeric",month:"short"}) : "—"))));
+  }));
+}
+
+function viewAbout(){
+  const topicItems = S.topics.length ? S.topics.map(t => el("li",null, el("b",null, str(t.name,40)), " — " + str(t.audience || t.brief, 200))) : [el("li",null,"AI (first topic)")];
+  return el("div",{class:"about"},
+    el("div",{class:"box"}, el("h3",null,"What you get"), el("ul",null,
+      el("li",null, el("b",null,"Two editions a day"), " at 7:44 and 18:44 IST, plus a Sunday-evening card on the week's trends."),
+      el("li",null, el("b",null,"Only what changed."), " A quiet half-day gets a short edition, not filler. Repeats of earlier stories are dropped unless something new happened."),
+      el("li",null, el("b",null,"Four layers per card:"), " what happened, why it matters if you build products, one thing to try, and a reality check."),
+      el("li",null, el("b",null,"Top 30 days:"), " up to 20 stories from the last month, ranked by impact and rebuilt every morning."),
+      el("li",null, el("b",null,"A one-pager"), " behind every card: context, key numbers, the bull and bear case, what to watch, and links to go deeper."))),
+    el("div",{class:"box"}, el("h3",null,"Reality check"), el("p",{style:{marginBottom:"12px"}},"Every story gets one of five labels, so a big claim never looks like a shipped product."), el("div",{class:"rubric"}, [5,4,3,2,1].map(n => el("div",null, realChip({score:n}), el("span",null,REAL_HELP[n]))))),
+    el("div",{class:"box"}, el("h3",null,"How it's made"), el("ul",null,
+      el("li",null,"A scheduled Claude run searches the web, reads primary sources first (lab blogs, papers, filings), and checks each claim against a second source."),
+      el("li",null,"It compares new items with the last 7 days of stories so repeats are dropped, and tags each item to a running trend so the Trends board shows what's rising or fading."),
+      el("li",null,"Summaries are written fresh, not copied. Always read the original before you act on anything."))),
+    el("div",{class:"box"}, el("h3",null,"Topics"), el("ul",null, topicItems), el("p",{style:{marginTop:"10px"}},"Each topic is a configuration (sources, audience, what counts as news), so new topics can be added without changing the app.")),
+    el("div",{class:"box wide"}, el("p",null,"Pulse is an experiment in AI-curated news, built by Aditya Khanna. It can be wrong. Nothing here is financial, legal or investment advice.")));
+}
+
+/* ---------- viewer ---------- */
+const V = { batch:null, slides:[], i:0, t0:0, elapsed:0, dur:0, raf:0, paused:false, hold:false, sheet:false };
+const viewer = $("#viewer"), frame = $("#frame"), stage = $("#stage");
+
+function openCard(c){ const idx = cardsOf(c.batch).findIndex(x => x.id === c.id); openBatch(c.batch, idx < 0 ? 0 : idx + 1); }
+function openBatch(bid, i){
+  const b = S.batches.find(x => x.id === bid) || {id:bid, topic:(S.cards.find(c=>c.batch===bid)||{}).topic||"ai", edition:"", at:""};
+  const cards = cardsOf(bid); if (!cards.length) return;
+  V.batch = b;
+  V.slides = [{type:"cover", b, cards}, ...cards.map(c => ({type: c.kind === "trends" ? "trends" : "card", c, b}))];
+  viewer.classList.add("open"); document.body.style.overflow = "hidden";
+  go(Math.max(0, Math.min(i, V.slides.length-1)));
+}
+function closeViewer(){ cancelAnimationFrame(V.raf); viewer.classList.remove("open"); document.body.style.overflow = ""; closeSheet(); render(); }
+
+function go(i){
+  if (i < 0) { V.elapsed = 0; return go(0); }
+  if (i >= V.slides.length) return nextBatch();
+  V.i = i; closeSheet();
+  const s = V.slides[i];
+  if (s.c) markSeen(s.c.id);
+  const t = topicOf(V.batch.topic);
+  $("#vAv").textContent = str(t.short||"AI",3); $("#vAv").style.background = str(t.accent)||"#C8F560";
+  $("#vWho").textContent = str(t.name,30) + (V.batch.edition ? " · " + str(V.batch.edition,20) : "");
+  $("#vWhen").textContent = ago(s.c ? s.c.publishedAt : V.batch.at);
+  stage.replaceChildren(s.type === "cover" ? slideCover(s) : s.type === "trends" ? slideTrends(s.c) : slideCard(s.c));
+  $("#bars").replaceChildren(...V.slides.map((_,k) => el("div",{class:"bar"}, el("i",{style:{width: k < i ? "100%" : "0%"}}))));
+  const w = s.type === "cover" ? wordsIn(s.b.blurb || "", ...s.cards.map(c => c.headline)) : s.type === "trends" ? wordsIn(s.c.headline, s.c.what, ...(s.c.trendsList||[]).map(x => x.label + " " + x.note)) : wordsIn(s.c.headline, s.c.what, s.c.why, s.c.tryThis && s.c.tryThis.text);
+  V.dur = RM ? Infinity : Math.min(30000, 4000 + w / 4 * 1000);
+  stage.setAttribute("aria-label", "Story " + (i+1) + " of " + V.slides.length);
+  V.elapsed = 0; V.t0 = performance.now(); tick();
+}
+function nextBatch(){
+  const bs = visibleBatches(); const k = bs.findIndex(b => b.id === V.batch.id);
+  const nxt = bs.slice(k+1).find(b => !allSeen(b.id));
+  if (nxt) openBatch(nxt.id, 0); else closeViewer();
+}
+function isPaused(){ return V.paused || V.hold || V.sheet || document.hidden; }
+function tick(){
+  cancelAnimationFrame(V.raf);
+  const step = now => {
+    if (isPaused()) { V.t0 = now; }
+    else { V.elapsed += now - V.t0; V.t0 = now; }
+    frame.classList.toggle("paused", V.paused);
+    const bar = $("#bars").children[V.i]; if (bar && isFinite(V.dur)) bar.firstChild.style.width = Math.min(100, V.elapsed / V.dur * 100) + "%";
+    if (V.elapsed >= V.dur) return go(V.i + 1);
+    V.raf = requestAnimationFrame(step);
+  };
+  V.raf = requestAnimationFrame(step);
+}
+
+function slideCover({b, cards}){
+  const t = topicOf(b.topic);
+  const isWeekly = b.edition === "Weekly";
+  return el("div",{class:"slide cover"}, el("div",{class:"bgx",style:{background:bgFor(b.id,.15)}}),
+    el("div",{class:"content"},
+      el("div",{class:"ed"}, dayLabel(b.at)),
+      el("div",{class:"big"}, isWeekly ? "The week in " + str(t.short||"AI",6) : str(b.edition||"Latest",20) + " edition"),
+      b.blurb ? el("div",{class:"blurb"}, str(b.blurb,240)) : null,
+      el("ol",null, cards.slice(0,7).map((c,k) => el("li",null, el("button",{onclick:e => { e.stopPropagation(); go(k+1); }}, el("span",{style:{fontFamily:"var(--fm)",opacity:.6,fontSize:"12px",paddingTop:"1px"}}, String(k+1).padStart(2,"0")), str(c.headline,90))))),
+      el("div",{class:"tap-hint",style:{marginTop:"auto"}}, RM ? "Tap the right side to go on →" : "Tap to start →")));
+}
+function slideCard(c){
+  const key = (c.trend && c.trend.id) || c.id;
+  const srcs = Array.isArray(c.sources) ? c.sources : [];
+  const tryU = c.tryThis && safeUrl(c.tryThis.url);
+  return el("div",{class:"slide"}, el("div",{class:"bgx",style:{background:bgFor(key)}}),
+    el("div",{class:"content"},
+      el("div",{class:"chips"}, realChip(c.real), c.trend ? el("span",{class:"trend-chip"}, trendName(c.trend)) : null),
+      el("div",{class:"s-head"}, str(c.headline,140)),
+      el("div",{class:"blk what"}, el("p",null, str(c.what,420))),
+      c.why ? el("div",{class:"blk why"}, el("h4",null,"Why it matters for PMs"), el("p",null, str(c.why,360))) : null,
+      c.tryThis ? el("div",{class:"blk try"}, el("h4",null,"Try this"), el("p",null, str(c.tryThis.text,240), tryU ? " " : null, tryU ? link(tryU, "Open →") : null)) : null,
+      el("div",{class:"s-foot"},
+        el("div",null, c.real && c.real.label ? el("div",{class:"real-why"}, str(c.real.label,60)) : null, el("div",{class:"src"}, srcs.length + (srcs.length===1?" source":" sources"))),
+        el("button",{class:"more", onclick:e => { e.stopPropagation(); openSheet(c); }}, "One-pager", el("span",{"aria-hidden":"true"},"↑")))));
+}
+function slideTrends(c){
+  const list = Array.isArray(c.trendsList) ? c.trendsList : [];
+  const arr = {up:"↗", down:"↘", flat:"→", new:"✦"};
+  return el("div",{class:"slide"}, el("div",{class:"bgx",style:{background:bgFor(c.id,.25)}}),
+    el("div",{class:"content"},
+      el("div",{class:"chips"}, el("span",{class:"trend-chip"}, "Weekly trends")),
+      el("div",{class:"s-head"}, str(c.headline,140)),
+      c.what ? el("p",{style:{fontSize:"14px",opacity:.9}}, str(c.what,300)) : null,
+      list.slice(0,5).map(t => el("div",{class:"tr-row"}, el("span",{class:"arr"}, arr[t.dir]||"→"), el("div",null, el("b",null, str(t.label,60)), el("p",null, str(t.note,200))))),
+      el("div",{class:"s-foot"}, el("span"), (c.pager || c.hasPager) ? el("button",{class:"more", onclick:e => { e.stopPropagation(); openSheet(c); }}, "One-pager ↑") : null)));
+}
+
+/* ---------- one-pager ---------- */
+const sheet = $("#sheet");
+async function openSheet(c){
+  const body = $("#sheetBody");
+  sheet.classList.add("open"); sheet.setAttribute("aria-hidden","false"); V.sheet = true; body.scrollTop = 0;
+  if (!c.pager && c.hasPager) body.replaceChildren(el("h2",null, str(c.headline,160)), el("p",{class:"fine"},"Loading the one-pager…"));
+  const p = (await getPager(c)) || {};
+  if (!V.sheet) return;
+  const paras = s => str(s,3000).split(/\n{2,}/).filter(Boolean).map(x => el("p",null,x));
+  const list = a => Array.isArray(a) && a.length ? el("ul",null, a.slice(0,10).map(x => el("li",null, str(x,400)))) : null;
+  const srcs = Array.isArray(c.sources) ? c.sources : [];
+  body.replaceChildren(...[
+    el("h2",null, str(c.headline,160)),
+    p.tldr ? el("div",{class:"tldr"}, str(p.tldr,600)) : null,
+    p.context ? [el("h5",null,"The story"), ...paras(p.context)] : null,
+    Array.isArray(p.numbers) && p.numbers.length ? [el("h5",null,"Key numbers"), el("div",{class:"nums"}, p.numbers.slice(0,6).map(n => el("div",{class:"num"}, el("b",null,str(n.v,30)), el("span",null,str(n.k,80)))))] : null,
+    p.whyPM ? [el("h5",null,"What it means if you build products"), ...paras(p.whyPM)] : null,
+    (p.bull || p.bear) ? [el("h5",null,"Two readings"), el("div",{class:"two"}, el("div",{class:"bull"}, el("h6",null,"Bull case"), el("p",null,str(p.bull,500))), el("div",{class:"bear"}, el("h6",null,"Bear case"), el("p",null,str(p.bear,500))))] : null,
+    Array.isArray(p.unknowns) && p.unknowns.length ? [el("h5",null,"Still unknown"), list(p.unknowns)] : null,
+    Array.isArray(p.watch) && p.watch.length ? [el("h5",null,"What to watch next"), list(p.watch)] : null,
+    c.real ? [el("h5",null,"Reality check"), el("div",{class:"realbox"}, el("span",{class:"rw l"+lvl(c.real)}, REAL_WORDS[lvl(c.real)]), el("span",null, str(c.real.reason,300)))] : null,
+    Array.isArray(p.deeper) && p.deeper.length ? [el("h5",null,"Go deeper"), el("div",{class:"srcs"}, p.deeper.slice(0,6).map(d => link(d.url, [str(d.label,120), d.note ? el("span",null,str(d.note,120)) : null].filter(Boolean))))] : null,
+    srcs.length ? [el("h5",null,"Sources"), el("div",{class:"srcs"}, srcs.slice(0,8).map(s => link(s.url, [str(s.title,140), el("span",null,str(s.outlet,60))])))] : null,
+    el("p",{class:"fine"}, "Written by Pulse from the sources above, in its own words. Check the originals before acting.")
+  ].flat(Infinity).filter(Boolean));
+}
+function closeSheet(){ sheet.classList.remove("open"); sheet.setAttribute("aria-hidden","true"); V.sheet = false; }
+
+/* ---------- input ---------- */
+$("#vClose").onclick = closeViewer;
+$("#sClose").onclick = closeSheet;
+$("#vPause").onclick = () => { V.paused = !V.paused; };
+$("#navP").onclick = () => go(V.i - 1);
+$("#navN").onclick = () => go(V.i + 1);
+let downAt = 0, downY = 0, downX = 0;
+for (const [id, dir] of [["zL",-1],["zR",1]]){
+  const z = $("#"+id);
+  z.addEventListener("pointerdown", e => { downAt = performance.now(); downX = e.clientX; downY = e.clientY; V.hold = true; });
+  z.addEventListener("pointerup", e => {
+    V.hold = false;
+    const dt = performance.now() - downAt, dy = e.clientY - downY, dx = e.clientX - downX;
+    if (dy > 90 && Math.abs(dx) < 60) return closeViewer();
+    if (dy < -70 && Math.abs(dx) < 60){ const s = V.slides[V.i]; if (s && s.c) openSheet(s.c); return; }
+    if (Math.abs(dx) > 60) return go(V.i + (dx < 0 ? 1 : -1));
+    if (dt < 280) go(V.i + dir);
+  });
+  z.addEventListener("pointercancel", () => { V.hold = false; });
+  z.addEventListener("pointerleave", () => { V.hold = false; });
+}
+viewer.addEventListener("click", e => { if (e.target === viewer) closeViewer(); });
+document.addEventListener("keydown", e => {
+  if (!viewer.classList.contains("open")) return;
+  if (e.key === "Escape") { V.sheet ? closeSheet() : closeViewer(); }
+  else if (e.key === "ArrowRight") go(V.i + 1);
+  else if (e.key === "ArrowLeft") go(V.i - 1);
+  else if (e.key === " ") { e.preventDefault(); V.paused = !V.paused; }
+  else if (e.key === "ArrowUp" || e.key.toLowerCase() === "m") { const s = V.slides[V.i]; if (s && s.c) openSheet(s.c); }
+});
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => { S.tab = t.dataset.tab; try{ history.replaceState(null, "", "#" + S.tab); }catch(e){} render(); }));
+function fromHash(){ const h = location.hash.slice(1); if (["feed","top","trends","about"].includes(h)) { S.tab = h; render(); } }
+window.addEventListener("hashchange", fromHash);
+setInterval(() => { if (!viewer.classList.contains("open")) renderStatus(); }, 60000);
+
+fromHash(); render(); boot();
+})();
+</script>
+</body>
+</html>

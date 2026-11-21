@@ -1,0 +1,41 @@
+[
+ {
+  "id": "ai-frontier-maths",
+  "topic": "ai",
+  "label": "AI does frontier maths",
+  "status": "rising",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T17:35:00Z",
+  "lastSeen": "2026-11-21T17:35:00Z",
+  "summary": "Since August, AI-assisted results on famous problems have come every few weeks: a better Riemann zeta bound (Aug), a formal proof of Fermat's Last Theorem (Sept), OpenAI's forced Navier–Stokes blow-up (Sept), and now two Millennium Prize claims. Checking the proofs, not producing them, is now the bottleneck.",
+  "cardIds": [
+   "ai-20261121-pm-01"
+  ]
+ },
+ {
+  "id": "ai-capex-bubble",
+  "topic": "ai",
+  "label": "AI bubble fears",
+  "status": "rising",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T17:35:00Z",
+  "lastSeen": "2026-11-21T17:35:00Z",
+  "summary": "Higher rates, huge losses at AI labs and chipmakers funding their own customers have turned 'is this a bubble?' from a talking point into a market move. Watch capex guidance and AI pricing.",
+  "cardIds": [
+   "ai-20261121-pm-02"
+  ]
+ },
+ {
+  "id": "computer-use-agents",
+  "topic": "ai",
+  "label": "Computer-use agents go mainstream",
+  "status": "rising",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T17:35:00Z",
+  "lastSeen": "2026-11-21T17:35:00Z",
+  "summary": "All four big labs now ship agents that operate a computer through its screen. The race has moved to reliability, background operation and trust controls such as scoped access and approvals.",
+  "cardIds": [
+   "ai-20261121-pm-03"
+  ]
+ }
+]

@@ -1,0 +1,47 @@
+{
+ "tldr": "Google joined OpenAI, Anthropic and Meta in shipping an agent that operates a computer through its interface. Its twist is running in a separate background window, so it doesn't take over your screen.",
+ "context": "You trigger it by adding '@Computer use' to a prompt. Gemini then works in an isolated window with a live preview in the chat, so you can keep using your Mac. You choose which apps it can touch, can stop it at any point, and must approve sensitive actions.\n\nThe launch came a day after Google renamed its Spark agent to Tasks and dropped its paywall, and alongside new desktop connectors such as Blender and Autodesk Fusion. Computer use itself is gated to US English users on paid plans with Apple Silicon Macs.",
+ "numbers": [
+  {
+   "v": "19 Nov",
+   "k": "rollout start"
+  },
+  {
+   "v": "4th",
+   "k": "major lab to ship computer use, after OpenAI, Anthropic and Meta"
+  },
+  {
+   "v": "US · EN",
+   "k": "launch availability"
+  },
+  {
+   "v": "Paid",
+   "k": "AI Plus, Pro and Ultra plans only"
+  }
+ ],
+ "whyPM": "Two consequences for product teams. First, your UI is becoming an API: agents read labels, button text and page states, so ambiguous screens break automation as well as people. Second, the trust model is converging on scoped access, pause or stop, and approval for sensitive steps. Any agentic flow you ship (say, auto-filling a claim) will be measured against that bar.\n\nIt's also a distribution play: tying the feature to paid plans makes agents a reason to upgrade.",
+ "bull": "A background window removes the biggest friction of earlier computer-use agents, which took over your cursor. Using GUIs means it works with apps that have no integrations.",
+ "bear": "Screen-driving agents are slow and fragile next to APIs, and they open new privacy and security questions about what they can see. Gating also limits early feedback.",
+ "unknowns": [
+  "When will it reach India and other markets?",
+  "How reliable is it on long, multi-app tasks?",
+  "How will apps that handle sensitive data respond to agents reading their screens?"
+ ],
+ "watch": [
+  "Apple's own Mac agent, which TechCrunch reports may be in development",
+  "A Windows version of Gemini computer use",
+  "Banking, health and messaging apps adding agent-blocking or agent-friendly modes"
+ ],
+ "deeper": [
+  {
+   "label": "Google's announcement",
+   "note": "Official scope and availability",
+   "url": "https://blog.google/innovation-and-ai/products/gemini-app/computer-use-mac/"
+  },
+  {
+   "label": "9to5Google: how it works",
+   "note": "Background window, connectors",
+   "url": "https://9to5google.com/2026/11/19/gemini-mac-computer-use/"
+  }
+ ]
+}

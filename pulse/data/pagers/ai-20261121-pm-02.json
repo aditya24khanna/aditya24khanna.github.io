@@ -1,0 +1,50 @@
+{
+ "tldr": "A multi-year AI rally had its sharpest week since the pandemic crash. The biggest IPO on record didn't stop it, and investors are now asking whether AI spending will ever earn its return.",
+ "context": "Anthropic priced at $83 a share on 18 November, above its marketed range, and raised about $81.3 billion, the largest IPO on record. It opened at $111.50 on 19 November and closed the day 17% up, while the wider Nasdaq fell. By Friday it was trading close to its IPO price.\n\nAnalysts point to several pressures at once: the Federal Reserve's September rate rise, which raises borrowing costs for data-centre builders; the midterm results, after which the incoming congressional majority pledged tougher AI rules and a slower data-centre build-out; leadership turmoil at Nvidia; and 'circular financing', where chipmakers invest in AI labs that then buy their chips.\n\nAnthropic's filing showed $33.2 billion of revenue in the first nine months of 2026, up about 1,200% on a year earlier, alongside a $104 billion net loss and around $900 billion in compute commitments running to 2045.",
+ "numbers": [
+  {
+   "v": "−10%",
+   "k": "Nasdaq this week, worst since March 2020"
+  },
+  {
+   "v": "$81.3B",
+   "k": "Anthropic IPO raise, a record"
+  },
+  {
+   "v": "+34% → ~0%",
+   "k": "Anthropic: opening pop vs. Friday close vs. IPO price"
+  },
+  {
+   "v": "$33.2B",
+   "k": "Anthropic revenue, first 9 months of 2026"
+  },
+  {
+   "v": "$104B",
+   "k": "Anthropic net loss over the same period"
+  },
+  {
+   "v": "~$900B",
+   "k": "compute commitments through 2045"
+  }
+ ],
+ "whyPM": "Bubble or not, the cost of capital is now part of AI product strategy. Inference cost per user, attach rates for paid AI features and payback periods will matter more in planning than demo quality.\n\nPractically: know your cost per AI interaction, have a cheaper-model fallback for high-volume flows, and frame AI features in terms of revenue protected or cost removed.",
+ "bull": "Revenue at the leading labs is growing very fast, Nvidia still posted strong results this week, and one market strategist read the selloff as money rotating toward the IPO rather than leaving AI.",
+ "bear": "Commentators are drawing dot-com comparisons: a wave of huge IPOs can signal a late cycle, losses are enormous, and chipmakers funding their own customers could spread trouble if one large borrower stumbles.",
+ "unknowns": [
+  "Is this a correction or the start of a longer de-rating?",
+  "How fast will the new congressional majority actually move on AI and data-centre rules?",
+  "Will enterprise AI budgets for 2027 hold up?"
+ ],
+ "watch": [
+  "Big-tech capex guidance in the next earnings round",
+  "Credit spreads for data-centre builders such as CoreWeave",
+  "AI price changes: cheaper tiers or rationed usage would be a tell"
+ ],
+ "deeper": [
+  {
+   "label": "NPR's explainer on the week",
+   "note": "Causes and economic stakes",
+   "url": "https://www.mprnews.org/story/2026/11/21/npr-ai-stock-markets-anthropic-nvidia"
+  }
+ ]
+}

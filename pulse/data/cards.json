@@ -1,0 +1,150 @@
+[
+ {
+  "id": "ai-20261121-pm-01",
+  "topic": "ai",
+  "batch": "ai-20261121-pm",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-21T17:35:00Z",
+  "dedupeKey": "millennium-prize-claims-riemann-navier-stokes-alpoge-2026-11-20",
+  "headline": "Two Millennium Prize claims in one day. Both AI-assisted, both unverified",
+  "what": "Anthropic mathematician Levent Alpöge says he and Claude found a proof of the Riemann hypothesis. Hours earlier, he and NYU's Tristan Buckmaster posted an AI-assisted proof that the Navier–Stokes fluid equations can blow up with no outside force.",
+  "why": "This is the verification bottleneck in its purest form: AI can now produce more 'proof' than humans can check. Any AI feature with high-stakes output needs a checking layer you trust, not just a better generator.",
+  "tryThis": {
+   "text": "Next time an AI output 'passes the tests', ask what the tests actually check. Here, a Lean proof compiling doesn't show the theorem it proves is the famous one.",
+   "url": "https://thecondia.com/anthropic-alpoge-claude-riemann-proof/"
+  },
+  "trend": {
+   "id": "ai-frontier-maths",
+   "label": "AIDoesFrontierMath"
+  },
+  "real": {
+   "score": 2,
+   "label": "Huge if true · unverified",
+   "reason": "Credible authors and formal proofs exist, but the Riemann claim has no readable paper, the Navier–Stokes proof's numerical certificate isn't released, and no outside expert has confirmed either."
+  },
+  "sources": [
+   {
+    "title": "Anthropic's Alpöge claims Claude found Riemann proof",
+    "outlet": "The Condia",
+    "url": "https://thecondia.com/anthropic-alpoge-claude-riemann-proof/"
+   },
+   {
+    "title": "Alpöge, Buckmaster post AI-aided unforced Navier-Stokes blowup",
+    "outlet": "AI Weekly",
+    "url": "https://aiweekly.co/alerts/alpge-buckmaster-post-ai-aided-unforced-navier-stokes-blowup"
+   },
+   {
+    "title": "Navier-Stokes can blow up with no outside force, Buckmaster and Alpöge say",
+    "outlet": "The Next Web",
+    "url": "https://thenextweb.com/news/navier-stokes-blow-up-without-force-buckmaster-alpoge"
+   },
+   {
+    "title": "Buckmaster, Alpöge claim proof of Navier-Stokes Millennium Prize problem without forcing",
+    "outlet": "OfficeChai",
+    "url": "https://officechai.com/ai/tristan-buckmaster-levent-alpoge-claim-proof-of-navier-stokes-millennium-prize-problem-without-forcing/"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "ai-20261121-pm-02",
+  "topic": "ai",
+  "batch": "ai-20261121-pm",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-21T17:35:00Z",
+  "dedupeKey": "ai-stock-selloff-week-nasdaq-10pct-anthropic-ipo-2026-11-21",
+  "headline": "Nasdaq's worst week since March 2020 as the AI trade cracks",
+  "what": "The Nasdaq fell 10% this week, and the S&P 500 and Dow closed Friday in correction. Anthropic's record IPO rose 17% on day one, then gave most of that back by Friday.",
+  "why": "When capital gets expensive, AI spend gets judged on ROI. Expect harder questions on revenue per AI feature, more pressure to run cheaper models in production, and fewer 'AI everywhere' roadmaps.",
+  "tryThis": {
+   "text": "List your team's AI features next to the one metric each moves (revenue, cost or risk). Anything you can't tie to a number is first in line at the next budget review."
+  },
+  "trend": {
+   "id": "ai-capex-bubble",
+   "label": "AIBubbleFears"
+  },
+  "real": {
+   "score": 5,
+   "label": "Market data",
+   "reason": "Index moves and IPO prices are reported market data. The causes are analysts' readings, so treat those as interpretation."
+  },
+  "sources": [
+   {
+    "title": "The AI boom had a really bad week — and it's raising loud alarms",
+    "outlet": "NPR (via MPR News)",
+    "url": "https://www.mprnews.org/story/2026/11/21/npr-ai-stock-markets-anthropic-nvidia"
+   },
+   {
+    "title": "Anthropic closes up 17% while Nasdaq falls",
+    "outlet": "Stocktwits",
+    "url": "https://stocktwits.com/news-articles/markets/equity/anthropic-closes-up-17-while-nasdaq-falls-mohamed-el-erian-calls-it-making-room-for-ai/cNbinSRR90u"
+   },
+   {
+    "title": "Nvidia, AMD, Micron sink as Anthropic closes 17% above IPO price",
+    "outlet": "Decrypt",
+    "url": "https://decrypt.co/383669/nvidia-amd-micron-ai-stocks-sink-anthropic-ipo-price"
+   },
+   {
+    "title": "Anthropic starts trading in the US after blockbuster IPO",
+    "outlet": "Al Jazeera",
+    "url": "https://www.aljazeera.com/economy/2026/11/19/anthropic-starts-trading-in-the-us-after-blockbuster-ipo"
+   },
+   {
+    "title": "Anthropic gains 17% on first trading day despite broad market losses",
+    "outlet": "Kaohoon International",
+    "url": "https://www.kaohooninternational.com/?p=595124"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "ai-20261121-pm-03",
+  "topic": "ai",
+  "batch": "ai-20261121-pm",
+  "kind": "news",
+  "order": 3,
+  "publishedAt": "2026-11-21T17:35:00Z",
+  "dedupeKey": "gemini-mac-computer-use-launch-2026-11-19",
+  "headline": "Gemini can now drive your Mac's apps for you, in a background window",
+  "what": "Google rolled out 'computer use' in the Gemini Mac app on 19 November. It clicks, types and fills in forms across local files, desktop apps and websites in an isolated window, so your own screen stays free.",
+  "why": "Agents are moving from APIs to the UI. If your product has no API, agents will use your screens anyway, so clear labels, stable layouts and explicit confirm steps now serve robots as well as people.",
+  "tryThis": {
+   "text": "Write one weekly 10-click chore as a single-paragraph instruction. If you can't describe it clearly, an agent can't do it either. (Gemini's version is US-only for now.)",
+   "url": "https://blog.google/innovation-and-ai/products/gemini-app/computer-use-mac/"
+  },
+  "trend": {
+   "id": "computer-use-agents",
+   "label": "ComputerUseAgents"
+  },
+  "real": {
+   "score": 4,
+   "label": "Shipped · US paid plans",
+   "reason": "Live according to Google's own post, but limited to US English, paid AI Plus/Pro/Ultra plans and Apple Silicon Macs."
+  },
+  "sources": [
+   {
+    "title": "Let Gemini tackle repetitive chores on your Mac",
+    "outlet": "Google blog",
+    "url": "https://blog.google/innovation-and-ai/products/gemini-app/computer-use-mac/"
+   },
+   {
+    "title": "Gemini app for Mac adds computer use to control desktop apps",
+    "outlet": "9to5Google",
+    "url": "https://9to5google.com/2026/11/19/gemini-mac-computer-use/"
+   },
+   {
+    "title": "Google gives Gemini the ability to use your Mac for you",
+    "outlet": "TechCrunch",
+    "url": "https://techcrunch.com/?p=3190514"
+   },
+   {
+    "title": "Google adds computer use to Gemini app for Mac",
+    "outlet": "Let's Data Science",
+    "url": "https://letsdatascience.com/news/google-adds-computer-use-to-gemini-app-for-mac-53407a26"
+   }
+  ],
+  "hasPager": true
+ }
+]

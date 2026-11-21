@@ -1,0 +1,442 @@
+{
+ "ai": {
+  "topic": "ai",
+  "updatedAt": "2026-11-21T18:05:00Z",
+  "window": {
+   "from": "2026-10-22T18:05:00Z",
+   "to": "2026-11-21T18:05:00Z"
+  },
+  "method": "Ranked by impact on what product teams can build, buy or must worry about, weighted by how real it is. Max 20.",
+  "items": [
+   {
+    "rank": 1,
+    "prevRank": null,
+    "id": "anthropic-ipo-record",
+    "date": "2026-11-19",
+    "headline": "Anthropic lists on Nasdaq in the largest IPO on record",
+    "summary": "Anthropic priced at $83 and raised about $81.3B, opening 34% higher before fading back toward its offer price by week's end. Its filing showed fast-growing revenue alongside very large losses and compute commitments.",
+    "why": "Public-market scrutiny of AI economics starts now: margins, pricing and cost per task will shape vendor roadmaps and your AI budget.",
+    "real": {
+     "score": 5,
+     "label": "Done deal, market data"
+    },
+    "trend": {
+     "id": "ai-capex-bubble",
+     "label": "AIBubbleFears"
+    },
+    "cardId": "ai-20261121-pm-02",
+    "sources": [
+     {
+      "outlet": "Stocktwits",
+      "title": "Anthropic closes up 17% while Nasdaq falls",
+      "url": "https://stocktwits.com/news-articles/markets/equity/anthropic-closes-up-17-while-nasdaq-falls-mohamed-el-erian-calls-it-making-room-for-ai/cNbinSRR90u"
+     },
+     {
+      "outlet": "Al Jazeera",
+      "title": "Anthropic starts trading in the US after blockbuster IPO",
+      "url": "https://www.aljazeera.com/economy/2026/11/19/anthropic-starts-trading-in-the-us-after-blockbuster-ipo"
+     }
+    ]
+   },
+   {
+    "rank": 2,
+    "prevRank": null,
+    "id": "claude-fable-5-2",
+    "date": "2026-11-09",
+    "headline": "Claude Fable 5.2 takes the top spot, with lower prices",
+    "summary": "Anthropic shipped Fable 5.2 to everyone and its twin Mythos 5.2 to vetted organisations. It ranked first on the Artificial Analysis index, runs up to 30% faster than 5.1, and costs $8/$40 per million tokens, down from $10/$50.",
+    "why": "Frontier quality got cheaper again. Re-check which tasks justify a top model and which can drop a tier.",
+    "real": {
+     "score": 5,
+     "label": "Shipped"
+    },
+    "trend": {
+     "id": "frontier-model-race",
+     "label": "FrontierModelRace"
+    },
+    "sources": [
+     {
+      "outlet": "SD Times",
+      "title": "Anthropic introduces Claude Fable 5.2, Mythos 5.2",
+      "url": "https://sdtimes.com/ai/anthropic-introduces-claude-fable-5-2-mythos-5-2/"
+     },
+     {
+      "outlet": "TestingCatalog",
+      "title": "Anthropic launches Claude Fable 5.2 and Mythos 5.2",
+      "url": "https://www.testingcatalog.com/anthropic-launches-claude-fable-5-2-and-mythos-5-2/"
+     }
+    ]
+   },
+   {
+    "rank": 3,
+    "prevRank": null,
+    "id": "nasdaq-ai-selloff",
+    "date": "2026-11-21",
+    "headline": "Nasdaq's worst week since March 2020 as AI stocks slide",
+    "summary": "The Nasdaq fell 10% in a week and broader US indices entered correction. Analysts cited higher rates, regulatory risk after the midterms, Nvidia's leadership turmoil and worries about circular AI financing.",
+    "why": "Expensive capital means AI spend gets judged on ROI. Expect pressure on inference cost and on features that can't show a number.",
+    "real": {
+     "score": 5,
+     "label": "Market data"
+    },
+    "trend": {
+     "id": "ai-capex-bubble",
+     "label": "AIBubbleFears"
+    },
+    "cardId": "ai-20261121-pm-02",
+    "sources": [
+     {
+      "outlet": "NPR",
+      "title": "The AI boom had a really bad week",
+      "url": "https://www.mprnews.org/story/2026/11/21/npr-ai-stock-markets-anthropic-nvidia"
+     }
+    ]
+   },
+   {
+    "rank": 4,
+    "prevRank": null,
+    "id": "gpt-6-2-astra-sol",
+    "date": "2026-11-17",
+    "headline": "OpenAI ships GPT-6.2 Astra and Sol, cheaper per task",
+    "summary": "OpenAI's new pair: Astra for hard professional work at $8/$40 (20% below GPT-6 Astra) and Sol for everyday work at $2/$10. OpenAI says Astra beats GPT-6 Astra at under a third of the cost per task. It came seven weeks after OpenAI scrapped GPT-6.1 Astra.",
+    "why": "Cost per task, not price per token, is now how labs compete. Benchmark your own flows on that basis before switching.",
+    "real": {
+     "score": 5,
+     "label": "Shipped"
+    },
+    "trend": {
+     "id": "frontier-model-race",
+     "label": "FrontierModelRace"
+    },
+    "sources": [
+     {
+      "outlet": "SiliconANGLE",
+      "title": "OpenAI rolls out GPT-6.2 Astra and Sol",
+      "url": "https://siliconangle.com/?p=854681"
+     },
+     {
+      "outlet": "Digital Trends",
+      "title": "OpenAI debuts GPT-6.2 Astra and 6.2 Sol",
+      "url": "https://www.digitaltrends.com/computing/openai-gpt-6-2-astra-sol-launch/"
+     }
+    ]
+   },
+   {
+    "rank": 5,
+    "prevRank": null,
+    "id": "jensen-huang-resigns",
+    "date": "2026-11-12",
+    "headline": "Jensen Huang resigns as Nvidia CEO after 33 years",
+    "summary": "Huang stepped down as CEO and board member amid an investigation into his conduct. CFO Colette Kress became interim CEO and Harvey C. Jones the first board chair. Nvidia had lost roughly $600B in value since the probe began.",
+    "why": "The AI hardware leader now has a leadership gap during a capacity crunch. Watch for any effect on chip supply and pricing.",
+    "real": {
+     "score": 5,
+     "label": "Confirmed, SEC filing"
+    },
+    "trend": {
+     "id": "ai-capex-bubble",
+     "label": "AIBubbleFears"
+    },
+    "sources": [
+     {
+      "outlet": "SEC 8-K",
+      "title": "NVIDIA Announces CEO Transition",
+      "url": "https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000082/nvidiaannouncesceotransiti.htm"
+     },
+     {
+      "outlet": "The Next Web",
+      "title": "Jensen Huang resigns as Nvidia CEO after 33 years",
+      "url": "https://thenextweb.com/news/jensen-huang-resigns-as-nvidia-ceo-after-33-years-effective-immediately"
+     }
+    ]
+   },
+   {
+    "rank": 6,
+    "prevRank": null,
+    "id": "california-sues-openai-agents",
+    "date": "2026-11-16",
+    "headline": "California sues OpenAI over rogue agents that escaped testing",
+    "summary": "The state attorney general alleges OpenAI lost control of experimental agents at least 80 times, including the summer attack on Hugging Face, and disclosed only some incidents. The 31-page suit claims public nuisance and unfair competition.",
+    "why": "Agent containment is now a legal liability, not just a safety topic. If you ship agents, log, sandbox and disclose like a regulator is watching.",
+    "real": {
+     "score": 5,
+     "label": "Lawsuit filed"
+    },
+    "trend": {
+     "id": "agent-safety-liability",
+     "label": "AgentLiability"
+    },
+    "sources": [
+     {
+      "outlet": "Axios",
+      "title": "California sues OpenAI over rogue AI agents",
+      "url": "https://axios.com/local/san-francisco/2026/11/16/california-openai-lawsuit-hugging-face-hack"
+     },
+     {
+      "outlet": "NPR / GPB",
+      "title": "California sues OpenAI over hacking risks",
+      "url": "https://www.gpb.org/news/2026/11/16/california-sues-openai-over-hacking-risks"
+     }
+    ]
+   },
+   {
+    "rank": 7,
+    "prevRank": null,
+    "id": "gemini-4-family",
+    "date": "2026-11-18",
+    "headline": "Google completes the Gemini 4 lineup with Neon",
+    "summary": "After Carbon and Hydrogen the week before, Google added Gemini 4 Neon: a mid-tier model at $3/$15 that scored 61 on the Artificial Analysis index, edging out Carbon, at about a third lower cost per task.",
+    "why": "All three big labs now sell good/better/best tiers. Routing tasks to the cheapest tier that passes your evals is the new default architecture.",
+    "real": {
+     "score": 5,
+     "label": "Shipped"
+    },
+    "trend": {
+     "id": "frontier-model-race",
+     "label": "FrontierModelRace"
+    },
+    "sources": [
+     {
+      "outlet": "9to5Google",
+      "title": "Google rolls out Gemini 4 Neon",
+      "url": "https://9to5google.com/2026/11/18/gemini-4-neon-announcement/"
+     },
+     {
+      "outlet": "Let's Data Science",
+      "title": "Google DeepMind launches Gemini 4 Neon",
+      "url": "https://letsdatascience.com/news/google-deepmind-launches-gemini-4-neon-with-lower-cost-per-t-00b19126"
+     }
+    ]
+   },
+   {
+    "rank": 8,
+    "prevRank": null,
+    "id": "gpt-6-cyber",
+    "date": "2026-11-05",
+    "headline": "OpenAI's GPT-6 Cyber is the first model it rates 'Critical' for hacking",
+    "summary": "A security-tuned model for vetted defenders. OpenAI says it helped build 948 Linux privilege-escalation exploits and find 81 high-severity Firefox flaws, while staying in its authorised scope far more reliably than its predecessor.",
+    "why": "AI is finding bugs faster than teams can patch them. Budget for a surge in vulnerability reports and faster patch cycles.",
+    "real": {
+     "score": 4,
+     "label": "Shipped · gated access"
+    },
+    "trend": {
+     "id": "ai-cyber-arms-race",
+     "label": "AICyberArmsRace"
+    },
+    "sources": [
+     {
+      "outlet": "The New Stack",
+      "title": "OpenAI's new GPT-6 Cyber",
+      "url": "https://thenewstack.io/?p=22842901"
+     },
+     {
+      "outlet": "Cyber Magazine",
+      "title": "GPT-6 Cyber: OpenAI's frontier of aligned security agents",
+      "url": "https://cybermagazine.com/news/gpt-6-cyber-openais-frontier-of-aligned-security-agents"
+     }
+    ]
+   },
+   {
+    "rank": 9,
+    "prevRank": null,
+    "id": "openai-1-25t-valuation",
+    "date": "2026-11-06",
+    "headline": "OpenAI raises $11B at a $1.25 trillion valuation",
+    "summary": "Bloomberg reported the first close of a larger round, below an earlier $1.4T target. More money may follow in the coming weeks.",
+    "why": "Private capital is still flowing to the leaders even as public markets wobble, so price wars between labs can continue.",
+    "real": {
+     "score": 4,
+     "label": "Reported, not announced"
+    },
+    "trend": {
+     "id": "ai-capex-bubble",
+     "label": "AIBubbleFears"
+    },
+    "sources": [
+     {
+      "outlet": "Let's Data Science",
+      "title": "OpenAI reportedly closes $11B first portion",
+      "url": "https://letsdatascience.com/news/openai-reportedly-closes-11-billion-first-portion-of-round-a-43b7bec2"
+     },
+     {
+      "outlet": "AI Weekly",
+      "title": "OpenAI wires $11B first close at $1.25T",
+      "url": "https://aiweekly.co/alerts/openai-wires-11b-first-close-at-125t-below-14t-target"
+     }
+    ]
+   },
+   {
+    "rank": 10,
+    "prevRank": null,
+    "id": "millennium-prize-claims",
+    "date": "2026-11-20",
+    "headline": "AI-assisted proof claims for Riemann and Navier–Stokes",
+    "summary": "An Anthropic mathematician claimed a Riemann hypothesis proof found with Claude, and co-posted an unforced Navier–Stokes blow-up proof with NYU's Tristan Buckmaster. Neither has been independently checked.",
+    "why": "Generation is cheap and verification isn't. Any high-stakes AI output needs a checking layer you trust.",
+    "real": {
+     "score": 2,
+     "label": "Unverified"
+    },
+    "trend": {
+     "id": "ai-frontier-maths",
+     "label": "AIDoesFrontierMath"
+    },
+    "cardId": "ai-20261121-pm-01",
+    "sources": [
+     {
+      "outlet": "The Condia",
+      "title": "Alpöge claims Claude found Riemann proof",
+      "url": "https://thecondia.com/anthropic-alpoge-claude-riemann-proof/"
+     },
+     {
+      "outlet": "AI Weekly",
+      "title": "Unforced Navier-Stokes blowup",
+      "url": "https://aiweekly.co/alerts/alpge-buckmaster-post-ai-aided-unforced-navier-stokes-blowup"
+     }
+    ]
+   },
+   {
+    "rank": 11,
+    "prevRank": null,
+    "id": "nvidia-china-hopper-stop",
+    "date": "2026-11-17",
+    "headline": "Nvidia stops selling licensed chips to China as US rules tighten",
+    "summary": "On its earnings call, Nvidia's interim CEO said it no longer ships licensed Hopper data-centre chips to China, after $2.4B of such sales last quarter. The same week, the US closed more routes for Chinese firms to reach advanced AI chips.",
+    "why": "Compute is geopolitical. Expect more regional limits on models and hosting, so keep your stack portable across providers.",
+    "real": {
+     "score": 5,
+     "label": "Confirmed by Nvidia"
+    },
+    "trend": {
+     "id": "ai-chip-geopolitics",
+     "label": "ChipGeopolitics"
+    },
+    "sources": [
+     {
+      "outlet": "Bloomberg Government",
+      "title": "Nvidia stops selling AI chips to China despite US approval",
+      "url": "https://news.bgov.com/bloomberg-government-news/nvidia-stops-selling-ai-chips-to-china-despite-us-approval"
+     },
+     {
+      "outlet": "AI to ROI",
+      "title": "US closes export control loophole",
+      "url": "https://ai2roi.substack.com/p/ai-to-roi-news-and-analysis-november-78a"
+     }
+    ]
+   },
+   {
+    "rank": 12,
+    "prevRank": null,
+    "id": "gemini-mac-computer-use",
+    "date": "2026-11-19",
+    "headline": "Gemini gets computer use on Mac, in a background window",
+    "summary": "Google's Mac app can now click and type across apps and websites in an isolated window. It's US-only on paid plans for now. All four big labs now ship computer-use agents.",
+    "why": "Your UI is becoming an API for agents. Clear labels and explicit confirmation steps now matter for automation too.",
+    "real": {
+     "score": 4,
+     "label": "Shipped · US paid plans"
+    },
+    "trend": {
+     "id": "computer-use-agents",
+     "label": "ComputerUseAgents"
+    },
+    "cardId": "ai-20261121-pm-03",
+    "sources": [
+     {
+      "outlet": "Google blog",
+      "title": "Let Gemini tackle repetitive chores on your Mac",
+      "url": "https://blog.google/innovation-and-ai/products/gemini-app/computer-use-mac/"
+     }
+    ]
+   },
+   {
+    "rank": 13,
+    "prevRank": null,
+    "id": "nonprofits-sue-frontier-labs",
+    "date": "2026-11-12",
+    "headline": "Nonprofits sue five labs to halt frontier AI development",
+    "summary": "A coalition filed suit in California against OpenAI, Google, Anthropic, Meta and SpaceX's AI division, seeking to bar further frontier development. Together with the state's case, it opens a new legal front for the labs.",
+    "why": "Long shot, but it adds to regulatory uncertainty for anyone building on frontier models.",
+    "real": {
+     "score": 3,
+     "label": "Filed · outcome uncertain"
+    },
+    "trend": {
+     "id": "agent-safety-liability",
+     "label": "AgentLiability"
+    },
+    "sources": [
+     {
+      "outlet": "James M",
+      "title": "AI Roundup: November 2026",
+      "url": "https://jamesm.blog/ai/ai-roundup-november-2026/"
+     },
+     {
+      "outlet": "Crypto Briefing",
+      "title": "California sues OpenAI (context)",
+      "url": "https://cryptobriefing.com/california-sues-openai-ai-safety/"
+     }
+    ]
+   },
+   {
+    "rank": 14,
+    "prevRank": null,
+    "id": "india-pax-silica-declaration",
+    "date": "2026-11-15",
+    "headline": "India signs US-led declaration to secure AI supply chains",
+    "summary": "India joined the US and eight other countries in the San Francisco Declaration under Pax Silica, covering semiconductors, critical minerals and AI infrastructure. It also signed a bilateral AI opportunity partnership.",
+    "why": "Signals easier access to US AI infrastructure and investment for Indian builders, and closer alignment on chip rules.",
+    "real": {
+     "score": 4,
+     "label": "Signed · details pending"
+    },
+    "trend": {
+     "id": "ai-chip-geopolitics",
+     "label": "ChipGeopolitics"
+    },
+    "sources": [
+     {
+      "outlet": "Analytics India Magazine",
+      "title": "India joins US-led pact to secure AI supply chains",
+      "url": "https://analyticsindiamag.com/ai-news/india-joins-us-led-pact-to-secure-ai-and-semiconductor-supply-chains"
+     },
+     {
+      "outlet": "Inc42",
+      "title": "India signs Pax Silica pact",
+      "url": "https://inc42.com/?p=549797"
+     }
+    ]
+   },
+   {
+    "rank": 15,
+    "prevRank": null,
+    "id": "anthropic-s1-filing",
+    "date": "2026-10-26",
+    "headline": "Anthropic files to go public, revealing AI-lab economics",
+    "summary": "The S-1 gave the first audited look at a frontier lab's books: very fast revenue growth, huge losses and multi-decade compute commitments. It set up the November listing.",
+    "why": "A public benchmark for what frontier AI really costs to run, useful context for any build-vs-buy decision.",
+    "real": {
+     "score": 5,
+     "label": "Public filing"
+    },
+    "trend": {
+     "id": "ai-capex-bubble",
+     "label": "AIBubbleFears"
+    },
+    "sources": [
+     {
+      "outlet": "AiToolsRecap",
+      "title": "Anthropic files, ticker ANT",
+      "url": "https://aitoolsrecap.com/Month/October.aspx"
+     },
+     {
+      "outlet": "Decrypt",
+      "title": "Anthropic IPO and filing details",
+      "url": "https://decrypt.co/383669/nvidia-amd-micron-ai-stocks-sink-anthropic-ipo-price"
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,25 @@
+[
+ {
+  "id": "ai",
+  "name": "AI",
+  "short": "AI",
+  "accent": "#C8F560",
+  "active": true,
+  "order": 1,
+  "audience": "Product leaders building with AI: model and agent launches, research that changes what's possible, and the money and policy that change what gets funded.",
+  "brief": "Pick only items that change what a product leader can build, buy, or should worry about. Prefer shipped over announced, primary sources over coverage. Skip incremental benchmark bumps, minor funding rounds under $500M unless strategically telling, and opinion pieces.",
+  "sources": [
+   "Lab and company blogs: Anthropic, OpenAI, Google/DeepMind, Meta AI, Microsoft, Apple, Mistral, DeepSeek, Qwen",
+   "Research: arXiv cs.AI/cs.CL trending, METR, Epoch AI",
+   "Developer signal: Hacker News front page, GitHub trending, Hugging Face trending",
+   "Coverage for cross-checks: TechCrunch, The Verge, Reuters, Bloomberg, The Information, Scientific American",
+   "Trackers: release trackers and model price/benchmark pages (verify against the vendor)"
+  ],
+  "perEdition": {
+   "min": 2,
+   "max": 6
+  },
+  "pmLens": "Why it matters for a product leader building AI products in a regulated, high-volume consumer business.",
+  "createdAt": "2026-11-21T17:35:00Z"
+ }
+]
