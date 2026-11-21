@@ -124,6 +124,8 @@ button:focus-visible{outline:3px solid var(--red);outline-offset:3px}
 .newbest b{color:var(--red)}
 .copied{font:400 14px var(--toon);color:var(--muted);min-height:1em}
 textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);padding:8px;resize:none}
+button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);color:#fff;text-shadow:1px 1px 0 #2A1F3D}
+.contLeft{margin-top:-4px;font:400 13px var(--toon);color:var(--muted);text-align:center}
 @media (max-width:440px){
   .hud{gap:6px}
   .stat{padding:3px 8px}
@@ -202,6 +204,8 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
         </div>
         <div class="trail" id="oTrail" aria-label="Ride trail: yellow is a clean 200 metres, red is a hit"></div>
         <div class="meta" id="oMeta"></div>
+        <button class="primary big" id="bCont" hidden>Keep riding · 5 fresh shocks</button>
+        <div class="contLeft" id="oCont" hidden></div>
         <div class="row">
           <button class="primary" id="bAgain">Ride again</button>
           <button id="bCopy">Copy score</button>
@@ -369,14 +373,14 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
     return o;
   }
 
-  const MAX_SHOCKS = 5;
+  const MAX_SHOCKS = 5, MAX_CONT = 3;
   // ---------- game state ----------
   let state = 'idle', mode = 'daily', G, lockUntil = 0, rng = Math.random;
   function newGame(m){
     mode = m;
     const wx = buildWeather(m === 'daily' ? ((DAY*7919 + 13) >>> 0) : 0, m === 'daily' && !!TODAY.rain);
     rng = m === 'daily' ? mulberry32(DAY * 2654435761 >>> 0) : Math.random;
-    G = { lane:1, x:1.5, shocks:MAX_SHOCKS, inv:0, meters:0, bonus:0, scroll:0, v:1.6, top:0, dodged:0,
+    G = { lane:1, x:1.5, shocks:MAX_SHOCKS, conts:0, inv:0, meters:0, bonus:0, scroll:0, v:1.6, top:0, dodged:0,
           obs:[], deco:[], signs:[], fx:[], spawnAcc:4, decoAcc:0, signAcc:1, markAcc:20, markI:0,
           t:0, shake:0, holeNo: 1000 + Math.floor(rng()*8000), stretch:-1,
           callout:null, lastMark:null, hits:[], rain:[], gear:0, honk:0, hornCd:0, horns:[],
@@ -1158,7 +1162,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
     const head = mode === 'daily'
       ? 'Pothole Dash · Road of the day #' + DAYNO + ' · ' + TODAY.name
       : 'Pothole Dash · Endless commute · reached ' + curRoad().name;
-    return head + '\n' + trail() + '\n' + fmtDist(score()) + ', dodged ' + G.dodged + ' hazards, top speed ' + kmh(G.top) + ' km/h.';
+    return head + '\n' + trail() + '\n' + fmtDist(score()) + ', dodged ' + G.dodged + ' hazards, top speed ' + kmh(G.top) + ' km/h' + (G.conts ? ' (' + G.conts + (G.conts === 1 ? ' continue' : ' continues') + ')' : '') + '.';
   }
   function gameOver(){
     state = 'over'; $('bHorn').hidden = true;
@@ -1190,9 +1194,27 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
     if (mode === 'daily'){ add('Streak', streak.n + (streak.n === 1 ? ' day' : ' days')); add('New road in', untilNext()); }
     $('bSwitch').textContent = mode === 'daily' ? 'Try the endless commute' : 'Back to today’s road';
     $('oCopied').textContent = ''; $('oShare').hidden = true;
+    const left = MAX_CONT - G.conts;
+    $('bCont').hidden = left <= 0; $('oCont').hidden = left <= 0;
+    $('oCont').textContent = left === 1 ? 'Last chance to continue from ' + fmtDist(sc) : left + ' continues left · pick up from ' + fmtDist(sc);
+    $('bAgain').classList.toggle('primary', left <= 0);
     G.wasted = { t: 0, word: WASTED[G.lastHit] || 'POTHOLED', line: WASTED_LINE[G.lastHit] || '', at: reduce ? 0.6 : 2.1, shown: false };
     SND.wasted();
     lockUntil = Infinity;   // released when the card appears
+  }
+  // continue: same ride, same distance, five fresh shocks; the road just ahead is cleared so it isn't an instant crash
+  function cont(){
+    if (state !== 'over' || G.conts >= MAX_CONT || performance.now() < lockUntil) return;
+    G.conts++; G.shocks = MAX_SHOCKS; G.inv = 2.2; G.wasted = null; G.fx = []; G.gear = 0; G.honk = 0; G.shake = 0;
+    G.obs = G.obs.filter(o => o.y < PY - 6 || o.y > PY + 1);
+    for (const p of G.peds) if (Math.abs(p.y - PY) < 3) p.hit = true;
+    G.v = Math.max(3, G.v*0.7); state = 'run';
+    show('ovOver', false); $('bHorn').hidden = false;
+    const left = MAX_CONT - G.conts;
+    G.newHaz = { text: left ? 'BACK ON THE ROAD!' : 'LAST LIFE!', t: 0 };
+    fx(left ? left + (left === 1 ? ' continue left' : ' continues left') : 'No more continues', T.ink);
+    SND.repair(); last = performance.now();
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   }
   function move(dir){ if (state === 'run') G.lane = Math.max(0, Math.min(2, G.lane + dir)); }
 
@@ -1202,6 +1224,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
   $('ovPause').addEventListener('click', resume);
   $('bResume').addEventListener('click', e => { e.stopPropagation(); resume(); });
   $('bAgain').addEventListener('click', () => { if (performance.now() >= lockUntil) start(mode); });
+  $('bCont').addEventListener('click', cont);
   $('bSwitch').addEventListener('click', () => { if (performance.now() >= lockUntil) start(mode === 'daily' ? 'endless' : 'daily'); });
   $('bCopy').addEventListener('click', () => {
     const text = shareText();
@@ -1312,7 +1335,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
       e.preventDefault();
       if (state === 'idle') start('daily');
       else if (state === 'paused') resume();
-      else if (state === 'over' && performance.now() >= lockUntil) start(mode);
+      else if (state === 'over' && performance.now() >= lockUntil){ if (G.conts < MAX_CONT) cont(); else start(mode); }
     }
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
@@ -1550,7 +1573,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
     if (state === 'run' || state === 'idle') update(dt);
     else if (state === 'over' && G.wasted){
       const w = G.wasted; w.t += dt; if (w.t < 2.2) update(dt*0.15); if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
-      if (!w.shown && w.t >= w.at){ w.shown = true; show('ovOver', true); lockUntil = performance.now() + 450; setTimeout(() => { if (state === 'over') $('bAgain').focus({preventScroll:true}); }, 450); }
+      if (!w.shown && w.t >= w.at){ w.shown = true; show('ovOver', true); lockUntil = performance.now() + 450; setTimeout(() => { if (state === 'over') $(G.conts < MAX_CONT ? 'bCont' : 'bAgain').focus({preventScroll:true}); }, 450); }
     }
     else if (G.shake > 0) G.shake = Math.max(0, G.shake - dt*40);
     if (G.flash > 0.95 && !thunderLatch){ thunderLatch = true; SND.thunder(); } else if (G.flash < 0.5) thunderLatch = false;
