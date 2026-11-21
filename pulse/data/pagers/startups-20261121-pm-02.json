@@ -1,0 +1,40 @@
+{
+ "tldr": "After a brief post-festive pickup, Indian startup funding fell off a cliff in mid-November. Monthly totals are running at roughly a third of last year.",
+ "context": "Inc42 counted $25.2M raised by Indian startups between 9 and 13 November, a 90.1% drop from $255M the previous week, with deal count down 55%. Clean tech led the week with about $16M.\n\nYourStory Research put October's VC total at $581M, against $1.6B in October 2025 and $1.1B in September 2026.",
+ "numbers": [
+  {
+   "v": "$25.2M",
+   "k": "raised 9–13 Nov (Inc42)"
+  },
+  {
+   "v": "−90.1%",
+   "k": "week on week"
+  },
+  {
+   "v": "$581M",
+   "k": "October 2026 VC total"
+  },
+  {
+   "v": "$1.6B",
+   "k": "October 2025, for comparison"
+  }
+ ],
+ "whyPM": "Weekly numbers are noisy, but the monthly trend agrees: Indian venture money is scarce. That changes behaviour: startups stretch runway, cut experiments, and look for strategic partners.\n\nFor a product leader at a larger company, it means better acquisition and partnership terms, and more strong builders open to moving.",
+ "bull": "Funding droughts weed out weak businesses, cut valuations to sane levels, and leave room for well-run companies to buy talent and teams cheaply.",
+ "bear": "A long drought starves the next generation of products. Shutdowns and layoffs hurt the ecosystem large companies rely on for partners and talent.",
+ "unknowns": [
+  "Is mid-November a blip or the new run rate?",
+  "Will the IPO pipeline revive late-stage rounds?"
+ ],
+ "watch": [
+  "Next weekly Inc42 and Entrackr totals",
+  "Layoffs and shutdown announcements"
+ ],
+ "deeper": [
+  {
+   "label": "Inc42 weekly funding report",
+   "note": "Deal-by-deal table",
+   "url": "https://inc42.com/buzz/from-greenjoules-to-misteo-indian-startups-raised-over-25-mn-this-week/"
+  }
+ ]
+}

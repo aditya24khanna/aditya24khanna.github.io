@@ -1,0 +1,36 @@
+{
+ "tldr": "The card networks are building the plumbing for AI agents to pay: verified intent for consumers, spending limits for businesses, and a shared way to check which agent is asking.",
+ "context": "In the consumer test, an AI agent bought a cup of coffee based on instructions the buyer had already verified, on Mastercard Agent Pay with Verifiable Intent, which keeps a record of what the person authorised. In the business pilot in Singapore, Antom let an agent use Mastercard Agent Pay for Machines to buy digital services within limits the business set.\n\nSeparately, Ant International, Visa and Mastercard said they will work on an interoperable 'Know Your Agent' framework, so an agent registered with one payment provider doesn't have to repeat the process with another.",
+ "numbers": [
+  {
+   "v": "2",
+   "k": "milestones: consumer purchase + business pilot"
+  },
+  {
+   "v": "3",
+   "k": "networks on a shared agent-ID effort (Ant, Visa, Mastercard)"
+  },
+  {
+   "v": "June",
+   "k": "when Agent Pay for Machines was introduced"
+  }
+ ],
+ "whyPM": "The trust model for agent payments is taking shape: scoped authority, spending caps, and a verifiable record of consent. Regulators will expect the same in lending and insurance.\n\nIf you own a payments or credit product, start designing for 'delegated' users now: separate limits for agents, clear consent screens, and dispute flows that can show what the agent was allowed to do.",
+ "bull": "Shared standards across Visa, Mastercard and Ant mean merchants and fintechs won't need a different integration for every agent.",
+ "bear": "Pilots are small and controlled. Liability, fraud patterns and consumer protection for agent purchases are still unsettled.",
+ "unknowns": [
+  "Who bears the loss when an authorised agent makes a bad purchase?",
+  "How will Indian rails (UPI, RBI rules) handle agent-initiated payments?"
+ ],
+ "watch": [
+  "A 'Know Your Agent' spec or pilot results",
+  "Regulator guidance on agent-initiated payments"
+ ],
+ "deeper": [
+  {
+   "label": "How Agent Pay for Machines works",
+   "note": "Decrypt explainer",
+   "url": "https://decrypt.co/381373?amp=1"
+  }
+ ]
+}

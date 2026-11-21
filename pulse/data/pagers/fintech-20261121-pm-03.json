@@ -1,0 +1,32 @@
+{
+ "tldr": "Two European fintechs moved from 'partner bank' to 'own licence' this week, the long, expensive route that gives them control of deposits and lending.",
+ "context": "Qonto, which serves small businesses in Europe, was granted a credit institution licence so it can expand into lending and savings directly. OakNorth, a UK business lender, secured a US national bank charter after approval of its acquisition of Michigan-based Community Unity Bank. The deal had earlier stalled when the Federal Reserve asked OakNorth to move its holding company to the UK.\n\nOther fintechs, including Revolut, have also applied for US charters.",
+ "numbers": [
+  {
+   "v": "2",
+   "k": "licences reported this week"
+  },
+  {
+   "v": "1 year+",
+   "k": "OakNorth's charter process via acquisition"
+  }
+ ],
+ "whyPM": "Owning a licence trades speed for control: more capital and compliance work, but cheaper funding, direct access to payment rails and no partner who can switch you off.\n\nIf your product runs on a partner's licence, the risk is concentration: one partner's regulatory problem becomes your outage. Know your plan B.",
+ "bull": "Licensed fintechs can offer better rates and more products, and regulators get clearer accountability.",
+ "bear": "Bank status brings bank-level capital and compliance costs that can slow product speed, the very edge fintechs had.",
+ "unknowns": [
+  "Exact conditions attached to OakNorth's charter",
+  "Whether more neobanks get US approvals in 2027"
+ ],
+ "watch": [
+  "Revolut's US charter application",
+  "Indian regulators' stance on digital banking licences"
+ ],
+ "deeper": [
+  {
+   "label": "Why the Fed held up OakNorth",
+   "note": "Background on the conditions",
+   "url": "https://www.fstech.co.uk/fst/US_Fed_Blocks_Oaknorth_US_Deal_Pending_UK_Restructuring.php"
+  }
+ ]
+}

@@ -21,5 +21,49 @@
   },
   "pmLens": "Why it matters for a product leader building AI products in a regulated, high-volume consumer business.",
   "createdAt": "2026-11-21T17:35:00Z"
+ },
+ {
+  "id": "startups",
+  "name": "Startups",
+  "short": "VC",
+  "accent": "#FFB547",
+  "active": true,
+  "order": 2,
+  "audience": "Product leaders and founders watching where startup money goes: big rounds, valuations, shutdowns, M&A and IPOs, in India and globally.",
+  "brief": "Pick funding, M&A, IPO and shutdown news that shows where capital and talent are moving. Prefer rounds of $100M+ or strategically telling smaller ones, India ecosystem shifts, and patterns across several deals over single press releases. Skip routine seed rounds and promotional coverage.",
+  "sources": [
+   "Company announcements and filings",
+   "Inc42, Entrackr, YourStory, The Ken, Mint (India)",
+   "TechCrunch, Crunchbase News, Bloomberg, Reuters, The Information (global)",
+   "Weekly funding trackers (verify against the company)"
+  ],
+  "perEdition": {
+   "min": 1,
+   "max": 4
+  },
+  "pmLens": "What it signals about where product opportunities, competition and hiring are heading.",
+  "createdAt": "2026-11-21T19:20:00Z"
+ },
+ {
+  "id": "fintech",
+  "name": "Fintech",
+  "short": "FIN",
+  "accent": "#7AB8FF",
+  "active": true,
+  "order": 3,
+  "audience": "Product leaders in fintech, payments, lending and insurance: launches, licences, regulation and the money behind them.",
+  "brief": "Pick news that changes what fintech products can do or must comply with: new licences and charters, regulator moves (RBI, SEBI, IRDAI, NPCI, FCA, MAS, US regulators), payment-rail changes, agentic payments, and large raises. No stock tips, price targets or buy/sell views.",
+  "sources": [
+   "Regulator sites and circulars (RBI, SEBI, IRDAI, NPCI, FCA, MAS)",
+   "Company announcements",
+   "FinTech Futures, Finextra, The Paypers, Fintech Singapore, Entrackr, Inc42",
+   "Bloomberg, Reuters, Mint, Economic Times"
+  ],
+  "perEdition": {
+   "min": 1,
+   "max": 4
+  },
+  "pmLens": "What it changes for a product leader building payments, lending or insurance products: compliance, partnerships, UX and unit economics.",
+  "createdAt": "2026-11-21T19:20:00Z"
  }
 ]

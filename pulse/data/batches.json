@@ -1,5 +1,21 @@
 [
  {
+  "id": "startups-20261121-pm",
+  "topic": "startups",
+  "edition": "Evening",
+  "at": "2026-11-21T19:20:00Z",
+  "blurb": "First Startups edition: megarounds abroad, a funding drought at home, and agent startups hitting $1B in months.",
+  "count": 3
+ },
+ {
+  "id": "fintech-20261121-pm",
+  "topic": "fintech",
+  "edition": "Evening",
+  "at": "2026-11-21T19:20:00Z",
+  "blurb": "First Fintech edition: agents learn to pay, finance-ops AI raises big, and fintechs become banks.",
+  "count": 3
+ },
+ {
   "id": "ai-20261121-pm",
   "topic": "ai",
   "edition": "Evening",

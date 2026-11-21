@@ -1,0 +1,40 @@
+{
+ "tldr": "One AI drug-discovery round was bigger than most countries' monthly startup funding. Money is flowing, but to fewer, larger bets.",
+ "context": "Isomorphic Labs, which applies AI to drug discovery, raised a $5B Series C. On the same day, Genesis AI raised a $500M Series A at a $3.5B post-money valuation to build robots for dexterous industrial work. Nine financings that day added up to more than $6.6B.\n\nA tracker counted 371 announced rounds worth $38.2B in November through the 16th, with a median round of $15M and AI the busiest category.",
+ "numbers": [
+  {
+   "v": "$5B",
+   "k": "Isomorphic Labs Series C"
+  },
+  {
+   "v": "$3.5B",
+   "k": "Genesis AI valuation after a $500M Series A"
+  },
+  {
+   "v": "$38.2B",
+   "k": "announced in Nov through the 16th (371 rounds)"
+  },
+  {
+   "v": "$15M",
+   "k": "median round size"
+  }
+ ],
+ "whyPM": "The gap between the median round and the megarounds is the story: a few AI companies can outspend whole categories on talent, compute and distribution.\n\nIf you compete with one of them, pick ground where money doesn't decide: domain data, distribution you already own, or regulated workflows that take time to earn.",
+ "bull": "Huge rounds fund long research bets (drug discovery, robotics) that smaller cheques can't, and they pull talent and suppliers into new categories.",
+ "bear": "Concentration raises the bar for everyone else, and this week's AI stock selloff shows how quickly sentiment can turn on capital-heavy bets.",
+ "unknowns": [
+  "Who led the Isomorphic round and at what valuation?",
+  "Will public-market jitters slow late-stage AI rounds?"
+ ],
+ "watch": [
+  "Weekly funding totals vs. the median round",
+  "Down rounds or extensions among 2025's AI unicorns"
+ ],
+ "deeper": [
+  {
+   "label": "November funding tracker",
+   "note": "Every disclosed round, by date",
+   "url": "https://workinsiders.com/funding/2026-11/"
+  }
+ ]
+}

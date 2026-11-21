@@ -37,5 +37,83 @@
   "cardIds": [
    "ai-20261121-pm-03"
   ]
+ },
+ {
+  "id": "ai-megarounds",
+  "topic": "startups",
+  "label": "AI megarounds",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-21T19:20:00Z",
+  "summary": "Capital is concentrating in a few very large AI bets. For everyone else, the bar for a raise is proof of revenue, and competing for AI talent against $5B war chests gets harder.",
+  "cardIds": [
+   "startups-20261121-pm-01"
+  ]
+ },
+ {
+  "id": "india-funding-winter",
+  "topic": "startups",
+  "label": "India's funding winter",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-21T19:20:00Z",
+  "summary": "Indian founders are raising in a drought while global AI rounds balloon. Expect slower hiring, longer runways, more down rounds, and more acqui-hire and partnership offers to land on your desk.",
+  "cardIds": [
+   "startups-20261121-pm-02"
+  ]
+ },
+ {
+  "id": "agent-infra-boom",
+  "topic": "startups",
+  "label": "Agent infrastructure boom",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-21T19:20:00Z",
+  "summary": "Investors are paying for agent infrastructure and agent-native apps, not chat wrappers. If your roadmap has agents in it, expect these vendors to be both your suppliers and your competitors.",
+  "cardIds": [
+   "startups-20261121-pm-03"
+  ]
+ },
+ {
+  "id": "agentic-payments",
+  "topic": "fintech",
+  "label": "Agentic payments",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-21T19:20:00Z",
+  "summary": "Agentic payments are moving from demos to rails. Products that pay, lend or insure will need to answer: which agent is this, what was it allowed to do, and who's liable if it goes wrong.",
+  "cardIds": [
+   "fintech-20261121-pm-01"
+  ]
+ },
+ {
+  "id": "finance-ops-ai",
+  "topic": "fintech",
+  "label": "AI for finance ops",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-21T19:20:00Z",
+  "summary": "Investors are backing AI that does finance work (spend control, analyst grunt work), not another consumer app. Expect enterprise buyers to compare your workflows against agent-first tools.",
+  "cardIds": [
+   "fintech-20261121-pm-02"
+  ]
+ },
+ {
+  "id": "fintech-charters",
+  "topic": "fintech",
+  "label": "Fintechs become banks",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-21T19:20:00Z",
+  "summary": "A licence lets a fintech hold deposits and lend on its own balance sheet instead of renting a partner bank. In India, this is the bank-partner vs. own-licence trade-off every lending and insurance product faces.",
+  "cardIds": [
+   "fintech-20261121-pm-03"
+  ]
  }
 ]

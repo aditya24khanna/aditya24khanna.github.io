@@ -1,0 +1,36 @@
+{
+ "tldr": "Fintech funding had its strongest week in a while, and the biggest cheques went to software that automates finance work.",
+ "context": "Payhawk, which sells corporate cards and spend management, raised a $280M Series C at a $2B valuation, led by Goldman Sachs Alternatives' growth equity arm. Model ML raised a $250M Series B at a $1.5B valuation for AI agents that do banking analysis.\n\nFinTech Global tracked $991M across 17 fintech deals this week, up from $602M the week before.",
+ "numbers": [
+  {
+   "v": "$280M",
+   "k": "Payhawk Series C, $2B valuation"
+  },
+  {
+   "v": "$250M",
+   "k": "Model ML Series B, $1.5B valuation"
+  },
+  {
+   "v": "$991M",
+   "k": "17 fintech deals this week (FinTech Global)"
+  }
+ ],
+ "whyPM": "The pattern is AI aimed at back-office work where accuracy and audit trails matter. That's where buyers will pay, and where 'agent' claims will be tested hardest.\n\nFor product leaders in lending or insurance, the same applies internally: underwriting, claims and reconciliation are where agents earn their keep first.",
+ "bull": "Clear ROI (hours saved, errors avoided) makes finance-ops AI easier to sell than consumer AI, even in a tight market.",
+ "bear": "Large late-stage rounds during a market selloff can mean pressure to grow into high valuations.",
+ "unknowns": [
+  "How much revenue do agent products actually drive for these companies?",
+  "Will incumbents (banks, ERPs) build the same features?"
+ ],
+ "watch": [
+  "More finance-ops rounds at $1B+ valuations",
+  "Bank adoption announcements"
+ ],
+ "deeper": [
+  {
+   "label": "FinTech Global weekly round-up",
+   "note": "All 17 deals",
+   "url": "https://fintech.global/2026/11/20/almost-1bn-raised-in-fintech-deals-in-strong-week-for-investment/"
+  }
+ ]
+}

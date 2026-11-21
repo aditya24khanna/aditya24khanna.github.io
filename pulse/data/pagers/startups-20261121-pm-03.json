@@ -1,0 +1,36 @@
+{
+ "tldr": "The money in AI applications is moving to agents: the tools to build, secure and run them, and apps where agents do the work.",
+ "context": "Corma, which builds AI for cybersecurity, raised a $125M Series A at a $1B valuation, three months after announcing a $60M seed. LangChain, whose framework many teams use to build agents, raised a reported $300M led by Alphabet's CapitalG at a $3B valuation.\n\nIn the same week, AI hiring platform Mercor raised $750M, bringing its total to $1.2B, with Apollo, Benchmark, General Catalyst and NVIDIA among the investors.",
+ "numbers": [
+  {
+   "v": "3 months",
+   "k": "Corma: seed to $1B valuation"
+  },
+  {
+   "v": "$3B",
+   "k": "LangChain valuation (CapitalG-led $300M)"
+  },
+  {
+   "v": "$750M",
+   "k": "Mercor round; $1.2B raised in total"
+  }
+ ],
+ "whyPM": "Agent tooling is consolidating fast. The frameworks, eval and security tools you pick now may be bought, re-priced or turned into platforms within a year.\n\nKeep your agent stack swappable: thin adapters over frameworks, your own eval sets, and no hard lock-in to one vendor's runtime.",
+ "bull": "Well-funded tooling gets better quickly, and buyers benefit from competition between agent platforms.",
+ "bear": "Valuations set three months after a seed assume huge growth; if agent adoption is slower, some of these tools will be sold or shut, leaving customers to migrate.",
+ "unknowns": [
+  "How much of this revenue is real enterprise spend vs. pilots?",
+  "Will LangChain-style frameworks become features of the big model labs?"
+ ],
+ "watch": [
+  "Lab-native agent frameworks competing with independents",
+  "Pricing changes after big rounds"
+ ],
+ "deeper": [
+  {
+   "label": "AlleyWatch weekly report",
+   "note": "The week's largest rounds",
+   "url": "https://alpha-maven.com/story/venture-capital/the-weekly-notable-startup-funding-report-111626-alleywatch"
+  }
+ ]
+}

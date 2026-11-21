@@ -1,5 +1,248 @@
 [
  {
+  "id": "startups-20261121-pm-01",
+  "topic": "startups",
+  "batch": "startups-20261121-pm",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-21T19:20:00Z",
+  "dedupeKey": "isomorphic-labs-5b-series-c-2026-11-18",
+  "headline": "Isomorphic Labs raises $5B as AI megarounds pile up",
+  "what": "AI drug-discovery company Isomorphic Labs raised a $5B Series C, reported on 18 Nov. The same day Genesis AI raised $500M at a $3.5B valuation for dexterous industrial robots.",
+  "why": "Capital is concentrating in a few very large AI bets. For everyone else, the bar for a raise is proof of revenue, and competing for AI talent against $5B war chests gets harder.",
+  "tryThis": {
+   "text": "List the two or three AI-funded competitors in your space and what their latest round lets them spend on. Ask what you'd do with a tenth of it."
+  },
+  "trend": {
+   "id": "ai-megarounds",
+   "label": "AIMegarounds"
+  },
+  "real": {
+   "score": 4,
+   "label": "Reported · company rounds",
+   "reason": "Reported in a daily funding round-up; the round sizes come from the companies, not independent filings."
+  },
+  "sources": [
+   {
+    "title": "Startup Funding News Today, November 18, 2026",
+    "outlet": "Tech Startups",
+    "url": "https://techstartups.com/2026/11/18/startup-funding-news-today-november-18-2026-isomorphic-labs-genesis-ai-model-ml-science-corporation-vincue-more/"
+   },
+   {
+    "title": "Startup funding in November 2026 so far",
+    "outlet": "Work Insiders",
+    "url": "https://workinsiders.com/funding/2026-11/"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "startups-20261121-pm-02",
+  "topic": "startups",
+  "batch": "startups-20261121-pm",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-21T19:20:00Z",
+  "dedupeKey": "india-startup-funding-slump-nov-9-13-2026",
+  "headline": "Indian startup funding fell 90% in a week, to $25M",
+  "what": "Indian startups raised just $25.2M between 9 and 13 Nov, down 90.1% from $255M the week before, per Inc42. October's VC total was $581M against $1.6B a year earlier, per YourStory Research.",
+  "why": "Indian founders are raising in a drought while global AI rounds balloon. Expect slower hiring, longer runways, more down rounds, and more acqui-hire and partnership offers to land on your desk.",
+  "tryThis": {
+   "text": "If you partner with Indian startups, check which ones raised in the last 12 months. Plan for vendors that might cut scope or shut down.",
+   "url": "https://inc42.com/buzz/from-greenjoules-to-misteo-indian-startups-raised-over-25-mn-this-week/"
+  },
+  "trend": {
+   "id": "india-funding-winter",
+   "label": "IndiaFundingWinter"
+  },
+  "real": {
+   "score": 5,
+   "label": "Tracker data",
+   "reason": "Weekly and monthly totals from two independent Indian trackers (Inc42, YourStory Research) that point the same way."
+  },
+  "sources": [
+   {
+    "title": "From Greenjoules To mistEO — Indian startups raised over $25 Mn this week",
+    "outlet": "Inc42",
+    "url": "https://inc42.com/buzz/from-greenjoules-to-misteo-indian-startups-raised-over-25-mn-this-week/"
+   },
+   {
+    "title": "Indian startup funding slumps 90% to $25.2 Mn",
+    "outlet": "TechStory",
+    "url": "https://techstory.in/weekly-startup-funding-news-indian-startup-funding-slumps-90-to-25-2-mn/"
+   },
+   {
+    "title": "Startup news and updates: daily roundup (November 3, 2026)",
+    "outlet": "YourStory",
+    "url": "https://yourstory.com/2026/11/startup-news-updates-daily-roundup-november-3-2026"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "startups-20261121-pm-03",
+  "topic": "startups",
+  "batch": "startups-20261121-pm",
+  "kind": "news",
+  "order": 3,
+  "publishedAt": "2026-11-21T19:20:00Z",
+  "dedupeKey": "ai-agent-startups-fast-valuations-nov-2026",
+  "headline": "AI agent startups hit $1B+ valuations at record speed",
+  "what": "Security startup Corma raised $125M at a $1B valuation three months after a $60M seed (17 Nov). LangChain raised $300M led by CapitalG at a $3B valuation, and AI hiring platform Mercor raised $750M.",
+  "why": "Investors are paying for agent infrastructure and agent-native apps, not chat wrappers. If your roadmap has agents in it, expect these vendors to be both your suppliers and your competitors.",
+  "tryThis": {
+   "text": "Map which agent tools your team already uses (frameworks, evals, security). Note which ones just raised and could change pricing or terms."
+  },
+  "trend": {
+   "id": "agent-infra-boom",
+   "label": "AgentInfraBoom"
+  },
+  "real": {
+   "score": 4,
+   "label": "Reported · company rounds",
+   "reason": "Reported by funding round-ups citing company announcements; valuations are as stated by the companies or their backers."
+  },
+  "sources": [
+   {
+    "title": "Startup Funding News Today, November 17, 2026",
+    "outlet": "Tech Startups",
+    "url": "https://techstartups.com/2026/11/17/startup-funding-news-today-november-17-2026-alecto-galvanize-therapeutics-corma-noeri-nomad-more/"
+   },
+   {
+    "title": "Startup Funding News Today, November 13, 2026",
+    "outlet": "Tech Startups",
+    "url": "https://techstartups.com/2026/11/13/startup-funding-news-today-november-13-2026-mirendil-langchain-luminal-kindo-q-ctrl-more/"
+   },
+   {
+    "title": "The Weekly Notable Startup Funding Report: 11/16/26",
+    "outlet": "AlleyWatch",
+    "url": "https://alpha-maven.com/story/venture-capital/the-weekly-notable-startup-funding-report-111626-alleywatch"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "fintech-20261121-pm-01",
+  "topic": "fintech",
+  "batch": "fintech-20261121-pm",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-21T19:20:00Z",
+  "dedupeKey": "mastercard-antom-agent-payments-pilot-2026-11-19",
+  "headline": "Mastercard and Ant prove AI agents can pay, with limits",
+  "what": "Mastercard and Ant International's Antom completed a live AI-agent purchase (a coffee, on the buyer's pre-verified intent) and a Singapore pilot where a business agent bought services within set spending limits.",
+  "why": "Agentic payments are moving from demos to rails. Products that pay, lend or insure will need to answer: which agent is this, what was it allowed to do, and who's liable if it goes wrong.",
+  "tryThis": {
+   "text": "Take one payment flow in your product and write down what you'd need to let a customer's AI agent complete it safely: identity, limits, consent record, refunds."
+  },
+  "trend": {
+   "id": "agentic-payments",
+   "label": "AgenticPayments"
+  },
+  "real": {
+   "score": 4,
+   "label": "Pilot completed",
+   "reason": "Confirmed by both companies' announcement and multiple outlets; a controlled pilot, not a general rollout."
+  },
+  "sources": [
+   {
+    "title": "Mastercard and Ant International advance trusted agentic commerce in Asia Pacific",
+    "outlet": "The Asian Banker",
+    "url": "https://www.theasianbanker.com/press-releases/mastercard-and-ant-international-advance-trusted-agentic-commerce-in-asia-pacific"
+   },
+   {
+    "title": "Mastercard tests AI agent payments across Asia Pacific",
+    "outlet": "Tech Coffee House",
+    "url": "https://techcoffeehouse.com/2026/11/20/mastercard-tests-ai-agent-payments-across-asia-pacific/"
+   },
+   {
+    "title": "Ant International joins Visa, Mastercard to build AI agent payment standards",
+    "outlet": "crypto.news",
+    "url": "https://crypto.news/ant-international-joins-visa-mastercard-to-build-ai-agent-payment-standards/"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "fintech-20261121-pm-02",
+  "topic": "fintech",
+  "batch": "fintech-20261121-pm",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-21T19:20:00Z",
+  "dedupeKey": "finance-ops-ai-raises-payhawk-modelml-2026-11",
+  "headline": "Payhawk and Model ML raise $530M between them for finance AI",
+  "what": "Spend-management fintech Payhawk raised $280M at a $2B valuation, led by Goldman Sachs Alternatives. Model ML raised $250M at $1.5B to give bankers an AI agent. FinTech Global counted $991M across 17 deals this week.",
+  "why": "Investors are backing AI that does finance work (spend control, analyst grunt work), not another consumer app. Expect enterprise buyers to compare your workflows against agent-first tools.",
+  "tryThis": {
+   "text": "Pick one manual finance or ops workflow on your team (reconciliation, reporting) and time it. That's the benchmark an agent-first vendor will pitch against."
+  },
+  "trend": {
+   "id": "finance-ops-ai",
+   "label": "FinanceOpsAI"
+  },
+  "real": {
+   "score": 4,
+   "label": "Announced rounds",
+   "reason": "Rounds reported by two fintech trade outlets based on company announcements."
+  },
+  "sources": [
+   {
+    "title": "FinTech Futures: Top five news stories of the week – 20 November 2026",
+    "outlet": "FinTech Futures",
+    "url": "https://www.fintechfutures.com/fintech/fintech-futures-top-five-news-stories-of-the-week-20-november-2026"
+   },
+   {
+    "title": "Almost $1bn raised in FinTech deals in strong week for investment",
+    "outlet": "FinTech Global",
+    "url": "https://fintech.global/2026/11/20/almost-1bn-raised-in-fintech-deals-in-strong-week-for-investment/"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "fintech-20261121-pm-03",
+  "topic": "fintech",
+  "batch": "fintech-20261121-pm",
+  "kind": "news",
+  "order": 3,
+  "publishedAt": "2026-11-21T19:20:00Z",
+  "dedupeKey": "fintechs-become-banks-qonto-oaknorth-2026-11",
+  "headline": "Fintechs keep turning into banks: Qonto and OakNorth win licences",
+  "what": "French business-banking fintech Qonto received a credit institution licence to expand lending and savings. UK lender OakNorth secured a US national bank charter after its Community Unity Bank deal was approved, per The Paypers (20 Nov).",
+  "why": "A licence lets a fintech hold deposits and lend on its own balance sheet instead of renting a partner bank. In India, this is the bank-partner vs. own-licence trade-off every lending and insurance product faces.",
+  "tryThis": {
+   "text": "List which of your product's features depend on a partner's licence. For each, note what would change if the partner pulled out or the rules tightened."
+  },
+  "trend": {
+   "id": "fintech-charters",
+   "label": "FintechCharters"
+  },
+  "real": {
+   "score": 4,
+   "label": "Reported approvals",
+   "reason": "Reported by trade press; we haven't seen the regulators' own notices, and OakNorth's approval had earlier been held up by the Fed."
+  },
+  "sources": [
+   {
+    "title": "FinTech Futures: Top five news stories of the week – 20 November 2026",
+    "outlet": "FinTech Futures",
+    "url": "https://www.fintechfutures.com/fintech/fintech-futures-top-five-news-stories-of-the-week-20-november-2026"
+   },
+   {
+    "title": "The Paypers: OakNorth secures US national banking charter",
+    "outlet": "The Paypers",
+    "url": "https://thepaypers.com/"
+   },
+   {
+    "title": "US Fed blocks OakNorth US deal pending UK restructuring",
+    "outlet": "FStech",
+    "url": "https://www.fstech.co.uk/fst/US_Fed_Blocks_Oaknorth_US_Deal_Pending_UK_Restructuring.php"
+   }
+  ],
+  "hasPager": true
+ },
+ {
   "id": "ai-20261121-pm-01",
   "topic": "ai",
   "batch": "ai-20261121-pm",
