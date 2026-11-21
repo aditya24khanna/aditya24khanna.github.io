@@ -660,7 +660,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
   function mix(a, b, t){
     const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16), f = (x, sh) => (x >> sh) & 255;
     const c = sh => Math.round(f(pa, sh) + (f(pb, sh) - f(pa, sh))*clamp(t, 0, 1));
-    return 'rgb(' + c(16) + ',' + c(8) + ',' + c(0) + ')';
+    return '#' + ((1 << 24) | (c(16) << 16) | (c(8) << 8) | c(0)).toString(16).slice(1);
   }
   const lw = (s, k) => Math.max(1, s*(k || 0.02));
 
@@ -762,37 +762,60 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     }
   }
 
+  // cartoon buildings: ink-outlined fronts, framed windows, a coloured parapet cap, black water tanks on some roofs.
+  // Far segments fade toward the horizon haze colour (painted depth) instead of being blurred by a haze band.
+  let HAZE = '#ffe4b6';
+  function wqi(x, za, zb, h0, h1, fill, w){ const pts = [P(x, za, h0), P(x, zb, h0), P(x, zb, h1), P(x, za, h1)]; poly(pts, fill, w); }
   function drawWalls(){
     const F = FAR + 1, WH = 1.35;
     stripes(2.3, ZN, F, (i, za, zb) => {
       for (const side of [-1, 1]){
         const k = i*2 + (side > 0 ? 1 : 0), x = side < 0 ? -1.05 : 4.05;
+        const a0 = i*2.3 - G.scroll, L = 2.3, zm = (za + zb)/2;
+        const fade = clamp((zm - 6)/(FAR - 6), 0, 1)*0.75, dk = NIGHT ? 0.5 : 0;
+        const tone = c => mix(mix(c, '#2a2540', dk), HAZE, fade);
         const fc = FACADE[Math.floor(hash(k*11)*FACADE.length)], fc2 = FACADE[Math.floor(hash(k*11+5)*FACADE.length)], sc = SIGNC[Math.floor(hash(k*11+1)*SIGNC.length)];
-        const a0 = i*2.3 - G.scroll, L = 2.3;
         const floors = Math.max(Math.ceil((camH + 0.4 - WH)/0.62), 3) + Math.floor(hash(k*11+4)*3), top = WH + floors*0.62;
-        const dk = NIGHT ? 0.55 : 0;
-        wq(x, za, zb, 0, WH, mix(fc, '#2a2540', dk));
-        wq(x, za, zb, WH, top, mix(fc2, '#2a2540', dk));
-        wq(x, za, zb, top - 0.08, top, 'rgba(42,31,61,0.22)');
-        if (za <= a0 + 0.001) wq(x, za, Math.min(zb, za + 0.05), 0, top, 'rgba(42,31,61,0.25)');
-        // shop: dark opening under a striped awning, signboard above
+        const s = P(x, zm).s, w = Math.max(1, s*0.022)*(1 - fade*0.6);
+        wqi(x, za, zb, 0, WH, tone(fc));
+        wqi(x, za, zb, WH, top, tone(fc2));
+        wqi(x, za, zb, WH - 0.03, WH + 0.06, tone(mix(fc2, '#2a1f3d', 0.25)));                   // floor ledge
+        wqi(x, za, zb, top, top + 0.16, tone(mix(fc2, '#2a1f3d', 0.3)), w);                       // parapet cap
+        // shop: dark opening, striped awning, signboard
         const d0 = Math.max(za, a0 + L*0.14), d1 = Math.min(zb, a0 + L*0.86);
         if (d1 > d0){
-          wq(x, d0, d1, 0.07, 0.72, NIGHT ? '#ffcf7a' : '#4a3b5c');
+          wqi(x, d0, d1, 0.07, 0.72, NIGHT ? tone('#ffcf7a') : tone('#4a3b5c'), w*0.8);
           if (NIGHT){ const c = P(x, (d0 + d1)/2, 0.4); LIGHTS.push({ x:c.x, y:c.y, r:c.s*0.32, c:'255,190,100' }); }
-          const n = 6; for (let j = 0; j < n; j++){ const s0 = d0 + (d1 - d0)*j/n, s1 = d0 + (d1 - d0)*(j + 1)/n; wq(x, s0, s1, 0.72, 0.86, j % 2 ? '#fff6e0' : sc); }
+          const n = 6; for (let j = 0; j < n; j++){ const s0 = d0 + (d1 - d0)*j/n, s1 = d0 + (d1 - d0)*(j + 1)/n; wqi(x, s0, s1, 0.72, 0.88, tone(j % 2 ? '#fff6e0' : sc)); }
+          wqi(x, d0, d1, 0.72, 0.88, 'rgba(0,0,0,0)', w*0.8);
         }
-        const s0 = Math.max(za, a0 + 0.1), s1 = Math.min(zb, a0 + L - 0.1);
-        if (s1 > s0) wq(x, s0, s1, 0.95, 1.22, mix(sc, '#2a2540', dk*0.6));
+        const g0 = Math.max(za, a0 + 0.12), g1 = Math.min(zb, a0 + L - 0.12);
+        if (g1 > g0) wqi(x, g0, g1, 0.96, 1.22, tone(sc), w*0.8);
+        // windows: cream frame, blue (or lit) glass, ink outline, a mullion
         for (let f = 0; f < floors; f++){
-          const h0 = WH + f*0.62 + 0.15;
-          for (const [u0, u1] of [[0.16, 0.42], [0.58, 0.84]]){
+          const h0 = WH + f*0.62 + 0.14;
+          for (const [u0, u1] of [[0.15, 0.42], [0.58, 0.85]]){
             const w0 = Math.max(za, a0 + L*u0), w1 = Math.min(zb, a0 + L*u1);
-            if (w1 <= w0) continue;
+            if (w1 - w0 < 0.04) continue;
             const lit = NIGHT && hash(k*97 + f*7 + (u0 > 0.5 ? 1 : 0)) > 0.4;
-            wq(x, w0, w1, h0, h0 + 0.32, lit ? '#ffd27a' : (NIGHT ? '#1e1c3d' : '#5d74b4'));
-            if (!NIGHT) wq(x, w0, w0 + (w1 - w0)*0.25, h0 + 0.06, h0 + 0.3, 'rgba(255,255,255,0.35)');
+            wqi(x, w0, w1, h0, h0 + 0.36, tone('#fff6e0'), w*0.8);
+            const m = (w1 - w0)*0.12;
+            wqi(x, w0 + m, w1 - m, h0 + 0.05, h0 + 0.31, lit ? '#ffd27a' : tone(NIGHT ? '#1e1c3d' : '#6f9fe0'));
+            if (!NIGHT) wqi(x, w0 + m, w0 + m + (w1 - w0)*0.2, h0 + 0.08, h0 + 0.28, tone('#bfe0ff'));
+            const mid = (w0 + w1)/2, p = P(x, mid, h0 + 0.05), q = P(x, mid, h0 + 0.31);
+            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.strokeStyle = tone('#fff6e0'); ctx.lineWidth = Math.max(1, w*0.9); ctx.stroke();
           }
+        }
+        // building outline: only where a building starts, so each reads as its own cel
+        if (za <= a0 + 0.001){ const p = P(x, za, 0), q = P(x, za, top + 0.16); ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.strokeStyle = INK; ctx.globalAlpha = 1 - fade; ctx.lineWidth = w*1.2; ctx.stroke(); ctx.globalAlpha = 1; }
+        // black water tank on the roof
+        if (hash(k*11 + 9) < 0.45 && za <= a0 + L*0.5 && zb >= a0 + L*0.5){
+          const b = P(x - side*0.25, a0 + L*0.5, top + 0.16), t = b.s;
+          ctx.globalAlpha = 1 - fade*0.8;
+          rr(b.x - 0.14*t, b.y - 0.3*t, 0.28*t, 0.3*t, 0.05*t); ctx.fillStyle = NIGHT ? '#15121f' : '#2b2635'; ctx.fill(); inkLine(Math.max(1, t*0.018));
+          ell(b.x, b.y - 0.3*t, 0.14*t, 0.035*t, '#3d3650', Math.max(1, t*0.015));
+          ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = Math.max(1, t*0.02); ctx.beginPath(); ctx.moveTo(b.x - 0.08*t, b.y - 0.25*t); ctx.lineTo(b.x - 0.08*t, b.y - 0.06*t); ctx.stroke();
+          ctx.globalAlpha = 1;
         }
       }
     });
@@ -1044,6 +1067,13 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
       // cartoon wet sheen: two pale streaks down the lanes
       ctx.globalAlpha = 0.35*G.sky.wet; gq(0.35, 0.5, ZN, FAR*0.5, '#d9ecff'); gq(2.4, 2.52, ZN, FAR*0.5, '#d9ecff'); ctx.globalAlpha = 1;
     }
+    // painted haze where the road meets the sky, behind the buildings so they stay crisp
+    { const ht = hy - (yP - hy)*(0.04 + 0.25*G.sky.fog), hb = hy + (yP - hy)*(0.16 + 0.4*G.sky.fog);
+      const hc = NIGHT ? '58,48,100' : (G.sky.cloud > 0.5 ? '214,214,210' : '255,228,182');
+      HAZE = NIGHT ? '#3a3064' : (G.sky.cloud > 0.5 ? '#d6d6d2' : '#ffe4b6');
+      const hz = ctx.createLinearGradient(0, ht, 0, hb);
+      hz.addColorStop(0, 'rgba(' + hc + ',0)'); hz.addColorStop(0.4, 'rgba(' + hc + ',0.85)'); hz.addColorStop(0.6, 'rgba(' + hc + ',0.45)'); hz.addColorStop(1, 'rgba(' + hc + ',0)');
+      ctx.fillStyle = hz; ctx.fillRect(-20, ht, W + 40, hb - ht); }
     drawWalls();
     if (road.metro) drawViaduct();
 
@@ -1082,12 +1112,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     }
     ctx.globalAlpha = 1;
 
-    // painted haze where the road meets the sky; fog thickens it
-    const FG = G.sky.fog, ht = hy - (yP - hy)*(0.04 + 0.25*FG), hb = hy + (yP - hy)*(0.16 + 0.4*FG);
-    const hc = NIGHT ? '58,48,100' : (G.sky.cloud > 0.5 ? '214,214,210' : '255,228,182');
-    const hz = ctx.createLinearGradient(0, ht, 0, hb);
-    hz.addColorStop(0, 'rgba(' + hc + ',0)'); hz.addColorStop(0.4, 'rgba(' + hc + ',0.7)'); hz.addColorStop(0.6, 'rgba(' + hc + ',0.35)'); hz.addColorStop(1, 'rgba(' + hc + ',0)');
-    ctx.fillStyle = hz; ctx.fillRect(-20, ht, W + 40, hb - ht);
+    const FG = G.sky.fog;
     if (FG > 0.02){ ctx.fillStyle = 'rgba(' + (NIGHT ? '58,48,100' : '226,226,232') + ',' + (0.25*FG) + ')'; ctx.fillRect(-20, -20, W + 40, H + 40); }
     if (!NIGHT && G.sky.dark > 0.02){ ctx.fillStyle = 'rgba(52,48,96,' + (0.28*G.sky.dark) + ')'; ctx.fillRect(-20, -20, W + 40, H + 40); }
 
