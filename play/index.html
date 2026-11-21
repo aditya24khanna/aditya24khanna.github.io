@@ -72,7 +72,8 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
 .stage.three #gl{display:block}
 .stage.three .horn{bottom:calc(128px + env(safe-area-inset-bottom, 0px))}
 .sndbar{position:absolute;top:10px;left:calc(10px + env(safe-area-inset-left, 0px));display:flex;gap:6px;z-index:2}
-.sndbar button{font:700 10px var(--mono);letter-spacing:.06em;padding:6px 9px;background:rgba(8,10,14,.68);color:#fff;border:1px solid rgba(255,255,255,.35);box-shadow:none;border-radius:4px;touch-action:none}
+.sndbar button:focus-visible{outline:2px solid #f4b740;outline-offset:2px}
+.sndbar button{font:700 11px var(--mono);letter-spacing:.06em;min-height:34px;padding:6px 11px;background:rgba(8,10,14,.68);color:#fff;border:1px solid rgba(255,255,255,.35);box-shadow:none;border-radius:4px;touch-action:none}
 .sndbar button:active{transform:none}
 .horn{
   position:absolute;right:calc(10px + env(safe-area-inset-right, 0px));bottom:calc(12px + env(safe-area-inset-bottom, 0px));
@@ -93,7 +94,11 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
 .card h2 mark{background:linear-gradient(transparent 58%, var(--hl) 58%, var(--hl) 94%, transparent 94%);color:inherit;padding:0 2px}
 .card p{margin:0;font-size:15px;line-height:1.45}
 .note{font-family:var(--hand);font-size:22px;color:var(--red);line-height:1.1}
-.controls{margin:0;font-size:13px;color:var(--muted);line-height:1.4}
+.controls{margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.keys{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+.keys div{display:flex;flex-direction:column;gap:3px;padding:8px 10px;border:1.5px solid var(--grid);border-radius:6px;min-width:0}
+.keys b{font:700 11px var(--mono);letter-spacing:.05em;color:var(--ink)}
+.keys span{font-size:12.5px;color:var(--muted);line-height:1.25}
 .controls kbd{font-family:var(--mono);font-size:11px;border:1.5px solid var(--muted);padding:0 4px;border-radius:3px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 button{
@@ -163,7 +168,13 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
           <button class="primary" id="bDaily">Ride today’s road</button>
           <button id="bEndless">Endless commute</button>
         </div>
-        <p class="controls">Tap the left or right half of the road to switch lanes; swipe up to speed up, down to slow down. On a keyboard: <kbd>←</kbd> <kbd>→</kbd> to steer, <kbd>↑</kbd> <kbd>↓</kbd> for speed. Faster earns bonus metres; too slow and the bus behind starts honking. Use the horn (or <kbd>H</kbd> / <kbd>Space</kbd>) to make vehicles move, though nobody promises they'll move the right way. Three shock absorbers. Where the footpath is broken, people walk on the road. The weather changes as you ride: rain makes puddles and slippery steering, fog hides what's ahead. Filter coffee adds 50 m. Sound: <kbd>M</kbd>, radio: <kbd>R</kbd>.</p>
+        <div class="keys" aria-label="Controls">
+          <div><b>Tap ◀ ▶</b><span>Change lane</span></div>
+          <div><b>Swipe ▲ ▼</b><span>Faster or slower</span></div>
+          <div><b>HORN</b><span>Traffic might move</span></div>
+          <div><b>M · R</b><span>Sound · radio</span></div>
+        </div>
+        <p class="controls">Three shock absorbers. Filter coffee adds 50 m. Rain means puddles, fog hides the road. Keyboard: arrows to steer and set speed, <kbd>H</kbd> or <kbd>Space</kbd> for the horn.</p>
       </div>
     </div>
 
@@ -1483,8 +1494,8 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   function wrapLines(txt, maxW){ const words = txt.split(' '), out = []; let line = ''; for (const w of words){ const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line){ out.push(line); line = w; } else line = t; } if (line) out.push(line); return out; }
   function helpBox(txt, alpha){
     ctx.font = '600 13px ' + DISPLAY; const maxW = Math.min(250, W - 150), lines = wrapLines(txt, maxW - 22), h = lines.length*17 + 16;
-    ctx.globalAlpha = alpha; panel(12, 44, maxW, h, 6);
-    ctx.fillStyle = '#ffffff'; lines.forEach((l, i) => ctx.fillText(l, 23, 44 + 21 + i*17)); ctx.globalAlpha = 1;
+    ctx.globalAlpha = alpha; panel(12, 54, maxW, h, 8);
+    ctx.fillStyle = '#ffffff'; lines.forEach((l, i) => ctx.fillText(l, 23, 54 + 21 + i*17)); ctx.globalAlpha = 1;
   }
   function subtitle(txt, y, alpha){
     const m = /^(Passing |Welcome to |Now entering )(.*)$/.exec(txt), pre = m ? m[1] : '', key = m ? m[2] : txt;
@@ -1509,6 +1520,12 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
       label(o.say.text, clamp(p.x, 80, W - 80), p.y - o.say.t*14, 15, o.say.bad ? T.red : T.ink, Math.min(1, (1.2 - o.say.t)*3));
     }
     for (const f of G.fx) label(f.txt, clamp(sc.x, 110, W - 110), sc.y - 90 - f.t*40, 19, f.color, 1 - f.t/1.3);
+    if (state === 'run' && G.gear > 0 && !reduce){
+      const k = G.gear/2, cx = W/2, cy = H*0.48; ctx.strokeStyle = 'rgba(255,255,255,' + (0.22*k) + ')'; ctx.lineWidth = 1.5; ctx.beginPath();
+      for (let i = 0; i < 26; i++){ const a = hash(i*7 + Math.floor(G.t*20))*Math.PI*2, r0 = Math.max(W, H)*(0.42 + hash(i*13)*0.1), len = 40 + 80*k*hash(i*3 + Math.floor(G.t*30));
+        ctx.moveTo(cx + Math.cos(a)*r0, cy + Math.sin(a)*r0); ctx.lineTo(cx + Math.cos(a)*(r0 + len), cy + Math.sin(a)*(r0 + len)); }
+      ctx.stroke();
+    }
 
     if (state !== 'idle'){
       // distance, GTA money-style
@@ -1523,13 +1540,14 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     if (banner && state !== 'idle'){
       banner.t += dt; const a = Math.min(1, banner.t*3, (4.5 - banner.t)*1.5);
       if (a > 0){
-        hudText(road.name, W - 14, H - 214, 24, '#ffffff', 'right', a, 'italic 800 24px ' + DISPLAY);
-        hudText('BENGALURU · ' + WX[G.sky.key].name.toUpperCase(), W - 14, H - 196, 12, '#f4c430', 'right', a, '700 12px ' + MONO);
+        const by = W < 640 ? 178 : 96;
+        hudText(road.name, W - 14, by, 21, '#ffffff', 'right', a, 'italic 800 21px ' + DISPLAY);
+        hudText('BENGALURU · ' + WX[G.sky.key].name.toUpperCase(), W - 14, by + 17, 11, '#f4c430', 'right', a, '700 11px ' + MONO);
       }
     }
     if (G.callout && !G.callout.big){ const a = Math.min(1, (3 - G.callout.t)*1.5, G.callout.t*4); subtitle(G.callout.text, H - 118, a); }
     // help box: first-ride controls, then weather news
-    if (state === 'run' && G.t < 5) helpBox('Tap left or right to change lanes. Swipe up for speed, down to slow down. HORN moves traffic. Sometimes.', Math.min(1, (5 - G.t)*2));
+    if (state === 'run' && G.t < 5) helpBox('Tap left or right to change lanes · swipe up or down for speed · HORN moves traffic. Sometimes.', Math.min(1, (5 - G.t)*2));
     else if (G.wxToast) helpBox(G.wxToast.text, Math.min(1, (3.2 - G.wxToast.t)*1.5, G.wxToast.t*4));
     if (radioToast){ radioToast.t += dt; const a = Math.min(1, radioToast.t*4, (2.6 - radioToast.t)*1.5); if (a <= 0) radioToast = null; else { hudText(radioToast.text.toUpperCase(), W/2, 96, 26, '#ffffff', 'center', a); hudText('RADIO', W/2, 72, 13, '#f4c430', 'center', a); } }
     // "wasted"-style crash stamp
@@ -1579,7 +1597,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
 })();
 </script>
 <script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.min.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
-<script type="module" src="./r3d.js?v=20261121a"></script>
+<script type="module" src="./r3d.js?v=20261121b"></script>
 
 </body>
 </html>
