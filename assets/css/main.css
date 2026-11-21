@@ -312,7 +312,20 @@ mark, .hl { color: inherit; background: linear-gradient(100deg, transparent 1%, 
 .feature p { font-size: 17px; color: var(--ink-2); max-width: 52ch; }
 .feature .proj-actions { margin-top: 4px; }
 
-.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 40px 28px; }
+.shelf-wrap { position: relative; }
+.shelf { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 3 * 28px) / 3.5); gap: 28px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; padding: 4px 0 18px; scrollbar-width: thin; scrollbar-color: var(--ink-3) transparent; }
+.shelf::-webkit-scrollbar { height: 6px; } .shelf::-webkit-scrollbar-thumb { background: var(--ink-3); border-radius: 6px; }
+.shelf:focus-visible { outline: 2px dashed var(--ink); outline-offset: 6px; }
+.shelf > .shelf-item { scroll-snap-align: start; min-width: 0; }
+.shelf-wrap::after { content: ""; position: absolute; right: 0; bottom: 18px; height: calc(100% - 68px); z-index: 1; width: 56px; pointer-events: none; background: linear-gradient(90deg, transparent, var(--paper)); transition: opacity .2s; }
+.shelf-wrap.at-end::after { opacity: 0; }
+.shelf-wrap::before { content: ""; position: absolute; left: 0; bottom: 18px; height: calc(100% - 68px); width: 40px; pointer-events: none; z-index: 1; background: linear-gradient(270deg, transparent, var(--paper)); opacity: 0; transition: opacity .2s; }
+.shelf-wrap.scrolled::before { opacity: 1; }
+.shelf-nav { position: relative; z-index: 2; display: flex; justify-content: flex-end; gap: 8px; margin: -8px 0 10px; padding-right: 4px; }
+.shelf-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--ink); background: var(--card); color: var(--ink); font-size: 18px; font-weight: 700; line-height: 1; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
+.shelf-btn:hover:not(:disabled) { background: var(--hi); color: var(--hi-ink, #14213D); }
+.shelf-btn:disabled { opacity: .35; cursor: default; box-shadow: none; }
+.shelf-btn:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
 .shelf-item { display: grid; gap: 8px; align-content: start; }
 .shelf-art { height: 200px; display: flex; justify-content: center; align-items: flex-end; border-bottom: 2px solid var(--ink); margin-bottom: 8px; overflow: hidden; }
 .shelf-item:nth-child(4n+1) .sk { transform: rotate(-2deg); }
@@ -405,7 +418,8 @@ mark, .hl { color: inherit; background: linear-gradient(100deg, transparent 1%, 
 }
 @media (max-width: 640px) {
   .feature { grid-template-columns: minmax(0, 1fr); padding: 22px; gap: 24px; }
-  .shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; }
+  .shelf { grid-auto-columns: 62%; gap: 16px; }
+  .shelf-nav { display: none; }
   .shelf-art { height: 170px; }
   .shelf-item .sk { width: 112px; height: 162px; font-size: 8.5px; padding: 16px 8px 8px; gap: 5px; }
   .game-art { height: 180px; }

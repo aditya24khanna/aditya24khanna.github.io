@@ -2,6 +2,22 @@
   "intro": "Working tools I've built. Each one is live: try it, break it, tell me what you'd change.",
   "tools": [
     {
+      "title": "Pulse",
+      "status": "Live",
+      "q": "What changed in AI today, and how real is it?",
+      "d": "AI news as stories, twice a day. Each card says what happened, why it matters if you build products, one thing to try, and a reality check: rumour, claim, credible, confirmed or solid. Tap any card for a one-pager. Plus the month's top 20, ranked by impact, and a board of rising trends. Quiet days get fewer stories, not filler. Runs on Claude, so it needs a Claude sign-in.",
+      "tags": [
+        "Scheduled agent",
+        "Reality check",
+        "Claude artifact"
+      ],
+      "url": "https://claude.ai/artifact/TY66pVX7fzmKkg4xeexEkZ",
+      "linkLabel": "Catch up ↗",
+      "s": "AI news as stories, twice a day, with a reality check.",
+      "sketch": "pulse",
+      "featured": true
+    },
+    {
       "title": "Storytime with Papa",
       "status": "Live",
       "q": "What if tonight's bedtime story was written for tonight's feeling?",
@@ -15,8 +31,7 @@
       "linkLabel": "Write a story ↗",
       "note": "storytime",
       "s": "An original read-aloud picture book for ages 3 to 5, from a feeling and a setting.",
-      "sketch": "storytime",
-      "featured": true
+      "sketch": "storytime"
     },
     {
       "title": "Ask Chanakya",
@@ -78,21 +93,6 @@
       "linkLabel": "Split a bill ↗",
       "s": "The fewest payments to settle up.",
       "sketch": "hisaab"
-    },
-    {
-      "title": "Pulse",
-      "status": "Live",
-      "q": "What changed in AI today, and how real is it?",
-      "d": "AI news as stories, twice a day. Each card says what happened, why it matters if you build products, one thing to try, and a reality check: rumour, claim, credible, confirmed or solid. Tap any card for a one-pager. Plus the month's top 20, ranked by impact, and a board of rising trends. Quiet days get fewer stories, not filler. Runs on Claude, so it needs a Claude sign-in.",
-      "tags": [
-        "Scheduled agent",
-        "Reality check",
-        "Claude artifact"
-      ],
-      "url": "https://claude.ai/artifact/TY66pVX7fzmKkg4xeexEkZ",
-      "linkLabel": "Catch up ↗",
-      "s": "AI news as stories, twice a day, with a reality check.",
-      "sketch": "pulse"
     }
   ],
   "handNote": "6 tools, try any of them",

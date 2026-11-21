@@ -187,7 +187,11 @@
         body.appendChild(fa);
         f.appendChild(body); box.appendChild(f);
       }
+      var wrap = el("div", "shelf-wrap");
       var shelf = el("div", "shelf");
+      shelf.setAttribute("tabindex", "0");
+      shelf.setAttribute("role", "region");
+      shelf.setAttribute("aria-label", "More tools, scroll sideways");
       tools.filter(function (t) { return t !== feat; }).forEach(function (t) {
         var d = el("article", "shelf-item");
         var art = el("div", "shelf-art"); art.appendChild(sketch(t.sketch, false)); d.appendChild(art);
@@ -199,7 +203,33 @@
         d.appendChild(actions(t, true, "link-strong", "link-soft"));
         shelf.appendChild(d);
       });
-      box.appendChild(shelf);
+      var nav = el("div", "shelf-nav");
+      var prev = el("button", "shelf-btn", "←"), next = el("button", "shelf-btn", "→");
+      prev.type = next.type = "button";
+      prev.setAttribute("aria-label", "Scroll tools left"); next.setAttribute("aria-label", "Scroll tools right");
+      var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function go(dir) {
+        var items = [].slice.call(shelf.children), x = shelf.scrollLeft, base = items[0] ? items[0].offsetLeft : 0, target = x;
+        var lefts = items.map(function (it) { return it.offsetLeft - base; });
+        if (dir > 0) { for (var i = 0; i < lefts.length; i++) { if (lefts[i] > x + 4) { target = lefts[i]; break; } } }
+        else { for (var k = lefts.length - 1; k >= 0; k--) { if (lefts[k] < x - 4) { target = lefts[k]; break; } } }
+        shelf.scrollTo({ left: target, behavior: reduce ? "auto" : "smooth" });
+      }
+      prev.addEventListener("click", function () { go(-1); });
+      next.addEventListener("click", function () { go(1); });
+      function sync() {
+        var max = shelf.scrollWidth - shelf.clientWidth - 2;
+        prev.disabled = shelf.scrollLeft <= 2; next.disabled = shelf.scrollLeft >= max;
+        nav.hidden = max <= 0;
+        wrap.classList.toggle("at-end", shelf.scrollLeft >= max);
+        wrap.classList.toggle("scrolled", shelf.scrollLeft > 2);
+      }
+      shelf.addEventListener("scroll", sync, { passive: true });
+      window.addEventListener("resize", sync);
+      nav.appendChild(prev); nav.appendChild(next);
+      wrap.appendChild(nav); wrap.appendChild(shelf);
+      box.appendChild(wrap);
+      requestAnimationFrame(sync);
     },
 
     // Play: the page turns to night; each game gets a picture.
@@ -381,11 +411,12 @@
     moments: '<b class="sk-t">Today</b><div class="sk-grid"><i></i><i></i><i></i><i></i><i></i><i></i></div><b>On this day</b><div class="bar m"></div>',
     mixlingo: '<b class="sk-t">Auto driver</b><span class="sk-msg">Elli hogbeku, saar?</span><span class="sk-msg me">Indiranagar, swalpa fast</span><span class="sk-msg">Sari, hogona!</span>',
     hisaab: '<b class="sk-t">Weekend trip</b><span class="sk-msg me">Rohan paid 600 for the cab</span><b>Settle up</b><div class="sk-row"><span>2 payments</span><span class="sk-pill">done</span></div>',
+    pulseBig: '<div class="sk-bars"><i class="on"></i><i class="on"></i><i></i><i></i></div><div class="sk-row"><span class="sk-real">Claim</span><span>Evening</span></div><b>Two maths claims, both unverified</b><div class="bar"></div><div class="bar m"></div><b>Why it matters</b><div class="bar hi"></div><div class="bar s"></div><b>Try this</b><div class="bar m"></div><em class="sk-hand">how real is it?</em><div class="sk-cta">One-pager ↑</div>',
     pulse: '<div class="sk-bars"><i class="on"></i><i class="on"></i><i></i><i></i></div><div class="sk-row"><span class="sk-real">Claim</span><span>Evening</span></div><b>Two maths claims, both unverified</b><div class="bar m"></div><b>Why it matters</b><div class="bar hi"></div><div class="sk-cta">One-pager ↑</div>'
   };
   function sketch(kind, big) {
     var s = el("div", "sk" + (big ? " sk-big" : "")); s.setAttribute("aria-hidden", "true");
-    s.innerHTML = SKETCH[kind] || '<div class="bar"></div><div class="bar m"></div><div class="bar s"></div>';
+    s.innerHTML = (big && SKETCH[kind + "Big"]) || SKETCH[kind] || '<div class="bar"></div><div class="bar m"></div><div class="bar s"></div>';
     return s;
   }
   var ART = {
