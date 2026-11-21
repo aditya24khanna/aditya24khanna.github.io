@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pulse: AI news as stories · Aditya Khanna</title>
-<meta name="description" content="AI news for people who build products. Twice a day, with a reality check on every story.">
+<title>Pulse: AI · Startups · Fintech — news as stories · Aditya Khanna</title>
+<meta name="description" content="AI, startup and fintech news for people who build products. Twice a day, with a reality check on every story.">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -348,10 +348,15 @@ const link = (u, text, cls) => { const h = safeUrl(u); return h ? el("a", {href:
 
 /* ---------- colour ---------- */
 function hash(s){ let h = 2166136261; for (const c of str(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
-const PALETTE = [["#5B3DF5","#C8F560"],["#FF5E3A","#FFB547"],["#0BA5A4","#C8F560"],["#E23E8B","#7A5CFF"],["#1F6FEB","#5EE6F0"],["#F2A20C","#FF5E3A"],["#2E8B57","#D8F36A"],["#7A5CFF","#FF8FB1"]];
-function pal(key){ return PALETTE[hash(key) % PALETTE.length]; }
-function bgFor(key, darken=.38){
-  const [a,b] = pal(key); const ang = 120 + hash(key+"a") % 120;
+const TOPIC_PAL = {
+  ai:       [["#2E8B57","#C8F560"],["#0BA5A4","#C8F560"],["#3D6B35","#D8F36A"],["#1A7A4C","#A8E050"]],
+  startups: [["#FF5E3A","#FFB547"],["#E06520","#FFCF4A"],["#C44D2A","#FFD066"],["#F2A20C","#FF5E3A"]],
+  fintech:  [["#1F6FEB","#7AB8FF"],["#2558C0","#5EE6F0"],["#3D5CCC","#8EC1FF"],["#1A5FD0","#60D0F0"]]
+};
+const PALETTE_FALLBACK = [["#5B3DF5","#C8F560"],["#FF5E3A","#FFB547"],["#0BA5A4","#C8F560"],["#7A5CFF","#FF8FB1"]];
+function pal(key, topic){ const p = (topic && TOPIC_PAL[topic]) || PALETTE_FALLBACK; return p[hash(key) % p.length]; }
+function bgFor(key, darken=.38, topic){
+  const [a,b] = pal(key, topic); const ang = 120 + hash(key+"a") % 120;
   return `linear-gradient(rgba(10,11,14,${darken}),rgba(10,11,14,${darken+.32})),radial-gradient(120% 80% at ${hash(key+"x")%100}% 0%, ${b} 0%, transparent 60%),linear-gradient(${ang}deg, ${a}, #14161C 85%)`;
 }
 function topicOf(id){ return S.topics.find(t => t.id === id) || {id, name:id.toUpperCase(), short:id.slice(0,2).toUpperCase(), accent:"#C8F560"}; }
@@ -460,7 +465,7 @@ function renderRail(){
     const target = unread[0] || bs[0];
     const ucards = (unread.length ? unread : [bs[0]]).flatMap(b => cardsOf(b.id)).filter(c => unread.length ? !seen.has(c.id) : true);
     const mins = Math.max(1, Math.ceil(ucards.reduce((n,c) => n + wordsIn(c.headline, c.what, c.why, c.tryThis && c.tryThis.text), 0) / 180));
-    const [c1,c2] = pal(target.id); const t = topicOf(target.topic);
+    const t = topicOf(target.topic); const [c1,c2] = pal(target.id, target.topic);
     rail.replaceChildren(el("button",{class:"catchup", onclick:() => openBatch(target.id, 0)},
       el("div",{class:"ring"+(unread.length?"":" seen"), style:{"--c1":c1,"--c2":c2}}, el("div",{class:"ring-in"}, el("div",{class:"ring-face"}, el("b",null, str(t.short||"AI",3))))),
       el("div",null, el("b",{class:"ct"}, unread.length ? "Catch up" : "Replay the latest edition"),
@@ -470,7 +475,7 @@ function renderRail(){
   }
   const unseenFirst = [...bs].sort((a,b) => (allSeen(a.id)?1:0) - (allSeen(b.id)?1:0));
   rail.replaceChildren(...unseenFirst.map(b => {
-    const [c1,c2] = pal(b.id); const t = topicOf(b.topic);
+    const t = topicOf(b.topic); const [c1,c2] = pal(b.id, b.topic);
     const weekly = b.edition === "Weekly";
     const d = new Date(b.at);
     const face = weekly ? ["Week", "trends"] : [str(t.short||"AI",3), str(b.edition||"",9)];
@@ -495,7 +500,7 @@ function viewFeed(){
 function postCard(c){
   const key = (c.trend && c.trend.id) || c.id;
   return el("button",{class:"post", onclick:() => openCard(c), "aria-label": str(c.headline,200)},
-    el("div",{class:"bgx", style:{background:bgFor(key,.2)}}),
+    el("div",{class:"bgx", style:{background:bgFor(key,.2,c.topic)}}),
     el("div",{class:"chips"}, c.trend ? el("span",{class:"trend-chip"}, trendName(c.trend)) : c.kind === "trends" ? el("span",{class:"trend-chip"}, "Weekly trends") : null),
     el("div",{class:"t"}, str(c.headline,140)),
     c.why ? el("div",{class:"w"}, el("b",null,"Why it matters: "), str(c.why,240)) : null,
@@ -630,7 +635,7 @@ function tick(){
 function slideCover({b, cards}){
   const t = topicOf(b.topic);
   const isWeekly = b.edition === "Weekly";
-  return el("div",{class:"slide cover"}, el("div",{class:"bgx",style:{background:bgFor(b.id,.15)}}),
+  return el("div",{class:"slide cover"}, el("div",{class:"bgx",style:{background:bgFor(b.id,.15,b.topic)}}),
     el("div",{class:"content"},
       el("div",{class:"ed"}, dayLabel(b.at)),
       el("div",{class:"big"}, isWeekly ? "The week in " + str(t.short||"AI",6) : str(b.edition||"Latest",20) + " edition"),
@@ -642,7 +647,7 @@ function slideCard(c){
   const key = (c.trend && c.trend.id) || c.id;
   const srcs = Array.isArray(c.sources) ? c.sources : [];
   const tryU = c.tryThis && safeUrl(c.tryThis.url);
-  return el("div",{class:"slide"}, el("div",{class:"bgx",style:{background:bgFor(key)}}),
+  return el("div",{class:"slide"}, el("div",{class:"bgx",style:{background:bgFor(key,.38,c.topic)}}),
     el("div",{class:"content"},
       el("div",{class:"chips"}, realChip(c.real), c.trend ? el("span",{class:"trend-chip"}, trendName(c.trend)) : null),
       el("div",{class:"s-head"}, str(c.headline,140)),
@@ -656,7 +661,7 @@ function slideCard(c){
 function slideTrends(c){
   const list = Array.isArray(c.trendsList) ? c.trendsList : [];
   const arr = {up:"↗", down:"↘", flat:"→", new:"✦"};
-  return el("div",{class:"slide"}, el("div",{class:"bgx",style:{background:bgFor(c.id,.25)}}),
+  return el("div",{class:"slide"}, el("div",{class:"bgx",style:{background:bgFor(c.id,.25,c.topic)}}),
     el("div",{class:"content"},
       el("div",{class:"chips"}, el("span",{class:"trend-chip"}, "Weekly trends")),
       el("div",{class:"s-head"}, str(c.headline,140)),
