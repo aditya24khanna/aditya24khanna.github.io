@@ -15,7 +15,8 @@
       "linkLabel": "Catch up ↗",
       "s": "AI news as stories, twice a day, with a reality check.",
       "sketch": "pulse",
-      "featured": true
+      "featured": true,
+      "note": "pulse"
     },
     {
       "title": "Storytime with Papa",

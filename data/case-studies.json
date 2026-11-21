@@ -117,5 +117,53 @@
       "Low floor, high ceiling: speed and hazards ramp up over a run, and each road has its own landmarks and hazard mix."
     ],
     "section": "play"
+  },
+  {
+    "id": "pulse",
+    "tab": "Pulse",
+    "eyebrow": "Build note · AI tool",
+    "title": "An AI news feed that says what changed, and how real it is",
+    "summary": "Two rules do most of the work: only what changed, and a reality check on every story.",
+    "locked": false,
+    "metrics": [],
+    "labels": {
+      "problem": "The user and the job",
+      "research": "What a raw chatbot gets wrong",
+      "did": "Decisions I made",
+      "owned": "What broke, and what changed"
+    },
+    "problem": "A product leader who builds with AI and wants to keep up without reading twenty newsletters: what changed today, whether it's real, and what it means for the product they're building.",
+    "research": [
+      "It doesn't know what happened today unless you ask, and it never comes to you.",
+      "Ask for \"the latest AI news\" and you get everything, with no sense of what matters.",
+      "Big claims and shipped products sound the same. A lab's blog post reads as fact.",
+      "The so-what is generic: \"this is a significant development\".",
+      "No memory, so the same story comes back every day and nothing adds up to a trend."
+    ],
+    "did": [
+      "It runs on a schedule, not on request: a morning and an evening edition, plus a Sunday card on the week's trends. My first ask was every few hours; most of those windows would have had nothing new, so twice a day won.",
+      "Quiet days get fewer stories, not filler. Each edition is checked against the last week so repeats are dropped unless something actually moved.",
+      "A reality check on every story, in words, not stars: Rumour, Claim, Credible, Confirmed or Solid. A big unverified claim should never look like a shipped product.",
+      "Every card answers three questions: what happened, why it matters if you build products, and one thing to try this week. Behind it is a one-pager with the numbers, the bull and bear case, what's still unknown and what to watch.",
+      "A Top 30 list ranked by impact, not by date, rebuilt every morning. An unverified claim can't rank above #8 until someone checks it.",
+      "Primary sources first, a second source for anything that drives the story, everything written in its own words with links to the originals, and political causes attributed to whoever claimed them.",
+      "Topics are configuration, not code. Stock markets or product management can be added as a new topic with its own sources and rules, and the app picks it up.",
+      "It's built as stories because that's how people already catch up on a phone: tap through in two minutes, open the one-pager only when a story earns it."
+    ],
+    "owned": "A design review before launch caught three problems. Stories auto-advanced every 13 seconds, but a card holds about 100 words, which takes nearer 25 to read; each card now gets time based on its word count, and with reduced motion turned on it waits for a tap. The first reality score was a number, and \"2/5\" on a big maths claim read as \"bad story\" rather than \"unverified\"; it became the five words above. And in testing, links inside a story couldn't be tapped because the invisible tap areas for next and previous sat on top of them; the content now sits above.",
+    "section": "ai",
+    "sections": [
+      {
+        "after": "did",
+        "label": "How I'm testing it",
+        "body": [
+          "96 written cases across the whole system: picking stories, accuracy and sourcing, the reality check, the product lens, repeats, writing and copyright, data checks, the Top 30 ranking, trends, safety, multiple topics and the page itself.",
+          "Fixture runs: the editor gets made-up news windows (a big launch day, a quiet Sunday, an unverified claim, a page with hidden instructions) and writes into a test copy, never the live feed.",
+          "Live audits: the first 10 real editions, then five a month, scored on whether each story is newsworthy, accurate, calibrated, useful, actionable, in its own words and neutral.",
+          "The bar for keeping it live: no failures in accuracy, safety or copyright across the first 10 editions, and reality labels that match a human rater at least 85% of the time.",
+          "Results go here once the first audit is done."
+        ]
+      }
+    ]
   }
 ]
