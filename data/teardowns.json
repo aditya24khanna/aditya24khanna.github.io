@@ -1,0 +1,119 @@
+{
+  "note": "Anyone can paste a product name into a chatbot and get a tidy summary. These aren't that. Each one has a point of view you can argue with, evidence from using the thing myself, an estimate with its assumptions on show, and a bet I'd defend in a room. Flip \"Show red pen\" on any teardown to see why each part is built the way it is.",
+  "rubricUrl": "teardowns/rubric.html",
+  "items": [
+    {
+      "id": "google-maps",
+      "product": "Google Maps",
+      "eyebrow": "Teardown · Navigation",
+      "title": "The disposable route",
+      "card": "Why I reach for directions, not navigation, on Indian roads — and the one change that fixes it.",
+      "readMins": 6,
+      "thesis": "Google Maps treats every route as disposable. It recomputes after a missed turn, and in directions mode after every unlock, rather than holding the route you committed to. On Indian roads most misses are cheaply recoverable — but only if the product tells you before it quietly moves you.",
+      "thesisPen": { "dim": "Thesis", "note": "One line, and you can disagree with it. It targets a design choice — recompute vs hold — not a vague \"navigation is bad\"." },
+      "sections": [
+        {
+          "h": "User, job, moment",
+          "pen": { "dim": "User & moment", "note": "The job is in the driver's words, and it names the constraint that matters: while I can still fix it cheaply." },
+          "blocks": [
+            "A car driver on a long drive, or a half-familiar city route — phone mounted or in a pocket, not running full navigation the whole way.",
+            { "callout": "The job: keep me on the route I started on, and tell me the instant I'm off it — while I can still fix it cheaply." },
+            { "list": [
+              "The few seconds after a missed turn.",
+              "A glance every 5–10 km on a long drive."
+            ] }
+          ]
+        },
+        {
+          "h": "Business model & the metric that matters",
+          "pen": { "dim": "Business grounding", "note": "Says how the product earns before proposing changes, and the estimate shows its assumptions instead of a made-up number." },
+          "blocks": [
+            "Maps earns through local search, ads and the Maps Platform — not navigation directly. Navigation earns its keep as the habit that keeps bringing people back.",
+            { "list": [
+              "North star (for this teardown): trips completed with Maps in use, without the driver abandoning it.",
+              "Bet metric: minutes of detour per missed turn — today vs with an instant alert.",
+              "Guardrails: screen taps per trip (safety); false alerts on deliberate deviations."
+            ] },
+            { "sub": "The estimate — first-principles, every assumption on show" },
+            { "list": [
+              "Per incident (one data point, the drive below): a silent recompute baked in ~90 min; an alert at the fork recovers in ~2 min → ~88 min saved.",
+              "Per affected driver / year: ~6 long unfamiliar drives with a recoverable miss × ~25 min average silent detour (conservative vs the 90 above) against ~3 min with an alert → ~22 min per incident, ~2+ hours a year.",
+              "Scale: × the number of affected drivers — left as a multiplier, since I won't invent India's driver count."
+            ] },
+            "The point is a method with its assumptions visible, not a fabricated crore figure."
+          ]
+        },
+        {
+          "h": "The moments that decide everything",
+          "pen": { "dim": "Evidence", "note": "Both moments are first-hand — one of them quantified. Not a screen-by-screen tour." },
+          "blocks": [
+            { "num": [
+              { "lead": "The missed flyover.", "body": "On an 11-hour interstate drive with several route options, passing through a small town, I missed the turn for a flyover. Maps recomputed silently. I noticed about 20 minutes into the new route — by which point turning back meant losing roughly 40 minutes. The trip finished at 12:30, about 1.5 hours (≈14%) over the 11-hour route. Flagged at the fork, recovery would have been about 2 minutes." },
+              { "lead": "The unlock on a long drive.", "body": "In directions mode the screen sleeps. Each time I unlock, it refreshes the directions and can show a different route from the one I started on. All I wanted was a check every 5–10 km — instead the route wouldn't hold still." }
+            ] }
+          ]
+        },
+        {
+          "h": "What works, and why",
+          "pen": { "dim": "Intellectual honesty", "note": "Credits the competing features and names exactly which half each one solves, instead of hiding them." },
+          "blocks": [
+            { "list": [
+              "Asking before a traffic reroute. For traffic, Maps surfaces a faster route and lets you choose — the driver stays in charge. The bet simply extends this to missed turns.",
+              "Flyover callouts (40 cities, 2024) and AI narrow-road avoidance. Google diagnosed the flyover-vs-service-road moment correctly — but solved the warning (a flyover is coming), not the recovery (when you miss it). Half the moment.",
+              "Glanceable directions (2023–24): lock-screen ETA and next turn without starting navigation. Not on my phone; where it exists it's off by default and still auto-updates the route on a detour. Solves the screen, not the route."
+            ] }
+          ]
+        },
+        {
+          "h": "What's broken, ranked",
+          "pen": { "dim": "Prioritisation", "note": "Ranked by impact, with the reason #1 hurts (the silence) named, and the data problem pushed down openly." },
+          "blocks": [
+            { "num": [
+              { "lead": "The route recomputes silently.", "body": "Highest impact: the recovery window is spent before the driver knows it exists. The silence, not the reroute itself, is what makes a disposable route cost you." },
+              { "lead": "Unlock refresh with no held route.", "body": "The route won't hold still between glances." },
+              { "lead": "Road data that doesn't match the road.", "body": "Real, but a data problem that's already being worked on — ranked below the two design problems." }
+            ] }
+          ]
+        },
+        {
+          "h": "The bet: a committed route",
+          "pen": { "dim": "The bet", "note": "Answers \"why haven't they done it?\" before you ask, and names the one mechanism the bet rests on — alert speed, not manual rerouting." },
+          "blocks": [
+            { "table": {
+              "cols": ["Moment", "Today", "Committed route"],
+              "rows": [
+                ["Start", "Pick a route", "Pick a route; it's held unless you change it"],
+                ["Missed turn", "Silent reroute", "Instant voice alert at the fork, both costs shown: \"Loop back: +2 min. Continue: +1 h 30 min.\" Picks the faster option itself after ~5 s"],
+                ["Long drive, screen off", "Unlock refreshes; route may change", "Lock screen: \"On route ✓ · next decision in 12 km\", against the held route"],
+                ["Check every 5–10 km", "Unlock and look", "Optional spoken check-in every N km"],
+                ["Traffic worsens", "Asks first", "No change"]
+              ]
+            } },
+            { "list": [
+              "Core of the bet: hold the route, and alert fast enough to recover cheaply. The value is flagging the deviation while recovery is still cheap — not manual rerouting.",
+              "Trade-off: more prompts mid-drive, and the risk of nagging on deliberate deviations. Mitigation: voice only, a safe default, suppressed once the deviation rejoins the route.",
+              "Why haven't they done it? One global routing logic; a silent reroute still \"succeeds\" on the dashboard (you still arrive); glanceable being off by default hints Google doubts the middle mode is wanted."
+            ] }
+          ]
+        },
+        {
+          "h": "Where I could be wrong",
+          "pen": { "dim": "Intellectual honesty", "note": "Names the data and the failure mode that would kill the bet." },
+          "blocks": [
+            { "list": [
+              "Google's data may show most deviations are deliberate — then auto-reroute is right for most drivers, and this should be opt-in.",
+              "An instant alert at every fork could become noise in dense city driving — the opposite failure to silence.",
+              "A held route can go stale (a closure, an accident). \"Committed\" must never mean blind, so the traffic prompt stays."
+            ] }
+          ]
+        }
+      ],
+      "dropToPm": [
+        { "s": "Thesis", "weak": "\"Navigation is frustrating in India.\"", "why": "A complaint, not a claim. Nothing to test." },
+        { "s": "Insight", "weak": "\"Maps reroutes too much.\"", "why": "Misses that silent recomputation — not rerouting as such — spends the recovery window." },
+        { "s": "The bet", "weak": "\"Fix the route; any deviation sounds an alarm and asks permission to reroute.\"", "why": "Asks the driver to look and tap at the most stressful moment, fires on every deliberate cut, and by the time you'd tap, recovery is already expensive." },
+        { "s": "Prior art", "weak": "No mention of flyover callouts or glanceable directions.", "why": "A Maps PM stops reading there." }
+      ]
+    }
+  ]
+}

@@ -14,6 +14,7 @@
     ai: "data/ai.json",
     play: "data/play.json",
     principles: "data/principles.json",
+    teardowns: "data/teardowns.json",
     toolbox: "data/toolbox.json",
     education: "data/education.json"
   };
@@ -291,6 +292,27 @@
       });
     },
 
+    // Teardowns block, sits under How I work. Cards link to the teardowns/ pages.
+    teardownsBlock: function (data, site) {
+      var box = $("#teardowns"); if (!box) return;
+      var items = (data && data.items) || [];
+      var off = site && site.sections && site.sections.teardowns === false;
+      if (off || !filled(items)) { box.hidden = true; return; }
+      if (filled(data.note)) $("#tdNote").textContent = data.note;
+      var rl = $("#tdRubric");
+      if (filled(data.rubricUrl)) rl.href = data.rubricUrl; else rl.hidden = true;
+      var cards = $("#teardownCards");
+      items.forEach(function (t) {
+        var a = el("a", "td-card paper"); a.href = "teardowns/?t=" + encodeURIComponent(t.id);
+        a.appendChild(el("span", "eyebrow", t.eyebrow || "Teardown"));
+        a.appendChild(el("h3", null, (t.product ? t.product + " — " : "") + t.title));
+        if (filled(t.card)) a.appendChild(el("span", "q", t.card));
+        if (filled(t.readMins)) a.appendChild(el("span", "td-read", t.readMins + " min read"));
+        cards.appendChild(a);
+      });
+      box.hidden = false;
+    },
+
     // Education folded into one line at the end of How I work.
     eduLine: function (items) {
       var box = $("#eduLine"); if (!box || !filled(items)) return;
@@ -481,7 +503,7 @@
       else if (key === "ai") render.ai(d.ai);
       else if (key === "play") render.play(d.play);
       else if (render[key]) render[key](data);
-      if (key === "principles") render.eduLine(d.education);
+      if (key === "principles") { render.eduLine(d.education); render.teardownsBlock(d.teardowns, site); }
     });
     // hide nav links for hidden sections
     document.querySelectorAll("#navLinks a").forEach(function (a) { var t = document.getElementById(a.getAttribute("href").slice(1)); if (!t || t.hidden) a.parentNode.hidden = true; });

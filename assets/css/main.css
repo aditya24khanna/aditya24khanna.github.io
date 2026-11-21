@@ -413,6 +413,70 @@ mark, .hl { color: inherit; background: linear-gradient(100deg, transparent 1%, 
 .band-hi .ccard { box-shadow: 5px 5px 0 var(--hi-ink); border-color: var(--hi-ink); color: var(--ink); }
 .band-hi .ccard b { font-size: 20px; }
 
+/* ===== Teardowns ===== */
+/* Home block, under How I work */
+.teardowns { margin-top: 52px; border-top: 2px solid var(--ink); padding-top: 34px; }
+.td-head { display: grid; gap: 12px; max-width: 760px; margin-bottom: 28px; }
+.td-note { font-size: 17px; color: var(--ink-2); max-width: 62ch; }
+.td-rubric { font-weight: 700; color: var(--ink); text-decoration: underline; text-decoration-color: var(--hi); text-decoration-thickness: 3px; text-underline-offset: 4px; justify-self: start; }
+.td-rubric:hover { text-decoration-color: var(--pen); }
+.td-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px; }
+.td-card { padding: 22px; display: grid; gap: 8px; align-content: start; color: var(--ink); text-decoration: none; transition: transform .2s var(--spring), box-shadow .2s var(--spring); }
+.td-card:hover { transform: translate(-3px, -3px); box-shadow: 8px 8px 0 var(--shadow); }
+.td-card h3 { font-size: 22px; line-height: 1.12; }
+.td-card .q { font-family: var(--hand); font-weight: 700; color: var(--pen); font-size: 20px; line-height: 1.18; }
+.td-read { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); letter-spacing: .04em; }
+
+/* Detail + rubric pages */
+.td-page { padding-block: 24px 64px; }
+.td-page h1, .td-h1 { font-size: clamp(30px, 4.6vw, 48px); line-height: 1.05; letter-spacing: -.02em; margin: 6px 0 4px; }
+.td-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 6px 0 4px; }
+.td-toggle { display: inline-flex; align-items: center; gap: 9px; font-family: var(--mono); font-size: 12.5px; letter-spacing: .03em; border: 2px solid var(--ink); border-radius: 999px; padding: 8px 15px; background: var(--card); color: var(--ink); cursor: pointer; transition: transform .15s var(--spring); }
+.td-toggle:hover { transform: translateY(-1px); }
+.td-toggle[aria-pressed="true"] { background: var(--pen); color: #fff; border-color: var(--pen); }
+.td-toggle .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--pen); }
+.td-toggle[aria-pressed="true"] .dot { background: #fff; }
+.td-thesis { font-size: clamp(20px, 2.5vw, 28px); line-height: 1.32; font-weight: 600; border-left: 5px solid var(--hi); padding-left: 20px; margin: 16px 0 10px; max-width: 46ch; }
+.td-sec { margin-top: 38px; }
+.td-sec h2 { font-size: clamp(22px, 2.6vw, 30px); line-height: 1.1; margin-bottom: 14px; }
+.td-sec > p { font-size: 17px; color: var(--ink-2); max-width: 68ch; margin-bottom: 12px; }
+.td-sec ul, .td-sec ol { display: grid; gap: 11px; margin: 4px 0 14px; max-width: 68ch; padding: 0; list-style: none; }
+.td-sec li { font-size: 16.5px; color: var(--ink-2); padding-left: 24px; position: relative; line-height: 1.5; }
+.td-sec ul li::before { content: "\2192"; position: absolute; left: 0; color: var(--pen); font-weight: 700; }
+.td-sec ol { counter-reset: td; }
+.td-sec ol > li { counter-increment: td; }
+.td-sec ol > li::before { content: counter(td); position: absolute; left: 0; top: -1px; font-family: var(--mono); font-weight: 700; color: var(--pen); }
+.td-lead { color: var(--ink); }
+.td-callout { font-family: var(--hand); font-size: clamp(21px, 2.3vw, 27px); color: var(--pen); line-height: 1.2; margin: 6px 0 14px; max-width: 46ch; }
+.td-sub { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin: 18px 0 8px; }
+
+.td-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 15.5px; }
+.td-table th, .td-table td { border: 1.5px solid var(--rule); padding: 10px 13px; text-align: left; vertical-align: top; line-height: 1.45; }
+.td-table th { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); background: color-mix(in srgb, var(--hi) 14%, var(--card)); }
+.td-table td:first-child { font-weight: 700; color: var(--ink); }
+.td-rubric-table td:first-child { white-space: nowrap; }
+
+.td-pen { display: none; }
+.redpen .td-pen { display: block; margin: 12px 0 2px; padding: 12px 15px; border-left: 4px solid var(--pen); background: color-mix(in srgb, var(--pen) 8%, var(--card)); border-radius: 0 8px 8px 0; max-width: 68ch; }
+.td-pen .dim { font-family: var(--mono); font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--pen); display: block; margin-bottom: 3px; }
+.td-pen .txt { font-family: var(--hand); font-size: 20px; line-height: 1.28; color: var(--pen); }
+.td-droppm { display: none; border-top: 2px dashed var(--ink-3); padding-top: 28px; }
+.redpen .td-droppm { display: block; }
+.td-droppm .lede { font-size: 15px; color: var(--ink-2); margin-bottom: 14px; }
+.td-more { margin-top: 40px; border-top: 2px solid var(--ink); padding-top: 20px; display: grid; gap: 8px; }
+.td-more a { font-weight: 700; color: var(--ink); }
+.td-more a:hover { color: var(--pen); }
+
+@media (max-width: 760px) {
+  .td-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .td-table, .td-table tbody, .td-table tr, .td-table td { display: block; width: auto; }
+  .td-table tr { border: 1.5px solid var(--rule); border-radius: 8px; margin-bottom: 14px; padding: 4px 4px 8px; }
+  .td-table td { border: 0; padding: 8px 12px 0; }
+  .td-table td::before { content: attr(data-l); font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 3px; }
+  .td-rubric-table td:first-child { white-space: normal; font-size: 18px; }
+  .td-rubric-table td:first-child::before { display: none; }
+}
+
 @media (max-width: 960px) {
   .principle-row { grid-template-columns: minmax(0, 1fr); padding: 28px 0; }
 }

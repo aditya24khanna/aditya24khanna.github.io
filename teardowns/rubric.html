@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>How to read a teardown · Aditya Khanna</title>
+  <meta name="description" content="How to read a product teardown, and how I'd grade one: six dimensions across APM, PM and SPM, plus the questions I ask.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../assets/css/tokens.css?v=20261122b">
+  <link rel="stylesheet" href="../assets/css/main.css?v=20261122b">
+  <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="me" href="../#principles"><span><b>← Aditya Khanna</b><span>Back to the site</span></span></a>
+      <div class="nav-actions" style="margin-left:auto">
+        <button type="button" class="icon-btn" id="themeBtn" aria-label="Switch theme">
+          <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+          <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="wrap td-page">
+    <p class="eyebrow">Teardowns</p>
+    <h1 class="td-h1">How to read a teardown <mark>(and how I'd grade one)</mark></h1>
+    <p class="td-thesis">A teardown isn't a product summary — a chatbot does those. It's a point of view you can argue with, evidence from using the thing, an estimate with its assumptions on show, and a bet worth defending. Here's the bar I hold my own to, and the one I'd hold a PM's work to.</p>
+
+    <section class="td-sec">
+      <h2>Six dimensions, three levels</h2>
+      <table class="td-table td-rubric-table">
+        <thead>
+          <tr><th>Dimension</th><th>APM</th><th>PM</th><th>SPM</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-l="Dimension">1. Thesis</td>
+            <td data-l="APM">Describes the product. No point of view, or a preference stated as fact.</td>
+            <td data-l="PM">Has a view, but it's a complaint or a generic truth.</td>
+            <td data-l="SPM">One arguable claim that could be wrong — and the rest of the teardown tests it.</td>
+          </tr>
+          <tr>
+            <td data-l="Dimension">2. User &amp; moment</td>
+            <td data-l="APM">Talks about "users" in general; lists features.</td>
+            <td data-l="PM">Names a user and a job, but stays broad.</td>
+            <td data-l="SPM">One user, one job in their words, one decisive moment, and the constraint that makes it hard.</td>
+          </tr>
+          <tr>
+            <td data-l="Dimension">3. Business grounding</td>
+            <td data-l="APM">No mention of how the product makes money.</td>
+            <td data-l="PM">Names the model; picks a metric but no guardrail; no estimate, or a made-up number.</td>
+            <td data-l="SPM">Model → the one metric that matters → a guardrail that could disprove the bet → an estimate with assumptions shown.</td>
+          </tr>
+          <tr>
+            <td data-l="Dimension">4. Evidence &amp; prioritisation</td>
+            <td data-l="APM">A screen-by-screen tour; everything matters equally.</td>
+            <td data-l="PM">Real observations, but secondhand or unranked.</td>
+            <td data-l="SPM">Two or three first-hand, specific, ideally quantified moments, ranked by impact with a reason.</td>
+          </tr>
+          <tr>
+            <td data-l="Dimension">5. The bet</td>
+            <td data-l="APM">A wish list of features.</td>
+            <td data-l="PM">One solution, but ignores trade-offs or why it isn't already built.</td>
+            <td data-l="SPM">A sized bet, its trade-off, the metric it should move, and an honest answer to "why haven't they done it?"</td>
+          </tr>
+          <tr>
+            <td data-l="Dimension">6. Intellectual honesty</td>
+            <td data-l="APM">No prior art; the idea is presented as obviously right.</td>
+            <td data-l="PM">Mentions some prior art; weak on own blind spots.</td>
+            <td data-l="SPM">Credits what already exists (and which half it solves), and names the data or failure mode that would kill the bet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="td-sec">
+      <h2>Eight questions I ask when someone walks me through one</h2>
+      <ol>
+        <li>What's the one sentence someone could disagree with? No sentence, no teardown.</li>
+        <li>Whose job is this, in their words, and what makes the moment hard?</li>
+        <li>How does this product actually make money, and does your bet help or hurt that?</li>
+        <li>Which single metric moves if you're right? What guardrail says you're wrong?</li>
+        <li>Is your evidence first-hand, or repeated from reviews and press?</li>
+        <li>If you could fix only one thing, which, and why that one?</li>
+        <li>Why hasn't the team already done your bet? Give the most charitable reason.</li>
+        <li>What would have to be true for you to be wrong, and how would you check?</li>
+      </ol>
+    </section>
+
+    <section class="td-sec">
+      <h2>The red pen</h2>
+      <p>Each teardown has a <b>Show red pen</b> toggle. Turn it on and margin notes appear, each tagged with the dimension above, explaining why that part is built the way it is. Every teardown also ends with a <i>What would drop this to PM level</i> box — the weaker version of each part, and why it falls short. The clean read is the default; the red pen is for anyone learning the craft.</p>
+    </section>
+
+    <nav class="td-more" aria-label="Teardowns">
+      <p class="eyebrow">Read a teardown</p>
+      <a href="./?t=google-maps">Google Maps — The disposable route →</a>
+    </nav>
+  </main>
+<script>
+(function () {
+  var root = document.documentElement, btn = document.getElementById("themeBtn");
+  function cur() { return root.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"); }
+  btn.addEventListener("click", function () { var n = cur() === "dark" ? "light" : "dark"; root.setAttribute("data-theme", n); try { localStorage.setItem("theme", n); } catch (e) {} });
+})();
+</script>
+</body>
+</html>
