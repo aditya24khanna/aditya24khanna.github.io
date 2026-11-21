@@ -283,6 +283,7 @@ mark, .hl { color: inherit; background: linear-gradient(100deg, transparent 1%, 
   .cells div:nth-child(odd) { border-right: 2px solid var(--ink); }
   .cells div:last-child { border-bottom: 0; }
   .cells div:nth-last-child(2):nth-child(odd) { border-bottom: 0; }
+  .cells div:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: 0; }
   .cs-blocks { grid-template-columns: minmax(0, 1fr); }
   .role { grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 18px; }
   .screens { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; }
