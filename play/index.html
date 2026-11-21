@@ -180,7 +180,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
           <div><b>HORN</b><span>Traffic might move</span></div>
           <div><b>M · R</b><span>Sound · radio</span></div>
         </div>
-        <p class="controls">Five shock absorbers. New hazards join the road as you go. Weather changes every kilometre. Filter coffee adds 50 m. Rain means puddles, fog hides the road. Keyboard: arrows to steer and set speed, <kbd>H</kbd> or <kbd>Space</kbd> for the horn.</p>
+        <p class="controls">Five shock absorbers. The three right lanes are oncoming traffic: risky, but distance counts 1.5×. New hazards join the road as you go. Weather changes every kilometre. Filter coffee adds 50 m. Rain means puddles, fog hides the road. Keyboard: arrows to steer and set speed, <kbd>H</kbd> or <kbd>Space</kbd> for the horn.</p>
       </div>
     </div>
 
@@ -302,6 +302,8 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
   // World: x runs across the road in lane widths (lanes are 0-1, 1-2, 2-3); y runs along it.
   // The player sits at y = PY; hazards spawn FAR lane-lengths ahead. Depth z = PY - y.
   const PY = 30, FAR = 24, SPAWN_Y = PY - FAR, ZC = 3;
+  // 6-lane road, no median: lanes 0-2 are your direction (left, as in India), lanes 3-5 carry oncoming traffic
+  const RW = 6, MYSIDE = 3;
   let W=1, H=1, dpr=1, hy=200, yP=600, LP=100, camH=4, DH=5, camX=1.5;
   function resize(){
     const r = stage.getBoundingClientRect();
@@ -310,7 +312,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
     hy = Math.round(H*0.36); yP = H - Math.max(24, H*0.04);
-    LP = Math.min(W*0.27, (yP - hy)*0.3);
+    LP = Math.min(W*0.25, (yP - hy)*0.29);
     camH = (yP - hy)/LP; DH = camH*1.35;
   }
   new ResizeObserver(resize).observe(stage);
@@ -341,6 +343,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     pillar: ['Metro pillar. It was here first.','Pillar 1, scooter 0.'],
     ped: ['Hard brake! The footpath was broken.','Pedestrian detour. Fair enough.','He had nowhere else to walk.'],
     honk: ['HONK. The bus behind ran out of patience.','Too slow. A Volvo bus nudged you.','Honked off the road.'],
+    oncoming: ['Head-on! Their lane, their rules.','Wrong side. Right consequences.','Oncoming traffic wins.'],
     wrongway: ['Wrong-side rider. Of course.','He was saving a U-turn.','Wrong side, full speed.'],
     auto: ['Auto braked. No indicator.','Auto: “Meter? Extra 20.”','Auto took a U-turn. Mid-road.']
   };
@@ -450,7 +453,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     else if (p < 0.175) G.obs.push(makeObs('repair', free, road));
   }
   // pedestrians walk the footpath; where a slab is missing they step onto the road edge
-  const pedX = p => p.side < 0 ? -0.55 + 0.85*p.off : 3.55 - 0.85*p.off;
+  const pedX = p => p.side < 0 ? -0.55 + 0.85*p.off : RW + 0.55 - 0.85*p.off;
 
   function fx(txt, color){ G.fx.push({ x: W/2 + (G.x - camX)*LP, y: yP - LP*1.0, txt, color, t:0 }); }
   function damage(msg, type){
@@ -476,6 +479,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
       G.top = Math.max(G.top, G.v);
       // riding fast earns a boost bonus; dawdling fills the honk meter
       if (G.gear > 0) G.bonus += G.v*dt*3.5*0.15*G.gear;
+      if (G.lane >= MYSIDE) G.bonus += G.v*dt*3.5*0.5;      // wrong side: distance counts 1.5x
       if (G.gear < 0) G.honk += dt*(-G.gear)/12;
       else G.honk = Math.max(0, G.honk - dt/4);
       if (G.honk >= 1){
@@ -519,7 +523,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
       const ahead = G.gaps.some(g => g.side === p.side &&
         (p.w < 0 ? (g.y + g.h/2 > p.y - 0.75 && g.y - g.h/2 < p.y + 0.15)
                  : (g.y - g.h/2 < p.y + 0.75 && g.y + g.h/2 > p.y - 0.15)));
-      const lane = p.side < 0 ? 0 : 2;
+      const lane = p.side < 0 ? 0 : RW - 1;
       const clear = !G.obs.some(o => !PICKUP(o.type) && Math.floor(o.x) === lane && Math.abs(o.y - p.y) < 1.4);
       const tgt = ahead && (clear || p.off > 0.3) ? 1 : 0;
       p.off += (tgt - p.off) * Math.min(1, dt*5);
@@ -558,6 +562,21 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
       spawnRow(running ? d : 0.15, road);
       G.spawnAcc = Math.max(1.35, G.v*0.42, 3.4 - 1.9*d) + rng()*0.6;
     }
+    // oncoming lanes: traffic heading at you, plus the odd pothole
+    G.oncAcc = (G.oncAcc == null ? 1 : G.oncAcc) - dy;
+    if (G.oncAcc <= 0){
+      const busy = new Set(G.obs.filter(o => o.x > MYSIDE && o.y < SPAWN_Y + 2.2).map(o => Math.floor(o.x)));
+      const free = [3, 4, 5].filter(l => !busy.has(l));
+      if (free.length){
+        const lane = free[Math.floor(rng()*free.length)], r = rng();
+        if (r < 0.22) G.obs.push(makeObs('pothole', lane, road));
+        else {
+          const t = r < 0.55 ? 'auto' : r < 0.72 ? 'wrongway' : r < 0.88 ? 'bus' : 'tanker';
+          const o = makeObs(t, lane, road); o.onc = true; o.slow = -(1.8 + rng()*1.2 + 1.2*d); o.flip = true; G.obs.push(o);
+        }
+      }
+      G.oncAcc = (1.5 + rng()*1.6)*(1.25 - 0.55*d);
+    }
     G.decoAcc -= dy;
     if (G.decoAcc <= 0){
       if (road.trees) G.deco.push({ y:SPAWN_Y, side: Math.random() < 0.5 ? 1 : -1, r: 0.8 + Math.random()*0.6 });
@@ -566,7 +585,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     G.decalAcc -= dy;
     if (G.decalAcc <= 0){
       const t = ['patch','patch','crack','crack','manhole','stain'][Math.floor(Math.random()*6)];
-      G.decals.push({ t, x: 0.2 + Math.random()*2.6, y: SPAWN_Y, w: 0.2 + Math.random()*0.5, l: 0.2 + Math.random()*0.6, r: Math.random() });
+      G.decals.push({ t, x: 0.2 + Math.random()*(RW - 0.4), y: SPAWN_Y, w: 0.2 + Math.random()*0.5, l: 0.2 + Math.random()*0.6, r: Math.random() });
       G.decalAcc = 0.6 + Math.random()*1.4;
     }
     // rain
@@ -604,7 +623,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
         else if (o.type==='repair'){ G.shocks = Math.min(MAX_SHOCKS, G.shocks+1); fx('Road fixed?! Rare sighting.', T.ink); SND.repair(); }
         else if (o.type==='puddle' && !o.hidden){ fx(o.foam ? 'Just foam. Hold your breath.' : 'Just water. This time.', T.muted); }
         else if (G.inv <= 0){
-          const key = o.type==='puddle' ? (o.foam ? 'foam' : 'deep') : o.type;
+          const key = o.onc ? 'oncoming' : o.type==='puddle' ? (o.foam ? 'foam' : 'deep') : o.type;
           damage(pickM(MSG[key]), key);
           if (state !== 'run') break;
         }
@@ -731,32 +750,33 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
   function drawGround(road){
     const F = FAR + 1, KH = 0.07;
     const roadC = NIGHT ? '#3c3752' : '#76718a', roadB = NIGHT ? '#38334d' : '#706b84';
-    gq(0, 3, ZN, F, roadC);
-    stripes(2.6, ZN, F, (i, za, zb) => { if (i % 2) gq(0, 3, za, zb, roadB); });
+    gq(0, RW, ZN, F, roadC);
+    stripes(2.6, ZN, F, (i, za, zb) => { if (i % 2) gq(0, RW, za, zb, roadB); });
     for (const d of G.decals){
       const z = PY - d.y; if (z < ZN - 1 || z > F) continue;
       if (d.t === 'patch') gq(d.x - d.w/2, d.x + d.w/2, z - d.l/2, z + d.l/2, d.r < 0.5 ? (NIGHT ? '#332e47' : '#625d75') : (NIGHT ? '#47425c' : '#8a859b'));
       else if (d.t === 'manhole'){ const c = P(d.x, z); ell(c.x, c.y, 0.13*c.s, 0.13*c.s*0.32, NIGHT ? '#2b273c' : '#55506a', lw(c.s, 0.01)); }
     }
     const paint = NIGHT ? '#cfc6b0' : '#fff1cf';
-    stripes(1.1, ZN, F, (i, za, zb) => { const zz = Math.min(zb, za + 0.55); if (hash(i*3) < 0.1) return; gq(0.97, 1.03, za, zz, paint); gq(1.97, 2.03, za, zz, paint); });
-    gq(0.03, 0.08, ZN, F, paint); gq(2.92, 2.97, ZN, F, paint);
+    stripes(1.1, ZN, F, (i, za, zb) => { const zz = Math.min(zb, za + 0.55); if (hash(i*3) < 0.1) return; for (const l of [1, 2, 4, 5]) gq(l - 0.03, l + 0.03, za, zz, paint); });
+    stripes(1.1, ZN, F, (i, za, zb) => { const zz = Math.min(zb, za + 0.75); gq(MYSIDE - 0.04, MYSIDE + 0.04, za, zz, NIGHT ? '#c9a640' : '#ffc93c'); });   // painted centre line, no median
+    gq(0.03, 0.08, ZN, F, paint); gq(RW - 0.08, RW - 0.03, ZN, F, paint);
     // kerbs: yellow and ink blocks
     stripes(0.5, ZN, F, (i, za, zb) => {
       const top = i % 2 ? '#ffc93c' : INK, face = i % 2 ? '#d9a21e' : '#1a1328';
-      wq(0, za, zb, 0, KH, face); wq(3, za, zb, 0, KH, face);
-      gq(-0.12, 0, za, zb, top, KH); gq(3, 3.12, za, zb, top, KH);
+      wq(0, za, zb, 0, KH, face); wq(RW, za, zb, 0, KH, face);
+      gq(-0.12, 0, za, zb, top, KH); gq(RW, RW + 0.12, za, zb, top, KH);
     });
     // footpaths
     const pathC = NIGHT ? '#5a4c6a' : '#f0d3a2', pathD = NIGHT ? '#4f4260' : '#e4c189';
-    gq(-1.05, -0.12, ZN, F, pathC, KH); gq(3.12, 4.05, ZN, F, pathC, KH);
+    gq(-1.05, -0.12, ZN, F, pathC, KH); gq(RW + 0.12, RW + 1.05, ZN, F, pathC, KH);
     stripes(0.42, ZN, F, (i, za, zb) => {
       if (hash(i*5+2) < 0.22) gq(-1.05, -0.12, za, zb, pathD, KH);
-      if (hash(i*5+3) < 0.22) gq(3.12, 4.05, za, zb, pathD, KH);
+      if (hash(i*5+3) < 0.22) gq(RW + 0.12, RW + 1.05, za, zb, pathD, KH);
     });
     for (const g of G.gaps){
       const z = PY - g.y; if (z < ZN - 1 || z > F) continue;
-      const x0 = g.side < 0 ? -0.95 : 3.22, x1 = g.side < 0 ? -0.22 : 3.95, za = z - g.h/2, zb = z + g.h/2;
+      const x0 = g.side < 0 ? -0.95 : RW + 0.22, x1 = g.side < 0 ? -0.22 : RW + 0.95, za = z - g.h/2, zb = z + g.h/2;
       const pts = [P(x0 + 0.05, za, KH), P((x0+x1)/2, za - 0.04, KH), P(x1, za + 0.03, KH), P(x1 - 0.04, zb, KH), P((x0+x1)/2, zb + 0.05, KH), P(x0, zb - 0.02, KH)];
       poly(pts, NIGHT ? '#2a2236' : '#8a6f6a', lw(pts[0].s, 0.01));
     }
@@ -770,7 +790,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     const F = FAR + 1, WH = 1.35;
     stripes(2.3, ZN, F, (i, za, zb) => {
       for (const side of [-1, 1]){
-        const k = i*2 + (side > 0 ? 1 : 0), x = side < 0 ? -1.05 : 4.05;
+        const k = i*2 + (side > 0 ? 1 : 0), x = side < 0 ? -1.05 : RW + 1.05;
         const a0 = i*2.3 - G.scroll, L = 2.3, zm = (za + zb)/2;
         const fade = clamp((zm - 6)/(FAR - 6), 0, 1)*0.75, dk = NIGHT ? 0.5 : 0;
         const tone = c => mix(mix(c, '#2a2540', dk), HAZE, fade);
@@ -893,6 +913,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     }
   }
   function sAuto(o, z){
+    if (o.onc) return sAutoF(o, z);
     const braking = o.slow > 2 || (o.say && o.say.bad), bob = Math.abs(Math.sin(G.t*9 + o.x*5))*0.012;
     const b0 = P(o.x, z); shadow(b0, 0.48);
     const b = { x: b0.x, y: b0.y - bob*b0.s, s: b0.s }, s = b.s;
@@ -905,6 +926,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     tail(b, -0.165, 0.15, braking); tail(b, 0.165, 0.15, braking);
   }
   function sBus(o, z){
+    if (o.onc) return sBusF(o, z);
     const b0 = P(o.x, z), w = 0.31, bob = Math.abs(Math.sin(G.t*6 + o.x*3))*0.008;
     shadow(b0, w*2);
     const b = { x: b0.x, y: b0.y - bob*b0.s, s: b0.s };
@@ -918,6 +940,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     tail(b, -w + 0.06, 0.2, false); tail(b, w - 0.06, 0.2, false);
   }
   function sTanker(o, z){
+    if (o.onc) return sTankerF(o, z);
     const b = P(o.x, z), s = b.s, w = lw(s);
     shadow(b, 0.52);
     wheelPair(b, 0.15, 0.12, 0.1);
@@ -942,6 +965,40 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     ctx.fillStyle = INK; for (let u = -w - 0.3; u < w; u += 0.13){ ctx.beginPath(); ctx.moveTo(b.x + u*s, b.y); ctx.lineTo(b.x + (u + 0.065)*s, b.y); ctx.lineTo(b.x + (u + 0.385)*s, b.y - 0.32*s); ctx.lineTo(b.x + (u + 0.32)*s, b.y - 0.32*s); ctx.fill(); }
     ctx.restore(); ctx.beginPath(); ctx.rect(x, y, w*2*s, 0.32*s); inkLine(lw(s));
     cel(b, -0.1, 0.1, 0.5, 0.6, '#ffffff', 0.015, null, 0.012); text(b, 'P-' + o.no, 0, 0.55, 0.05, INK);
+  }
+  // oncoming traffic, seen from the front: windscreens, faces, headlights
+  function headlight(b, x, h, r){ const s = b.s; ell(b.x + x*s, b.y - h*s, r*s, r*s*0.85, '#fff6c8', lw(s, 0.012)); LIGHTS.push({ x:b.x + x*s, y:b.y - h*s, r:r*6*s, c:'255,245,200' }); }
+  function driver(b, x, h, k){ const s = b.s; ell(b.x + x*s, b.y - h*s, 0.045*k*s, 0.05*k*s, SKIN, lw(s, 0.01)); ctx.beginPath(); ctx.arc(b.x + x*s, b.y - (h + 0.012*k)*s, 0.047*k*s, Math.PI, 0); ctx.fillStyle = HAIR; ctx.fill(); }
+  function sAutoF(o, z){
+    const b0 = P(o.x, z), bob = Math.abs(Math.sin(G.t*9 + o.x*5))*0.012; shadow(b0, 0.48);
+    const b = { x: b0.x, y: b0.y - bob*b0.s, s: b0.s };
+    cel(b, -0.035, 0.035, 0, 0.13, INK, 0.025);                                  // single front wheel
+    cel(b, -0.2, 0.2, 0.08, 0.3, '#3fae4f', 0.06, '#33903f');
+    cel(b, -0.22, 0.22, 0.28, 0.6, '#2b2635', 0.1);
+    cel(b, -0.16, 0.16, 0.33, 0.52, '#9fd3f4', 0.04, null, 0.014); driver(b, 0, 0.42, 1); shine(b, -0.11, 0.36, 0.49);
+    flat(b, -0.2, 0.2, 0.26, 0.3, '#ffcf3a');
+    headlight(b, 0, 0.19, 0.045);
+  }
+  function sBusF(o, z){
+    const b0 = P(o.x, z), w = 0.31; shadow(b0, w*2);
+    const b = { x: b0.x, y: b0.y - Math.abs(Math.sin(G.t*6 + o.x*3))*0.008*b0.s, s: b0.s };
+    wheelPair(b, w - 0.12, 0.1, 0.09);
+    cel(b, -w, w, 0.06, 0.98, '#fff1d6', 0.06, '#eedcbc');
+    flat(b, -w, w, 0.08, 0.22, '#e2483d');
+    cel(b, -w + 0.04, w - 0.04, 0.42, 0.82, '#9fd3f4', 0.04, null, 0.014); driver(b, -0.13, 0.55, 1.4); shine(b, -w + 0.1, 0.48, 0.76); shine(b, w - 0.12, 0.5, 0.7);
+    cel(b, -0.17, 0.17, 0.85, 0.94, INK, 0.015, null, 0.01); text(b, '500D', 0, 0.895, 0.07, '#ffb020');
+    cel(b, -0.08, 0.08, 0.26, 0.36, '#2b2635', 0.01, null, 0.01);
+    headlight(b, -w + 0.07, 0.16, 0.045); headlight(b, w - 0.07, 0.16, 0.045);
+  }
+  function sTankerF(o, z){
+    const b = P(o.x, z), s = b.s; shadow(b, 0.52);
+    const cx = b.x, cy = b.y - 0.62*s, r = 0.24*s;            // tank peeking over the cab
+    ell(cx, cy, r, r, '#3f8fe0', lw(s));
+    wheelPair(b, 0.15, 0.12, 0.1);
+    cel(b, -0.25, 0.25, 0.08, 0.5, '#e2483d', 0.05, '#c23a30');
+    cel(b, -0.2, 0.2, 0.3, 0.46, '#9fd3f4', 0.03, null, 0.014); driver(b, -0.08, 0.37, 1);
+    cel(b, -0.12, 0.12, 0.12, 0.24, '#2b2635', 0.02, null, 0.012);
+    headlight(b, -0.19, 0.17, 0.04); headlight(b, 0.19, 0.17, 0.04);
   }
   function sWrong(o, z){   // oncoming bike on the wrong side, seen head-on
     const b0 = P(o.x, z), bob = Math.abs(Math.sin(G.t*14 + o.x*7))*0.01;
@@ -990,7 +1047,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     ctx.beginPath(); ctx.arc(b.x, b.y - 0.495*s, 0.05*s, Math.PI, 0); ctx.fillStyle = HAIR; ctx.fill();
   }
   function sTree(t, z){
-    const x = t.side < 0 ? -0.8 : 3.8, b = P(x, z, 0.07), s = b.s, R = t.r*0.55, w = lw(s, 0.016);
+    const x = t.side < 0 ? -0.8 : RW + 0.8, b = P(x, z, 0.07), s = b.s, R = t.r*0.55, w = lw(s, 0.016);
     ell(b.x, b.y, R*s*0.75, R*s*0.18, 'rgba(42,31,61,0.22)');
     cel(b, -0.045, 0.045, 0, 1.05, NIGHT ? '#4a3346' : '#8a5a3c', 0.02, null, 0.014);
     const dark = NIGHT ? '#1f3a35' : '#3f9a4c', light = NIGHT ? '#2b4d44' : '#6cc45a';
@@ -1000,7 +1057,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     ctx.fillStyle = light; ctx.beginPath(); for (const [bx, bh, k] of blobs){ const cx = b.x + (bx - 0.08)*R*s, cy = b.y - (bh + 0.06)*s, rx = R*k*s*0.5; ctx.moveTo(cx + rx, cy); ctx.ellipse(cx, cy, rx, R*k*s*0.32, 0, 0, Math.PI*2); } ctx.fill();
   }
   function sSign(sg, z){
-    const x = sg.side < 0 ? -0.6 : 3.6, b = P(x, z, 0.07), s = b.s;
+    const x = sg.side < 0 ? -0.6 : RW + 0.6, b = P(x, z, 0.07), s = b.s;
     cel(b, -0.4, -0.365, 0, 0.8, '#8f8aa0', 0, null, 0.012); cel(b, 0.365, 0.4, 0, 0.8, '#8f8aa0', 0, null, 0.012);
     cel(b, -0.5, 0.5, 0.74, 1.1, '#11804a', 0.04);
     ctx.strokeStyle = '#ffffff'; ctx.lineWidth = Math.max(1, 0.014*s); rr(b.x - 0.46*s, b.y - 1.06*s, 0.92*s, 0.28*s, 0.025*s); ctx.stroke();
@@ -1009,7 +1066,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
       ctx.fillText(str, b.x, b.y - 0.92*s); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic'; }
   }
   function sLamp(l, z){
-    const x = l.side < 0 ? -0.18 : 3.18, b = P(x, z, 0.07), s = b.s, top = 1.9, dir = l.side < 0 ? 1 : -1, w = lw(s, 0.012);
+    const x = l.side < 0 ? -0.18 : RW + 0.18, b = P(x, z, 0.07), s = b.s, top = 1.9, dir = l.side < 0 ? 1 : -1, w = lw(s, 0.012);
     cel(b, -0.02, 0.02, 0, top, '#6d6782', 0.01, null, 0.012);
     const a = P(x, z, top + 0.06), c = P(x + dir*0.42, z, top + 0.04);
     ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(a.x, c.y - 0.05*s, c.x, c.y); ctx.strokeStyle = INK; ctx.lineWidth = Math.max(1.6, 0.04*s); ctx.stroke(); ctx.strokeStyle = '#6d6782'; ctx.lineWidth = Math.max(1, 0.022*s); ctx.stroke();
@@ -1056,16 +1113,16 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
 
   function draw(dt){
     const road = curRoad();
-    camX += ((1.5 + (G.x - 1.5)*0.55) - camX) * 0.2;
+    camX += ((0.375 + 0.75*G.x) - camX) * 0.2;
     LIGHTS = [];
     ctx.save();
     if (G.shake > 0) ctx.translate((Math.random() - 0.5)*G.shake, (Math.random() - 0.5)*G.shake*0.6);
     drawSky();
     drawGround(road);
     if (G.sky.wet > 0.02){
-      gq(0, 3, ZN, FAR + 1, 'rgba(30,26,70,' + (0.22*G.sky.wet) + ')');
+      gq(0, RW, ZN, FAR + 1, 'rgba(30,26,70,' + (0.22*G.sky.wet) + ')');
       // cartoon wet sheen: two pale streaks down the lanes
-      ctx.globalAlpha = 0.35*G.sky.wet; gq(0.35, 0.5, ZN, FAR*0.5, '#d9ecff'); gq(2.4, 2.52, ZN, FAR*0.5, '#d9ecff'); ctx.globalAlpha = 1;
+      ctx.globalAlpha = 0.35*G.sky.wet; gq(0.35, 0.5, ZN, FAR*0.5, '#d9ecff'); gq(2.4, 2.52, ZN, FAR*0.5, '#d9ecff'); gq(3.6, 3.72, ZN, FAR*0.5, '#d9ecff'); gq(5.4, 5.52, ZN, FAR*0.5, '#d9ecff'); ctx.globalAlpha = 1;
     }
     // painted haze where the road meets the sky, behind the buildings so they stay crisp
     { const ht = hy - (yP - hy)*(0.04 + 0.25*G.sky.fog), hb = hy + (yP - hy)*(0.16 + 0.4*G.sky.fog);
@@ -1241,7 +1298,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     SND.repair(); last = performance.now();
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   }
-  function move(dir){ if (state === 'run') G.lane = Math.max(0, Math.min(2, G.lane + dir)); }
+  function move(dir){ if (state === 'run') G.lane = Math.max(0, Math.min(RW - 1, G.lane + dir)); }
 
   // ---------- input ----------
   $('bDaily').addEventListener('click', () => start('daily'));
@@ -1291,7 +1348,7 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
     let reacted = 0;
     for (const o of G.obs){
       const rule = HORN[o.type];
-      if (!rule || o.done || o.tx != null) continue;
+      if (!rule || o.done || o.tx != null || o.onc) continue;
       const ahead = py - o.y;
       if (ahead < 0.2 || ahead > 4.2) continue;           // only vehicles in front, within earshot
       const r = Math.random(), lane = Math.round(o.x - 0.5);
@@ -1452,8 +1509,8 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
   function soundLabel(){ $('bSound').textContent = SND.on ? 'SOUND' : 'MUTED'; $('bSound').setAttribute('aria-pressed', SND.on ? 'true' : 'false'); $('bRadio').textContent = STATIONS[SND.st].kind === 'off' ? 'RADIO OFF' : '♪ RADIO'; $('bRadio').setAttribute('aria-label', 'Radio: ' + STATIONS[SND.st].name); }
   function toggleSound(){ SND.init(); SND.setOn(!SND.on); soundLabel(); }
   function cycleRadio(){ SND.init(); const s = SND.cycle(); soundLabel(); radioToast = { text: s.name, t: 0 }; }
-  const WASTED = { pothole:'POTHOLED', deep:'POTHOLED', foam:'FOAMED', barricade:'DIVERTED', cow:'MOOED', auto:'AUTO-CORRECTED', bus:'BUSTED', tanker:'TANKED', wrongway:'WRONG-SIDED', pillar:'METRO-ED', ped:'FOOTPATHED', honk:'HONKED OUT' };
-  const WASTED_LINE = { pothole:'A pothole had the final word.', deep:'That puddle was a pothole in disguise.', foam:'Lake foam. Pothole underneath.', barricade:'Metro work wins again.', cow:'The cow had right of way.', auto:'Auto braked. No indicator.', bus:'BMTC stops where it likes.', tanker:'6,000 litres of right of way.', wrongway:'He was saving a 2 km U-turn.', pillar:'The pillar was here first.', ped:'Nowhere else to walk.', honk:'The bus behind lost patience.' };
+  const WASTED = { pothole:'POTHOLED', deep:'POTHOLED', foam:'FOAMED', barricade:'DIVERTED', cow:'MOOED', auto:'AUTO-CORRECTED', bus:'BUSTED', tanker:'TANKED', wrongway:'WRONG-SIDED', oncoming:'HEAD-ON', pillar:'METRO-ED', ped:'FOOTPATHED', honk:'HONKED OUT' };
+  const WASTED_LINE = { pothole:'A pothole had the final word.', deep:'That puddle was a pothole in disguise.', foam:'Lake foam. Pothole underneath.', barricade:'Metro work wins again.', cow:'The cow had right of way.', auto:'Auto braked. No indicator.', bus:'BMTC stops where it likes.', tanker:'6,000 litres of right of way.', wrongway:'He was saving a 2 km U-turn.', oncoming:'You were on their side of the road.', pillar:'The pillar was here first.', ped:'Nowhere else to walk.', honk:'The bus behind lost patience.' };
 
   // ---------- cartoon HUD (drawn on the canvas over the road) ----------
   let banner = null, lastRoadName = '', impact = null, lastShocks = 5;
@@ -1550,6 +1607,13 @@ button.big{width:100%;font-size:19px;padding:11px 18px;background:var(--red);col
       const t = G.newHaz.t, a = Math.min(1, t*5, (3 - t)*1.8), pop = reduce ? 1 : 1 + 0.35*Math.max(0, 1 - t*6);
       ctx.save(); ctx.translate(W/2, by + 4); ctx.scale(pop, pop); ctx.rotate(-0.03); ctx.translate(-W/2, -(by + 4));
       ribbon(W/2, by + 4, G.newHaz.text, 17, '#8c5cc4', a); ctx.restore(); by += 46;
+    }
+    if (state === 'run' && G.lane >= MYSIDE){
+      const p = 1 + (reduce ? 0 : 0.05*Math.sin(G.t*10));
+      ctx.save(); ctx.translate(W/2, H - 70); ctx.scale(p, p);
+      ctx.font = '15px ' + TOON; const tw = ctx.measureText('WRONG SIDE · DISTANCE ×1.5').width + 26;
+      chip(-tw/2, -15, tw, 30, '#e2483d'); ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('WRONG SIDE · DISTANCE ×1.5', 0, 1);
+      ctx.restore(); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
     }
     // landmarks, weather news, first-ride hints, radio
     if (G.callout){ const a = Math.min(1, (3 - G.callout.t)*1.5, G.callout.t*4); if (!(G.callout.big && banner)) label(G.callout.text, W/2, by + 18, G.callout.big ? 20 : 16, G.callout.big ? T.ink : T.muted, a); }
