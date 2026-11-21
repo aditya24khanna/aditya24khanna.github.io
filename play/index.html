@@ -6,7 +6,7 @@
 <title>Pothole Dash</title>
 <meta name="description" content="Dodge potholes, cows, BMTC buses and metro pillars on a new Bangalore road every day.">
 <meta property="og:title" content="Pothole Dash">
-<meta property="og:description" content="A new Bangalore road every day. Three shock absorbers. Good luck.">
+<meta property="og:description" content="A new Bangalore road every day. Five shock absorbers. Good luck.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
@@ -147,7 +147,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
     <div class="hud" aria-live="off">
       <div class="stat"><span>Distance</span><b id="hDist">0 m</b></div>
       <div class="stat"><span>Speed</span><b id="hSpeed">0 km/h</b></div>
-      <div class="stat"><span>Shocks</span><div class="shocks" id="hShocks"><i class="shock"></i><i class="shock"></i><i class="shock"></i></div></div>
+      <div class="stat"><span>Shocks</span><div class="shocks" id="hShocks"><i class="shock"></i><i class="shock"></i><i class="shock"></i><i class="shock"></i><i class="shock"></i></div></div>
       <div class="stat"><span>Best</span><b id="hBest">—</b></div>
     </div>
   </header>
@@ -178,7 +178,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
           <div><b>HORN</b><span>Traffic might move</span></div>
           <div><b>M · R</b><span>Sound · radio</span></div>
         </div>
-        <p class="controls">Three shock absorbers. New hazards join the road as you go. Filter coffee adds 50 m. Rain means puddles, fog hides the road. Keyboard: arrows to steer and set speed, <kbd>H</kbd> or <kbd>Space</kbd> for the horn.</p>
+        <p class="controls">Five shock absorbers. New hazards join the road as you go. Weather changes every kilometre. Filter coffee adds 50 m. Rain means puddles, fog hides the road. Keyboard: arrows to steer and set speed, <kbd>H</kbd> or <kbd>Space</kbd> for the horn.</p>
       </div>
     </div>
 
@@ -352,12 +352,12 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
     fog:      { cloud:0.6,  rain:0,    dark:0.12, fog:0.85, wet:0.25, name:'Fog',      msg:['Fog. Can’t see a thing.','Thick fog. Trust your horn.'] }
   };
   const WX_NEXT = { clear:['cloudy','cloudy','drizzle','fog'], cloudy:['drizzle','drizzle','downpour','fog','clear'], drizzle:['downpour','downpour','cloudy','clear'], downpour:['drizzle','cloudy','clear'], fog:['clear','cloudy','drizzle'] };
-  const WX_F = ['cloud','rain','dark','fog','wet'], WX_BLEND = 80;
+  const WX_F = ['cloud','rain','dark','fog','wet'], WX_BLEND = 120, WX_SPELL = 1000;
   function buildWeather(seed, wetStart){
     const r = seed ? mulberry32(seed) : Math.random;
     let k = wetStart ? 'drizzle' : (r() < 0.6 ? 'clear' : 'cloudy');
     const list = []; let m = 0;
-    for (let i = 0; i < 100; i++){ const len = 160 + r()*140; list.push({ k, start:m, len }); m += len; const n = WX_NEXT[k]; k = n[Math.floor(r()*n.length)]; }
+    for (let i = 0; i < 100; i++){ const len = WX_SPELL; list.push({ k, start:m, len }); m += len; const n = WX_NEXT[k]; k = n[Math.floor(r()*n.length)]; }
     return list;
   }
   function weatherAt(m){
@@ -369,13 +369,14 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
     return o;
   }
 
+  const MAX_SHOCKS = 5;
   // ---------- game state ----------
   let state = 'idle', mode = 'daily', G, lockUntil = 0, rng = Math.random;
   function newGame(m){
     mode = m;
     const wx = buildWeather(m === 'daily' ? ((DAY*7919 + 13) >>> 0) : 0, m === 'daily' && !!TODAY.rain);
     rng = m === 'daily' ? mulberry32(DAY * 2654435761 >>> 0) : Math.random;
-    G = { lane:1, x:1.5, shocks:3, inv:0, meters:0, bonus:0, scroll:0, v:1.6, top:0, dodged:0,
+    G = { lane:1, x:1.5, shocks:MAX_SHOCKS, inv:0, meters:0, bonus:0, scroll:0, v:1.6, top:0, dodged:0,
           obs:[], deco:[], signs:[], fx:[], spawnAcc:4, decoAcc:0, signAcc:1, markAcc:20, markI:0,
           t:0, shake:0, holeNo: 1000 + Math.floor(rng()*8000), stretch:-1,
           callout:null, lastMark:null, hits:[], rain:[], gear:0, honk:0, hornCd:0, horns:[],
@@ -596,7 +597,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
         }
         o.done = true;
         if (o.type==='coffee'){ G.bonus += 50; fx('+50 m · filter coffee', T.ink); SND.coffee(); }
-        else if (o.type==='repair'){ G.shocks = Math.min(3, G.shocks+1); fx('Road fixed?! Rare sighting.', T.ink); SND.repair(); }
+        else if (o.type==='repair'){ G.shocks = Math.min(MAX_SHOCKS, G.shocks+1); fx('Road fixed?! Rare sighting.', T.ink); SND.repair(); }
         else if (o.type==='puddle' && !o.hidden){ fx(o.foam ? 'Just foam. Hold your breath.' : 'Just water. This time.', T.muted); }
         else if (G.inv <= 0){
           const key = o.type==='puddle' ? (o.foam ? 'foam' : 'deep') : o.type;
@@ -1407,7 +1408,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
   const WASTED_LINE = { pothole:'A pothole had the final word.', deep:'That puddle was a pothole in disguise.', foam:'Lake foam. Pothole underneath.', barricade:'Metro work wins again.', cow:'The cow had right of way.', auto:'Auto braked. No indicator.', bus:'BMTC stops where it likes.', tanker:'6,000 litres of right of way.', wrongway:'He was saving a 2 km U-turn.', pillar:'The pillar was here first.', ped:'Nowhere else to walk.', honk:'The bus behind lost patience.' };
 
   // ---------- cartoon HUD (drawn on the canvas over the road) ----------
-  let banner = null, lastRoadName = '', impact = null, lastShocks = 3;
+  let banner = null, lastRoadName = '', impact = null, lastShocks = 5;
   function chip(x, y, w, h, fill){ ctx.fillStyle = INK; rr(x + 3, y + 3, w, h, h/2); ctx.fill(); rr(x, y, w, h, h/2); ctx.fillStyle = fill; ctx.fill(); inkLine(2.5); }
   function ribbon(cx, y, txt, size, fill, alpha){
     ctx.globalAlpha = clamp(alpha, 0, 1);
@@ -1440,7 +1441,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
     }
     // impact star when a shock absorber goes
     if (state !== 'idle' && G.shocks < lastShocks) impact = { t: 0 };
-    lastShocks = state === 'idle' ? 3 : G.shocks;
+    lastShocks = state === 'idle' ? MAX_SHOCKS : G.shocks;
     if (impact){
       impact.t += dt; const t = impact.t;
       if (t > 0.55) impact = null;
@@ -1462,10 +1463,10 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px sol
       const pw = Math.max(96, ctx.measureText(dist).width + 28), px = W - pw - 12, py = 10;
       chip(px, py, pw, 34, '#fff6e0');
       ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(dist, px + pw/2, py + 18); ctx.textBaseline = 'alphabetic';
-      for (let i = 0; i < 3; i++){
-        const cx = px + pw/2 + (i - 1)*20, cy = py + 50, on = i < G.shocks;
-        ctx.globalAlpha = on ? 1 : 0.45; ell(cx, cy, 7, 7, on ? (G.shocks === 1 ? '#ff6b5a' : '#ffc93c') : 'rgba(255,255,255,0.35)', 2.5);
-        if (on){ ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(cx, cy, 4, Math.PI*1.1, Math.PI*1.5); ctx.stroke(); }
+      for (let i = 0; i < MAX_SHOCKS; i++){
+        const cx = px + pw/2 + (i - (MAX_SHOCKS - 1)/2)*16, cy = py + 50, on = i < G.shocks;
+        ctx.globalAlpha = on ? 1 : 0.45; ell(cx, cy, 6, 6, on ? (G.shocks === 1 ? '#ff6b5a' : '#ffc93c') : 'rgba(255,255,255,0.35)', 2.5);
+        if (on){ ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, cy, 3.4, Math.PI*1.1, Math.PI*1.5); ctx.stroke(); }
         ctx.globalAlpha = 1;
       }
       // throttle: five pips under the panel
