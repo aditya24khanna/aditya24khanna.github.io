@@ -76,7 +76,6 @@
     "endpoint": "https://adikhanna.goatcounter.com",
     "label": "site in numbers:",
     "floors": {
-      "visits": 1000,
       "visitors": 500,
       "opens": 200
     }

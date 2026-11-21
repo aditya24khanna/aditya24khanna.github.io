@@ -277,9 +277,8 @@
     var base = m.endpoint.replace(/\/+$/, ""), f = m.floors || {};
     Promise.all([counter(base, "TOTAL")].concat(tracked.map(function (t) { return counter(base, t.path); }))).then(function (res) {
       var total = res[0] || {}, parts = [];
-      // GoatCounter returns "count" and, on some versions, "count_unique"; numbers come formatted ("1,234").
-      var visits = num(total.count), visitors = num(total.count_unique);
-      if (visits >= (f.visits || 0) && visits > 0) parts.push(fmt(visits) + " visits");
+      // GoatCounter's public counter reports unique visitors ("count"); there is no separate visits figure.
+      var visitors = num(total.count_unique || total.count);
       if (visitors >= (f.visitors || 0) && visitors > 0) parts.push(fmt(visitors) + " visitors");
       var opens = 0, top = null, topN = 0;
       tracked.forEach(function (t, i) { var n = num(res[i + 1] && res[i + 1].count); opens += n; if (n > topN) { topN = n; top = t.title; } });
