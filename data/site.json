@@ -13,8 +13,8 @@
   "avatarNote": "that's me, illustrated",
   "ctas": [
     {
-      "label": "How I work ↓",
-      "href": "#principles",
+      "label": "See what I've built ↓",
+      "href": "#ai",
       "primary": true
     },
     {
@@ -87,6 +87,7 @@
     "workedAt": false,
     "ai": true,
     "toolbox": false,
-    "play": true
+    "play": true,
+    "education": false
   }
 }

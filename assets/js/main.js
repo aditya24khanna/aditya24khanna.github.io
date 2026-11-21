@@ -165,8 +165,61 @@
       });
     },
 
-    ai: function (ai) { render.cards(ai, ai.tools, "#aiIntro", "#aiTools", true); },
-    play: function (p) { render.cards(p, p.games, "#playIntro", "#playGames", false); },
+    // AI work: one featured tool (big card) + a shelf of the rest, each with a sketched screen.
+    ai: function (ai) {
+      if (filled(ai.intro)) $("#aiIntro").textContent = ai.intro;
+      if (filled(ai.handNote)) { var hn = $("#aiNote"); hn.textContent = ai.handNote; hn.hidden = false; }
+      var box = $("#aiTools"); box.className = "tools-v2";
+      var tools = ai.tools || [];
+      var feat = tools.filter(function (t) { return t.featured; })[0];
+      if (feat) {
+        var f = el("article", "feature paper");
+        var art = el("div", "feature-art"); art.appendChild(sketch(feat.sketch, true)); f.appendChild(art);
+        var body = el("div", "feature-body");
+        var meta = el("div", "feature-meta");
+        if (filled(feat.status)) meta.appendChild(el("span", "chip", feat.status));
+        if (filled(ai.featuredNote)) meta.appendChild(el("span", "pen", ai.featuredNote));
+        body.appendChild(meta);
+        body.appendChild(el("h3", null, feat.title));
+        if (filled(feat.q)) body.appendChild(el("span", "q", feat.q));
+        body.appendChild(el("p", null, feat.s || feat.d));
+        var fa = actions(feat, true, "btn btn-ink", "btn");
+        body.appendChild(fa);
+        f.appendChild(body); box.appendChild(f);
+      }
+      var shelf = el("div", "shelf");
+      tools.filter(function (t) { return t !== feat; }).forEach(function (t) {
+        var d = el("article", "shelf-item");
+        var art = el("div", "shelf-art"); art.appendChild(sketch(t.sketch, false)); d.appendChild(art);
+        var h = el("h3", null, t.title);
+        if (filled(t.status) && !/^live$/i.test(t.status)) h.appendChild(el("span", "chip", t.status));
+        d.appendChild(h);
+        if (filled(t.q)) d.appendChild(el("span", "q", t.q));
+        d.appendChild(el("p", null, t.s || t.d));
+        d.appendChild(actions(t, true, "link-strong", "link-soft"));
+        shelf.appendChild(d);
+      });
+      box.appendChild(shelf);
+    },
+
+    // Play: the page turns to night; each game gets a picture.
+    play: function (p) {
+      if (filled(p.intro)) $("#playIntro").textContent = p.intro;
+      if (filled(p.handNote)) { var hn = $("#playNote"); hn.textContent = p.handNote; hn.hidden = false; }
+      var box = $("#playGames"); box.className = "games";
+      (p.games || []).forEach(function (g) {
+        var d = el("article", "game");
+        var art = el("div", "game-art game-art-" + (g.art || "none")); art.innerHTML = ART[g.art] || ""; art.setAttribute("aria-hidden", "true");
+        d.appendChild(art);
+        var body = el("div", "game-body");
+        var top = el("div", "top"); top.appendChild(el("h3", null, g.title));
+        if (filled(g.status)) top.appendChild(el("span", "game-status", g.status));
+        body.appendChild(top);
+        if (filled(g.q)) body.appendChild(el("span", "q", g.q));
+        body.appendChild(actions(g, false, "link-strong", "link-soft"));
+        d.appendChild(body); box.appendChild(d);
+      });
+    },
 
     cards: function (src, items, introSel, boxSel, external) {
       if (filled(src.intro)) $(introSel).textContent = src.intro;
@@ -195,16 +248,29 @@
     },
 
     principles: function (items) {
-      var box = $("#principleList");
+      // Big statements on plain paper, explanation alongside. No cards.
+      var box = $("#principleList"); box.className = "principle-rows";
       items.forEach(function (p) {
-        var d = el("article", "principle paper");
-        d.appendChild(el("span", "n", "Principle " + p.n));
+        var d = el("article", "principle-row");
         d.appendChild(el("h3", null, p.title));
-        d.appendChild(el("p", null, p.body));
-        if (filled(p.tags)) { var t = el("div", "tags"); p.tags.forEach(function (x) { t.appendChild(el("span", "chip", x)); }); d.appendChild(t); }
-        if (filled(p.note)) d.appendChild(el("span", "pen", p.note));
+        var side = el("div", "principle-side");
+        side.appendChild(el("p", null, p.body));
+        if (filled(p.note)) side.appendChild(el("span", "pen", p.note));
+        d.appendChild(side);
         box.appendChild(d);
       });
+    },
+
+    // Education folded into one line at the end of How I work.
+    eduLine: function (items) {
+      var box = $("#eduLine"); if (!box || !filled(items)) return;
+      box.appendChild(el("span", "pen", "Engineer first, then business:"));
+      items.forEach(function (e, i) {
+        if (i) { var ar = el("span", "edu-arrow", "→"); ar.setAttribute("aria-hidden", "true"); box.appendChild(ar); }
+        var s = el("span", "edu-item"); s.appendChild(el("b", null, e.school)); s.appendChild(document.createTextNode(", " + e.degree));
+        box.appendChild(s);
+      });
+      box.hidden = false;
     },
 
     toolbox: function (items) {
@@ -293,6 +359,39 @@
 
   function selectText(node) { var r = document.createRange(); r.selectNodeContents(node); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 
+  /* ---------- tool cards: links, sketched screens, game art ---------- */
+  function actions(t, external, primaryCls, noteCls) {
+    var act = el("div", "proj-actions");
+    if (filled(t.url)) {
+      var a = el("a", primaryCls, t.linkLabel || "Try it ↗"); a.href = t.url;
+      if (external && /^https?:/i.test(t.url)) { a.target = "_blank"; a.rel = "noopener"; }
+      var tp = trackPath(t);
+      if (tp && tp.event) a.addEventListener("click", function () { countEvent(tp.path, t.title); });
+      if (tp) tracked.push({ title: t.title, path: tp.path });
+      act.appendChild(a);
+    }
+    if (filled(t.note)) { var n = el("a", noteCls, "Build note →"); n.href = "notes/?n=" + encodeURIComponent(t.note); act.appendChild(n); }
+    return act;
+  }
+
+  // Hand-drawn style screens. Illustrations only, not real output.
+  var SKETCH = {
+    storytime: '<b class="sk-t">Tonight\'s story</b><div class="sk-pic"></div><div class="bar"></div><div class="bar m"></div><em class="sk-hand">refrain to chant…</em><div class="bar s"></div><div class="sk-cta">Read aloud</div>',
+    chanakya: '<b class="sk-t">Your note</b><b>The players</b><div class="bar m"></div><b>One move</b><div class="bar hi"></div><b>Pre-mortem</b><div class="bar s"></div>',
+    moments: '<b class="sk-t">Today</b><div class="sk-grid"><i></i><i></i><i></i><i></i><i></i><i></i></div><b>On this day</b><div class="bar m"></div>',
+    mixlingo: '<b class="sk-t">Auto driver</b><span class="sk-msg">Elli hogbeku, saar?</span><span class="sk-msg me">Indiranagar, swalpa fast</span><span class="sk-msg">Sari, hogona!</span>',
+    hisaab: '<b class="sk-t">Weekend trip</b><span class="sk-msg me">Rohan paid 600 for the cab</span><b>Settle up</b><div class="sk-row"><span>2 payments</span><span class="sk-pill">done</span></div>'
+  };
+  function sketch(kind, big) {
+    var s = el("div", "sk" + (big ? " sk-big" : "")); s.setAttribute("aria-hidden", "true");
+    s.innerHTML = SKETCH[kind] || '<div class="bar"></div><div class="bar m"></div><div class="bar s"></div>';
+    return s;
+  }
+  var ART = {
+    road: '<i class="lane l1"></i><i class="lane l2"></i><i class="hole h1"></i><i class="hole h2"></i><i class="hole h3"></i><i class="scooter"></i><span class="sign">MG ROAD</span>',
+    aunty: '<span class="bub office">"Let\'s circle back on this."</span><span class="bub aunty">"Matlab beta, abhi nahi. Baad mein dekhenge."</span>'
+  };
+
   /* ---------- sample phone screens ---------- */
   function phone(kind) {
     var p = el("div", "phone"), u = el("div", "ui");
@@ -350,6 +449,7 @@
       else if (key === "ai") render.ai(d.ai);
       else if (key === "play") render.play(d.play);
       else if (render[key]) render[key](data);
+      if (key === "principles") render.eduLine(d.education);
     });
     // hide nav links for hidden sections
     document.querySelectorAll("#navLinks a").forEach(function (a) { var t = document.getElementById(a.getAttribute("href").slice(1)); if (!t || t.hidden) a.parentNode.hidden = true; });

@@ -13,7 +13,10 @@
       ],
       "url": "https://claude.ai/artifact/BWCPi55nwydQtzhuGLewmK",
       "linkLabel": "Write a story ↗",
-      "note": "storytime"
+      "note": "storytime",
+      "s": "An original read-aloud picture book for ages 3 to 5, from a feeling and a setting.",
+      "sketch": "storytime",
+      "featured": true
     },
     {
       "title": "Ask Chanakya",
@@ -27,7 +30,9 @@
       ],
       "url": "https://claude.ai/artifact/7cSFRLAD8AuGTi8xQiZQt8",
       "linkLabel": "Open the tool ↗",
-      "note": "ask-chanakya"
+      "note": "ask-chanakya",
+      "s": "A one-page note: who's who, one move, a pre-mortem.",
+      "sketch": "chanakya"
     },
     {
       "title": "Moments",
@@ -40,7 +45,9 @@
         "Private by design"
       ],
       "url": "moments/",
-      "linkLabel": "Open Moments ↗"
+      "linkLabel": "Open Moments ↗",
+      "s": "A private photo log that never leaves your phone.",
+      "sketch": "moments"
     },
     {
       "title": "Mixlingo",
@@ -53,7 +60,9 @@
         "Evals"
       ],
       "url": "https://claude.ai/artifact/PSRUrhpz9vF4SxqCCWCP6N",
-      "linkLabel": "Start talking ↗"
+      "linkLabel": "Start talking ↗",
+      "s": "Kanglish in 3-minute daily chats.",
+      "sketch": "mixlingo"
     },
     {
       "title": "Hisaab",
@@ -66,7 +75,11 @@
         "Settle-up maths"
       ],
       "url": "https://claude.ai/artifact/WfjQAVnVJgW4AJgM25Thym",
-      "linkLabel": "Split a bill ↗"
+      "linkLabel": "Split a bill ↗",
+      "s": "The fewest payments to settle up.",
+      "sketch": "hisaab"
     }
-  ]
+  ],
+  "handNote": "5 tools, try any of them",
+  "featuredNote": "start here"
 }
