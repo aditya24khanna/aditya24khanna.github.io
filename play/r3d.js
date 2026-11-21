@@ -14,8 +14,9 @@ const TILE = 5.5;            // road texture repeat length, in lanes (5 lane das
 const hash = i => { let x = Math.imul((i | 0) ^ 0x9e3779b9, 0x85ebca6b); x ^= x >>> 13; x = Math.imul(x, 0xc2b2ae35); x ^= x >>> 16; return (x >>> 0) / 4294967296; };
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const X = x => (x - 1.5) * L;          // lane coordinate -> metres across
-const Zm = z => -z * L;                // depth ahead (lanes) -> metres (forward is -Z)
+let LV = L;                  // lane width in use: L for the built street, the clip's real lane width in video mode
+const X = x => (x - 1.5) * LV;         // lane coordinate -> metres across
+const Zm = z => -z * LV;               // depth ahead (lanes) -> metres (forward is -Z)
 
 function makeCanvas(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); draw(g, w, h); return c; }
 function tex(canvas, { repeat = [1, 1], srgb = true, aniso = 4 } = {}) {
@@ -260,11 +261,13 @@ export function create(PD) {
   const pathTex = tex(pathCanvas(), { repeat: [2, RL / 0.84] });
   const pathMat = new THREE.MeshStandardMaterial({ map: pathTex, roughness: 0.9, envMapIntensity: 0.4 });
   const KH = 0.22;
+  const streetStatic = [];   // generated street pieces hidden while real footage plays
   for (const side of [-1, 1]) {
     const kerb = new THREE.Mesh(new THREE.BoxGeometry(0.12 * L, KH, RL * L), kerbMat);
     kerb.position.set(side < 0 ? X(-0.06) : X(3.06), KH / 2, Zm(RL / 2 - 4)); kerb.receiveShadow = true; scene.add(kerb);
     const path = new THREE.Mesh(new THREE.BoxGeometry(1.05 * L, KH, RL * L), pathMat);
     path.position.set(side < 0 ? X(-0.645) : X(3.645), KH / 2 - 0.005, Zm(RL / 2 - 4)); path.receiveShadow = true; scene.add(path);
+    streetStatic.push(kerb, path);
   }
   const dirt = new THREE.Mesh(new THREE.PlaneGeometry(200, RL * L * 3), M('#6f6252', { roughness: 1 }));
   dirt.rotation.x = -Math.PI / 2; dirt.position.set(0, -0.02, Zm(RL)); dirt.receiveShadow = true; scene.add(dirt);
@@ -623,6 +626,7 @@ export function create(PD) {
 
   // ---------------- player
   const scooter = makeScooter(); scene.add(scooter);
+  streetStatic.push(sky, ...clouds, skyline, road, dirt, viaduct, scooter);
   scooter.traverse(o => { if (o.isMesh) o.castShadow = o.name !== 'blob'; });
 
   // ---------------- sun glare and dust in the light
@@ -641,6 +645,80 @@ export function create(PD) {
   const rainMat = new THREE.LineBasicMaterial({ color: 0xc8d6e8, transparent: true, opacity: 0.0, fog: true, depthWrite: false });
   const rainMesh = new THREE.LineSegments(rainGeo, rainMat); rainMesh.frustumCulled = false; scene.add(rainMesh);
   const rainSeed = Array.from({ length: RAIN_N }, (_, i) => [(hash(i) - 0.5) * 40, hash(i * 3) * 18, -hash(i * 7) * 70 + 6]);
+
+  // ---------------- real-road video mode
+  // Real first-person footage plays behind the 3D hazards; the bike's own bars/tank (a hand-drawn mask) draw in front.
+  // The 3D camera is matched to each clip: horizon (hf, from top), vanishing point (vx), camera height (h, m),
+  // real lane width (laneW, m), vertical field of view of the clip (vfov) and the speed it was filmed at (m/s).
+  // Footage: Pexels (free licence), re-encoded to 720x1280. Bike foreground masks are hand-drawn per clip.
+  const CLIPS = {
+    city: { src: 'media/city.mp4', mask: 'media/city-mask.png', hf: 0.571, vx: 0.485, h: 1.2, laneW: 2.35, vfov: 80, speed: 11, hemi: 0.9, sun: 0.7, sat: 1.04 },
+    mountain: { src: 'media/mountain.mp4', mask: 'media/mountain-mask.png', hf: 0.30, vx: 0.61, h: 1.6, laneW: 1.6, vfov: 80, speed: 13, hemi: 0.9, sun: 1.1, sat: 1.02 },
+  };
+  const qs = new URLSearchParams(location.search);
+  const CLIP = CLIPS[qs.get('clip')] || CLIPS.city;
+  const wantVideo = !window.PD_NO_VIDEO && qs.get('video') !== '0';
+  let vid = false, video = null, maskReady = false, playPending = false, lastPlayTry = 0;
+  const vU = { tVid: { value: null }, tMask: { value: null }, scale: { value: new THREE.Vector2(1, 1) }, cover: { value: new THREE.Vector2(1, 1) }, pan: { value: new THREE.Vector2() },
+    expo: { value: 1 }, vtint: { value: new THREE.Vector3(1, 1, 1) }, vsat: { value: 1 }, haze: { value: 0 }, hazeCol: { value: new THREE.Color(0.6, 0.62, 0.65) }, horizon: { value: 1 - CLIP.hf } };
+  const vVert = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+  const vFrag = `uniform sampler2D tVid, tMask; uniform vec2 scale, cover, pan; uniform float expo, vsat, haze, horizon, fg; uniform vec3 vtint, hazeCol; varying vec2 vUv;
+    vec3 look(vec3 c, float y){ float l = dot(c, vec3(0.299,0.587,0.114)); c = mix(vec3(l), c, vsat); c *= vtint * expo;
+      return mix(c, hazeCol, clamp(haze * exp(-abs(y - horizon) * 5.0), 0.0, 1.0)); }
+    void main(){
+      vec2 v = (vUv - 0.5 - pan) / scale + 0.5;
+      bool inside = v.x >= 0.0 && v.x <= 1.0 && v.y >= 0.0 && v.y <= 1.0;
+      if (fg > 0.5){ if (!inside) discard; float a = texture2D(tMask, v).r; if (a < 0.02) discard; gl_FragColor = vec4(look(texture2D(tVid, v).rgb, v.y), a); return; }
+      vec3 c;
+      if (inside) c = texture2D(tVid, v).rgb;
+      else { vec2 w = (vUv - 0.5) / cover + 0.5; c = vec3(0.0);
+        for (int i = -2; i <= 2; i++) for (int j = -2; j <= 2; j++) c += texture2D(tVid, clamp(w + vec2(float(i), float(j)) * 0.008, 0.0, 1.0)).rgb;
+        c = c / 25.0 * 0.26; }
+      gl_FragColor = vec4(look(c, v.y), 1.0); }`;
+  const vGeo = new THREE.PlaneGeometry(2, 2);
+  const vBg = new THREE.Mesh(vGeo, new THREE.ShaderMaterial({ uniforms: { ...vU, fg: { value: 0 } }, vertexShader: vVert, fragmentShader: vFrag, depthTest: false, depthWrite: false, fog: false, toneMapped: false }));
+  const vFg = new THREE.Mesh(vGeo, new THREE.ShaderMaterial({ uniforms: { ...vU, fg: { value: 1 } }, vertexShader: vVert, fragmentShader: vFrag, depthTest: false, depthWrite: false, fog: false, toneMapped: false, transparent: true }));
+  vBg.renderOrder = -1e6; vFg.renderOrder = 1e6;
+  for (const m of [vBg, vFg]) { m.frustumCulled = false; m.visible = false; scene.add(m); }
+  // invisible ground that only shows shadows, so hazards sit on the filmed road
+  const catcher = new THREE.Mesh(new THREE.PlaneGeometry(60, 200), new THREE.ShadowMaterial({ opacity: 0.3 }));
+  catcher.rotation.x = -Math.PI / 2; catcher.position.set(0, 0.002, -80); catcher.receiveShadow = true; catcher.visible = false; scene.add(catcher);
+  if (wantVideo) {
+    video = document.createElement('video');
+    video.muted = true; video.defaultMuted = true; video.playsInline = true; video.loop = true; video.preload = 'auto';
+    video.setAttribute('playsinline', ''); video.setAttribute('muted', ''); video.setAttribute('aria-hidden', 'true');
+    video.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none;z-index:-1';
+    const mp4 = video.canPlayType('video/mp4; codecs="avc1.640028"'), webm = video.canPlayType('video/webm; codecs="vp9"');
+    video.src = (mp4 || !webm) ? CLIP.src : CLIP.src.replace('.mp4', '.webm'); document.body.appendChild(video);
+    const vt = new THREE.VideoTexture(video); vt.colorSpace = THREE.SRGBColorSpace; vt.minFilter = vt.magFilter = THREE.LinearFilter; vt.generateMipmaps = false;
+    vU.tVid.value = vt;
+    new THREE.TextureLoader().load(CLIP.mask, m => { m.minFilter = m.magFilter = THREE.LinearFilter; vU.tMask.value = m; maskReady = true; }, undefined, () => { video = null; });
+    video.addEventListener('error', () => { if (vid) setVideo(false); video = null; });
+    const kick = () => tryPlay(true);
+    ['pointerdown', 'keydown', 'touchstart'].forEach(e => addEventListener(e, kick, { passive: true }));
+  }
+  function tryPlay(force) {
+    if (!video || !video.paused || playPending) return;
+    const now = performance.now(); if (!force && now - lastPlayTry < 1500) return; lastPlayTry = now;
+    const p = video.play(); if (p && p.then) { playPending = true; p.then(() => { playPending = false; }, () => { playPending = false; }); }
+  }
+  function setVideo(on) {
+    vid = on; LV = on ? CLIP.laneW : L;
+    for (const o of streetStatic) o.visible = !on;
+    vBg.visible = vFg.visible = catcher.visible = on;
+    for (const mp of [buildings, lamps, cablePoles, piers]) { for (const [, o] of mp) scene.remove(o); mp.clear(); }
+    for (const [, m] of live) scene.remove(m); live.clear();      // rebuild hazards at the new lane width
+    renderer.toneMapping = on ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping;   // footage is already display-ready
+    camera.rotation.order = on ? 'YXZ' : 'XYZ';
+    resize();
+  }
+  function vidFit() {
+    const sa = W / H, va = 720 / 1280;
+    const cov = sa < va ? [va / sa, 1] : [1, sa / va];
+    vU.cover.value.set(cov[0] * 1.05, cov[1] * 1.05);
+    if (sa > 0.8) vU.scale.value.set(va / sa, 1);              // wide screens: whole frame, blurred sides
+    else vU.scale.value.set(cov[0] * 1.06, cov[1] * 1.06);     // phones: fill, slight zoom so pans never show an edge
+  }
 
   // ---------------- post-processing
   const composer = new EffectComposer(renderer);
@@ -682,7 +760,8 @@ export function create(PD) {
   }
   function resize() {
     const r = stage.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
-    camera.aspect = W / H; camera.fov = W / H < 0.7 ? 68 : 58; camera.updateProjectionMatrix();
+    camera.aspect = W / H; if (!vid) camera.fov = W / H < 0.7 ? 68 : 58; camera.updateProjectionMatrix();
+    vidFit();
     applyQuality();
   }
   resize();
@@ -700,12 +779,54 @@ export function create(PD) {
   };
   const cA = new THREE.Color(), cB = new THREE.Color();
 
+  const tmp2 = new THREE.Vector3();
+  // playback speed follows the throttle, so the filmed road moves at the speed the hazards approach
+  function driveVideo(G, state) {
+    let rate;
+    if (state === 'run') rate = clamp(G.v * CLIP.laneW / CLIP.speed, 0.5, 2.2);
+    else if (state === 'over') rate = G.wasted && G.wasted.t < 1.4 ? 0.25 : 0;
+    else if (state === 'paused') rate = 0;
+    else rate = 0.6;      // start card: the road rolls slowly behind it
+    if (rate <= 0) { if (!video.paused) video.pause(); return; }
+    if (Math.abs(video.playbackRate - rate) > 0.04) video.playbackRate = rate;
+    tryPlay(false);
+  }
+  function videoLook(sky, NIGHT, ov, fogC) {
+    const rainy = sky.rain, dark = Math.max(sky.dark, ov * 0.4);
+    vU.expo.value = NIGHT ? 0.34 : 1 - dark * 0.22 - rainy * 0.1;
+    vU.vsat.value = NIGHT ? 0.55 : 1 - rainy * 0.3 - sky.fog * 0.3;
+    if (NIGHT) vU.vtint.value.set(0.72, 0.84, 1.18); else vU.vtint.value.set(1 - rainy * 0.05, 1, 1 + rainy * 0.06);
+    vU.haze.value = sky.fog * 0.85 + rainy * 0.12;
+    vU.hazeCol.value.set(NIGHT ? 0.05 : 0.62, NIGHT ? 0.06 : 0.64, NIGHT ? 0.08 : 0.67);
+    // match the 3D lighting to the clip (overcast daylight) and the same haze
+    hemi.color.set(0xdfe6ee); hemi.groundColor.set(0x5a554e);
+    hemi.intensity = (NIGHT ? 0.22 : CLIP.hemi * (1 - dark * 0.3)) + (PD.G.flash || 0) * 3;
+    sun.color.set(NIGHT ? 0x8fa8d8 : 0xfff4e6); sun.intensity = NIGHT ? 0.15 : CLIP.sun * (1 - ov * 0.6);
+    scene.fog.color.copy(vU.hazeCol.value); scene.fog.density = 0.004 + sky.fog * 0.03 + rainy * 0.006;
+  }
+  function videoCamera(G, px, sh, wasted) {
+    const pan = vU.pan.value, sc = vU.scale.value;
+    const jx = (Math.random() - 0.5) * sh * 0.25, jy = (Math.random() - 0.5) * sh * 0.25;
+    pan.set((reduceMotion ? 0 : -(G.x - 1.5) * 0.012) + jx, jy + (wasted ? -0.02 : 0));
+    const tv = Math.tan(CLIP.vfov * Math.PI / 360) / sc.y;                // tan(half vertical fov) of what the screen shows
+    camera.fov = 2 * Math.atan(tv) * 180 / Math.PI;
+    const yh = 2 * ((CLIP.hf * -1 + 0.5) * sc.y + 0.5 + pan.y) - 1;      // clip horizon in screen NDC
+    const xv = 2 * ((CLIP.vx - 0.5) * sc.x + 0.5 + pan.x) - 1;           // clip vanishing point in screen NDC
+    const phi = -Math.atan(yh * tv);
+    const psi = Math.atan(xv * tv * camera.aspect * Math.cos(phi));
+    camera.rotation.set(phi, psi, 0);
+    camera.position.set(px, CLIP.h, 0);
+    camera.updateProjectionMatrix();
+  }
+
   function render(dt) {
     const G = PD.G, state = PD.state, road = PD.curRoad(), NIGHT = PD.NIGHT, sky = G.sky || { cloud: 0, rain: 0, dark: 0, fog: 0, wet: 0 };
     frameId++; t += dt;
     // auto quality: step down once if the frame rate stays low
     const nowT = performance.now(); const realDt = fpsTime ? (nowT - fpsTime) / 1000 : 0; fpsTime = nowT;
-    if (state === 'run' && realDt < 0.5 && qPin == null) { fpsAcc += realDt; fpsN++; if (fpsAcc > 2.5) { const fps = fpsN / fpsAcc; if (fps < 42 && quality > 0) { quality--; applyQuality(); } else if (fps < 22 && quality === 0) api.tooSlow = true; fpsAcc = 0; fpsN = 0; } }
+    if (video && !vid && maskReady && video.readyState >= 2) setVideo(true);
+    if (video) driveVideo(G, state);
+    if (state === 'run' && realDt < 0.5 && qPin == null) { fpsAcc += realDt; fpsN++; if (fpsAcc > 2.5) { const fps = fpsN / fpsAcc; if (fps < 42 && quality > 0) { quality--; applyQuality(); } else if (fps < 22 && quality === 0) { api.tooSlow = true; if (video) video.pause(); video = null; } fpsAcc = 0; fpsN = 0; } }
 
     // ---- lighting + sky from weather and theme
     const ov = clamp(sky.cloud * 0.9 + sky.rain * 0.3, 0, 1);
@@ -722,6 +843,7 @@ export function create(PD) {
     renderer.toneMappingExposure = NIGHT ? 0.95 : 1.0 - sky.dark * 0.25;
     const wxKey = (NIGHT ? 'n' : 'd') + Math.round(ov * 4) + Math.round(sky.fog * 3);
     if (wxKey !== lastWxKey) { lastWxKey = wxKey; rebuildEnv(wxKey); }
+    if (vid) videoLook(sky, NIGHT, ov, cA);
     for (const c of clouds) { const u = c.userData; u.a += u.sp * dt * 0.2; c.position.set(Math.sin(u.a) * u.d, u.h, -Math.cos(u.a) * u.d); c.material.opacity = (0.35 + ov * 0.6) * (NIGHT ? 0.35 : 1) * (1 - sky.fog * 0.6); c.material.color.copy(cA).lerp(cB.set('#ffffff'), NIGHT ? 0 : 0.6 - ov * 0.4); }
 
     // wet road
@@ -735,6 +857,7 @@ export function create(PD) {
 
     // ---- camera
     const px = X(G.x);
+    if (vid) camX = px;
     camX += (px * 0.62 - camX) * Math.min(1, dt * 5);
     const boost = Math.max(0, G.gear || 0), speedK = clamp((G.v - 3) / 6, 0, 1);
     const wasted = G.wasted && state === 'over';
@@ -742,16 +865,21 @@ export function create(PD) {
     const sh = camShake * 0.012;
     let cy = 2.85 + speedK * 0.12, cz = 6.3 + speedK * 0.5, look = -22;
     if (wasted) { const w = clamp(G.wasted.t / 1.5, 0, 1); cy = lerp(cy, 1.4, w); cz = lerp(cz, 2.8, w); }
-    camera.position.set(camX + (Math.random() - 0.5) * sh, cy + (Math.random() - 0.5) * sh, cz);
-    camera.lookAt(camX * 0.9 + (px - camX) * 0.25, wasted ? 0.8 : 0.85, look);
     const lean = (G.lane + 0.5 - G.x);
-    camera.rotation.z += lean * 0.035;
-    const fov0 = W / H < 0.7 ? 68 : 58;
-    camera.fov += ((fov0 + boost * 3 + speedK * 4) - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix();
+    if (vid) videoCamera(G, px, sh, wasted);
+    else {
+      camera.position.set(camX + (Math.random() - 0.5) * sh, cy + (Math.random() - 0.5) * sh, cz);
+      camera.lookAt(camX * 0.9 + (px - camX) * 0.25, wasted ? 0.8 : 0.85, look);
+      camera.rotation.z += lean * 0.035;
+      const fov0 = W / H < 0.7 ? 68 : 58;
+      camera.fov += ((fov0 + boost * 3 + speedK * 4) - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix();
+    }
 
     // sun + shadow box follow the camera target
-    tmp.set(0, 0, -16);
-    sun.target.position.copy(tmp); sun.position.copy(tmp).add(new THREE.Vector3(NIGHT ? 30 : -38, NIGHT ? 40 : 22, NIGHT ? -30 : -60));
+    tmp.set(camX, 0, -16);
+    sun.target.position.copy(tmp);
+    if (vid) sun.position.copy(tmp).add(tmp2.set(-8, 30, 10));     // soft, high light so shadows fall just behind and under things
+    else sun.position.copy(tmp).add(tmp2.set(NIGHT ? 30 : -38, NIGHT ? 40 : 22, NIGHT ? -30 : -60));
     // sky follows the camera so it never clips
     skyline.position.x = camX * 0.3;
 
@@ -760,15 +888,16 @@ export function create(PD) {
     scooter.rotation.z = (reduceMotion ? 0 : lean * 0.42);
     scooter.rotation.y = lean * 0.12;
     const blink = G.inv > 0 && Math.floor(G.inv * 12) % 2 === 0;
-    scooter.visible = !blink;
+    scooter.visible = !vid && !blink;
     for (const w of scooter.userData.wheels) w.rotation.x = -sc * L / 0.27;
     scooter.userData.tail.material.emissiveIntensity = (G.gear < 0 ? 4 : 1.2) * (NIGHT ? 1.6 : 1);
     headlight.intensity = NIGHT || sky.dark > 0.45 ? (NIGHT ? 90 : 40) : 0;
-    headlight.position.set(px, 1.0, -0.7); headlight.target.position.set(px, 0, -18);
+    headlight.position.set(px, vid ? CLIP.h * 0.85 : 1.0, -0.7); headlight.target.position.set(px, 0, -18);
     riderFill.position.set(px + 0.6, 2.6, 2.6); riderFill.intensity = NIGHT ? 7 : sky.dark > 0.45 ? 3 : 0;
 
     // ---- buildings, lamps, piers: recycle by road position
     const zN = -3, zF = 34;
+    if (!vid) {
     const i0 = Math.floor((sc + zN) / BLEN), i1 = Math.floor((sc + zF) / BLEN);
     const want = new Set();
     for (let i = i0; i <= i1; i++) for (const side of [-1, 1]) {
@@ -802,6 +931,8 @@ export function create(PD) {
       if (trainZ < 900) { trainZ -= dt * 22; if (trainZ < -260) trainZ = 999; }
       train.position.z = trainZ; winMat.emissiveIntensity = NIGHT ? 1.2 : 0;
     } else for (const [k, p] of piers) { scene.remove(p); piers.delete(k); }
+    }
+    if (vid) { viaduct.visible = false; lampLights.forEach(p => p.intensity = 0); }
 
     // building windows/shops at night
     const winI = NIGHT ? 0.75 : sky.dark > 0.5 ? 0.3 : 0;
@@ -812,7 +943,7 @@ export function create(PD) {
     for (const k in floorMats) floorMats[k].emissiveIntensity = winI;
 
     // ---- sim objects
-    const PY = PD.PY;
+    const PY = PD.PY, objK = clamp(LV / 2.35, 0.7, 1);
     for (const o of G.obs) {
       if (o.done && (o.type === 'coffee' || o.type === 'repair')) continue;
       const z = PY - o.y; if (z < -3 || z > zF + 2) continue;
@@ -831,16 +962,17 @@ export function create(PD) {
       }
       if (!m) continue;
       m.position.x = X(o.x); m.position.z = Zm(z);
-      if (o.type === 'cow') m.position.z = Zm(z);
+      m.scale.setScalar(!vid ? 1 : (o.type === 'pothole' || o.type === 'puddle') ? Math.max(LV / L, 0.8) : objK);
     }
     busGlass.emissiveIntensity = NIGHT ? 0.6 : 0;
     blinkMat.emissiveIntensity = (Math.floor(t * 3) % 2) ? 3 : 0.3;
     for (const p of G.peds) {
       const z = PY - p.y; if (z < -1 || z > zF) continue;
       const m = sync(p, () => makePed(p.col)); const x = PD.pedX(p);
-      m.position.set(X(x), KH * (1 - p.off), Zm(z)); m.rotation.y = p.w < 0 ? Math.PI : 0;
+      m.position.set(X(x), vid ? 0 : KH * (1 - p.off), Zm(z)); m.scale.setScalar(vid ? objK : 1); m.rotation.y = p.w < 0 ? Math.PI : 0;
       const sw = Math.sin(p.ph + t * 7) * 0.5; m.userData.legs[0].rotation.x = sw; m.userData.legs[1].rotation.x = -sw;
     }
+    if (!vid) {
     for (const tr of G.deco) { const z = PY - tr.y; if (z < -3 || z > zF) continue; const m = sync(tr, () => makeTree(Math.floor(tr.r * 1000))); m.position.set(tr.side < 0 ? X(-0.85) : X(3.85), KH, Zm(z)); }
     for (const sg of G.signs) { const z = PY - sg.y; if (z < -3 || z > zF) continue; const m = sync(sg, () => makeSign(sg.text)); m.position.set(sg.side < 0 ? X(-0.6) : X(3.6), KH, Zm(z)); }
     for (const d of G.decals) {
@@ -853,10 +985,11 @@ export function create(PD) {
       const m = sync(g, () => { const pm = new THREE.Mesh(new THREE.PlaneGeometry(0.7 * L, g.h * L), gapMat); pm.rotation.x = -Math.PI / 2; return pm; });
       m.position.set(g.side < 0 ? X(-0.6) : X(3.6), KH + 0.006, Zm(z));
     }
+    }
     sweep();
 
     // ---- sun glare + dust motes in clear golden light
-    const clear = NIGHT ? 0 : clamp(1 - ov * 1.3 - sky.fog, 0, 1);
+    const clear = NIGHT || vid ? 0 : clamp(1 - ov * 1.3 - sky.fog, 0, 1);
     tmp.copy(skyU.sunDir.value).multiplyScalar(380).add(camera.position);
     sunGlow.position.copy(tmp); sunHalo.position.copy(tmp);
     sunGlow.material.opacity = 0.9 * clear; sunHalo.material.opacity = 0.35 * clear; sunGlow.visible = sunHalo.visible = clear > 0.02;
@@ -894,6 +1027,11 @@ export function create(PD) {
     const wd = wasted ? clamp(G.wasted.t / 0.8, 0, 1) : 0;
     grade.uniforms.desat.value = wd * 0.92; grade.uniforms.dim.value = wd * 0.25;
     grade.uniforms.vignette.value = 0.42 + wd * 0.35;
+    if (vid) {   // footage is already graded: keep the look light so it stays real
+      bloom.strength = NIGHT ? 0.35 : 0.12; bloom.threshold = NIGHT ? 0.8 : 0.97;
+      grade.uniforms.sat.value = CLIP.sat; grade.uniforms.contrast.value = 1.03; grade.uniforms.tint.value.set(1, 1, 1);
+      grade.uniforms.vignette.value = 0.3 + wd * 0.4; grade.uniforms.speed.value *= 0.6;
+    } else grade.uniforms.contrast.value = 1.07;
     composer.render(dt);
   }
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -905,8 +1043,8 @@ export function create(PD) {
     pv2.set(X(x + 1), (h || 0) * L, Zm(z)).project(camera);
     return { x: (pv.x + 1) / 2 * W, y: (1 - pv.y) / 2 * H, s: Math.abs(pv2.x - pv.x) / 2 * W, behind: pv.z > 1 };
   }
-  function scooterScreen() { return project(PD.G.x, 0, 0.55); }
-  const api = { ok: true, tooSlow: false, render, project, scooterScreen, get quality() { return quality; }, setQuality(q) { quality = q; applyQuality(); } };
+  function scooterScreen() { return vid ? { x: W / 2, y: H * 0.66, s: W * 0.25, behind: false } : project(PD.G.x, 0, 0.55); }
+  const api = { ok: true, tooSlow: false, render, project, scooterScreen, get quality() { return quality; }, get video() { return vid; }, setQuality(q) { quality = q; applyQuality(); } };
   return api;
 }
 
