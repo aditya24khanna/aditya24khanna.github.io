@@ -344,6 +344,10 @@ mark, .hl { color: inherit; background: linear-gradient(100deg, transparent 1%, 
 .sk .sk-msg.me { align-self: flex-end; background: #14213D; color: #FFFFFF; border-radius: 9px 9px 3px 9px; }
 .sk .sk-row { display: flex; justify-content: space-between; align-items: center; }
 .sk .sk-pill { background: #F4B740; border-radius: 99px; padding: 0 7px; font-weight: 700; }
+.sk .sk-bars { display: flex; gap: 3px; }
+.sk .sk-bars i { flex: 1; height: 3px; border-radius: 2px; background: #DCE5F0; }
+.sk .sk-bars i.on { background: #14213D; }
+.sk .sk-real { border: 1.5px solid #C2452D; color: #C2452D; border-radius: 5px; padding: 0 5px; font-weight: 800; text-transform: uppercase; font-size: 9.5px; letter-spacing: .04em; }
 
 /* Play: the page turns to night (in both themes) */
 .band-night { --paper: #14213D; --card: #152036; --grid: #22304E; --ink: #E8EDF5; --ink-2: #A9B4C8; --ink-3: #8A97AE; --pen: #FF8A6B; --rule: #3A4A68;

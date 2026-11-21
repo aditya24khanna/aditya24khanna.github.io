@@ -380,7 +380,8 @@
     chanakya: '<b class="sk-t">Your note</b><b>The players</b><div class="bar m"></div><b>One move</b><div class="bar hi"></div><b>Pre-mortem</b><div class="bar s"></div>',
     moments: '<b class="sk-t">Today</b><div class="sk-grid"><i></i><i></i><i></i><i></i><i></i><i></i></div><b>On this day</b><div class="bar m"></div>',
     mixlingo: '<b class="sk-t">Auto driver</b><span class="sk-msg">Elli hogbeku, saar?</span><span class="sk-msg me">Indiranagar, swalpa fast</span><span class="sk-msg">Sari, hogona!</span>',
-    hisaab: '<b class="sk-t">Weekend trip</b><span class="sk-msg me">Rohan paid 600 for the cab</span><b>Settle up</b><div class="sk-row"><span>2 payments</span><span class="sk-pill">done</span></div>'
+    hisaab: '<b class="sk-t">Weekend trip</b><span class="sk-msg me">Rohan paid 600 for the cab</span><b>Settle up</b><div class="sk-row"><span>2 payments</span><span class="sk-pill">done</span></div>',
+    pulse: '<div class="sk-bars"><i class="on"></i><i class="on"></i><i></i><i></i></div><div class="sk-row"><span class="sk-real">Claim</span><span>Evening</span></div><b>Two maths claims, both unverified</b><div class="bar m"></div><b>Why it matters</b><div class="bar hi"></div><div class="sk-cta">One-pager ↑</div>'
   };
   function sketch(kind, big) {
     var s = el("div", "sk" + (big ? " sk-big" : "")); s.setAttribute("aria-hidden", "true");
