@@ -84,6 +84,7 @@
     "ai": true,
     "toolbox": false,
     "play": true,
+    "teardowns": false,
     "education": false
   }
 }
