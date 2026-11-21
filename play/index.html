@@ -14,31 +14,32 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif}[hidden]{display:none!important}html{height:100%}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Hanken+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: one-screen notebook page — ink stat strip, then a hard-shadow paper card holding a canvas road drawn on graph paper. Tokens follow the portfolio's Graph Paper system, plus Namma Metro purple and rain-tree green. */
+/* Cartoon design language, shared by the page, the cards and the canvas: cream paper, one ink colour,
+   thick ink outlines, hard offset shadows, round pill buttons and the chunky Lilita One face. */
 :root{
-  --paper:#FFFFFF; --grid:#DCE5F0; --ink:#14213D; --hl:#F4B740; --red:#C2452D;
-  --road:#F1F4F8; --hole:#26314A; --water:#6FA8D6; --coffee:#7A4B2A; --muted:#5B6884;
-  --metro:#7D4CA8; --leaf:#5E8C4A; --slab:#E6E2D8; --concrete:#C3C8D0;
-  --card:#FFFFFF; --shadow:#14213D; --on-hl:#14213D;
+  --paper:#FDF3DC; --grid:#F1DFB8; --ink:#2A1F3D; --hl:#FFC93C; --red:#E2483D;
+  --road:#F1F4F8; --hole:#26314A; --water:#8FD3F4; --coffee:#7A4B2A; --muted:#6E5E86;
+  --metro:#8C5CC4; --leaf:#3F9A4C; --slab:#F0D3A2; --concrete:#C3C8D0;
+  --card:#FFFAF0; --shadow:#2A1F3D; --on-hl:#2A1F3D; --line:#2A1F3D; --sky:#8FD3EC;
   --display:'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --hand:'Caveat', 'Segoe Print', 'Comic Sans MS', cursive;
+  --toon:'Lilita One', 'Hanken Grotesk', system-ui, sans-serif;
   --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#0E1626; --grid:#1B2740; --ink:#E6ECF5; --hl:#F4B740; --red:#E46A50;
-    --road:#152038; --hole:#04070D; --water:#3E7FB5; --coffee:#C58B5C; --muted:#93A0B8;
-    --metro:#A77BD0; --leaf:#6FA35A; --slab:#232D42; --concrete:#45506A;
-    --card:#132036; --shadow:#000000; --on-hl:#14213D; color-scheme:dark;
+    --paper:#1B1838; --grid:#2C2856; --ink:#FFF6E0; --hl:#FFC93C; --red:#FF6B5A;
+    --road:#152038; --hole:#04070D; --water:#3E5596; --coffee:#C58B5C; --muted:#B9AED6;
+    --metro:#A77BD0; --leaf:#6FA35A; --slab:#5A4C6A; --concrete:#45506A;
+    --card:#2A2552; --shadow:#0B0820; --on-hl:#2A1F3D; --line:#0B0820; --sky:#33306E; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#0E1626; --grid:#1B2740; --ink:#E6ECF5; --hl:#F4B740; --red:#E46A50;
-  --road:#152038; --hole:#04070D; --water:#3E7FB5; --coffee:#C58B5C; --muted:#93A0B8;
-  --metro:#A77BD0; --leaf:#6FA35A; --slab:#232D42; --concrete:#45506A;
-  --card:#132036; --shadow:#000000; --on-hl:#14213D; color-scheme:dark;
+  --paper:#1B1838; --grid:#2C2856; --ink:#FFF6E0; --hl:#FFC93C; --red:#FF6B5A;
+  --road:#152038; --hole:#04070D; --water:#3E5596; --coffee:#C58B5C; --muted:#B9AED6;
+  --metro:#A77BD0; --leaf:#6FA35A; --slab:#5A4C6A; --concrete:#45506A;
+  --card:#2A2552; --shadow:#0B0820; --on-hl:#2A1F3D; --line:#0B0820; --sky:#33306E; color-scheme:dark;
 }
 html,body{height:100%;overscroll-behavior:none}
 body{background:var(--paper);color:var(--ink);font-family:var(--display)}
@@ -50,79 +51,86 @@ body{background:var(--paper);color:var(--ink);font-family:var(--display)}
   padding-block:12px 18px;
 }
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px}
-.brand h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-0.02em;line-height:1;text-wrap:balance}
-.brand h1 mark{background:linear-gradient(transparent 55%, var(--hl) 55%, var(--hl) 92%, transparent 92%);color:inherit;padding:0 2px}
-.home{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
-.home:hover{color:var(--ink)}
-.brand p{margin:4px 0 0;font-family:var(--hand);font-size:20px;color:var(--red);line-height:1}
-.hud{display:flex;gap:18px;flex-wrap:wrap}
-.stat{display:flex;flex-direction:column;gap:2px;min-width:0}
-.stat span{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.stat b{font-family:var(--mono);font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
-.shocks{display:flex;gap:5px;align-items:center;height:20px}
-.shock{width:11px;height:11px;border-radius:50%;border:2px solid var(--ink);background:var(--hl)}
-.shock.gone{background:transparent;border-style:dashed;opacity:.5}
+.brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.brand h1{margin:0;font:400 32px/1 var(--toon);letter-spacing:.01em;color:var(--hl);
+  -webkit-text-stroke:2.5px #2A1F3D;paint-order:stroke fill;text-shadow:3px 3px 0 #2A1F3D;transform:rotate(-1.5deg)}
+.brand h1 mark{background:none;color:#fff;padding:0}
+.brand p{margin:2px 0 0;font:400 16px/1.15 var(--toon);color:var(--red)}
+.home{display:inline-block;margin-top:2px;font:400 12px var(--toon);letter-spacing:.03em;color:var(--ink);text-decoration:none;
+  border:2px solid var(--ink);border-radius:999px;padding:3px 10px;background:var(--card);box-shadow:2px 2px 0 var(--shadow)}
+.home:hover{background:var(--hl);color:var(--on-hl)}
+.hud{display:flex;gap:8px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;background:var(--card);border:2.5px solid var(--line);border-radius:14px;padding:4px 10px;box-shadow:3px 3px 0 var(--shadow)}
+.stat span{font:400 10.5px var(--toon);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stat b{font:400 17px var(--toon);font-variant-numeric:tabular-nums}
+.shocks{display:flex;gap:4px;align-items:center;height:21px}
+.shock{width:12px;height:12px;border-radius:50%;border:2.5px solid #2A1F3D;background:var(--hl)}
+.shock.gone{background:transparent;border-style:dashed;border-color:var(--muted);opacity:.6}
 .stage{
-  position:relative;flex:1;min-height:360px;border:2px solid var(--ink);
-  box-shadow:6px 6px 0 var(--shadow);background:var(--paper);overflow:hidden;
+  position:relative;flex:1;min-height:360px;border:3px solid var(--line);border-radius:18px;
+  box-shadow:6px 6px 0 var(--shadow);background:var(--sky);overflow:hidden;
   touch-action:none;overscroll-behavior:contain;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
 }
 canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
 .sndbar{position:absolute;top:10px;left:calc(10px + env(safe-area-inset-left, 0px));display:flex;gap:6px;z-index:2}
-.sndbar button:focus-visible{outline:2px solid #f4b740;outline-offset:2px}
-.sndbar button{font:400 13px 'Lilita One', var(--display);letter-spacing:.03em;min-height:34px;padding:5px 13px;background:#fff6e0;color:#2a1f3d;border:2.5px solid #2a1f3d;box-shadow:3px 3px 0 #2a1f3d;border-radius:999px;touch-action:none}
-.sndbar button:active{transform:none}
+.sndbar button{font:400 13px var(--toon);letter-spacing:.03em;min-height:34px;padding:5px 13px;background:#FFF6E0;color:#2A1F3D;border:2.5px solid #2A1F3D;box-shadow:3px 3px 0 #2A1F3D;border-radius:999px;touch-action:none}
+.sndbar button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #2A1F3D}
+.sndbar button:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
 .horn{
   position:absolute;right:calc(10px + env(safe-area-inset-right, 0px));bottom:calc(12px + env(safe-area-inset-bottom, 0px));
-  width:58px;height:58px;border-radius:50%;padding:0;display:grid;place-items:center;
-  font:400 12px 'Lilita One', var(--display);letter-spacing:.04em;background:#ffc93c;color:#2a1f3d;
-  border:3px solid #2a1f3d;box-shadow:3px 3px 0 #2a1f3d;touch-action:none;z-index:2;
+  width:60px;height:60px;border-radius:50%;padding:0;display:grid;place-items:center;
+  font:400 12px var(--toon);letter-spacing:.04em;background:#FFC93C;color:#2A1F3D;
+  border:3px solid #2A1F3D;box-shadow:3px 3px 0 #2A1F3D;touch-action:none;z-index:2;
 }
-.horn svg{width:22px;height:22px;display:block;margin-bottom:-2px}
+.horn svg{width:22px;height:22px;display:block;margin:0 auto -2px}
 .horn.cool{opacity:.55}
-.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;overflow:auto;touch-action:pan-y}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;overflow:auto;touch-action:pan-y;background:rgba(42,31,61,.18)}
 .card{
-  width:min(350px,100%);box-sizing:border-box;background:var(--card);color:var(--ink);
-  border:2px solid var(--ink);box-shadow:5px 5px 0 var(--shadow);padding:18px 18px 16px;
-  display:flex;flex-direction:column;gap:10px;
+  width:min(352px,100%);box-sizing:border-box;background:var(--card);color:var(--ink);
+  border:3px solid var(--line);border-radius:22px;box-shadow:6px 6px 0 var(--shadow);padding:18px 18px 16px;
+  display:flex;flex-direction:column;gap:10px;animation:pop .32s cubic-bezier(.3,1.6,.5,1) both;
 }
-.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.card h2{margin:0;font-size:28px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;text-wrap:balance}
-.card h2 mark{background:linear-gradient(transparent 58%, var(--hl) 58%, var(--hl) 94%, transparent 94%);color:inherit;padding:0 2px}
+@keyframes pop{from{transform:scale(.7) rotate(-2deg);opacity:0}to{transform:none;opacity:1}}
+.kicker{align-self:flex-start;font:400 12px var(--toon);letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--metro);
+  border:2px solid #2A1F3D;border-radius:999px;padding:3px 10px;box-shadow:2px 2px 0 #2A1F3D}
+.card h2{margin:0;font:400 30px/1.05 var(--toon);letter-spacing:.005em;text-wrap:balance}
+.card h2 mark{background:none;color:var(--hl);-webkit-text-stroke:2px #2A1F3D;paint-order:stroke fill;text-shadow:2px 2px 0 #2A1F3D;padding:0}
 .card p{margin:0;font-size:15px;line-height:1.45}
-.note{font-family:var(--hand);font-size:22px;color:var(--red);line-height:1.1}
+.note{font:400 19px/1.2 var(--toon);color:var(--red)}
 .controls{margin:0;font-size:13px;color:var(--muted);line-height:1.45}
 .keys{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
-.keys div{display:flex;flex-direction:column;gap:3px;padding:8px 10px;border:1.5px solid var(--grid);border-radius:6px;min-width:0}
-.keys b{font:700 11px var(--mono);letter-spacing:.05em;color:var(--ink)}
+.keys div{display:flex;flex-direction:column;gap:2px;padding:7px 10px;border:2.5px solid var(--line);border-radius:12px;min-width:0;background:var(--paper)}
+.keys b{font:400 14px var(--toon);letter-spacing:.03em;color:var(--ink)}
 .keys span{font-size:12.5px;color:var(--muted);line-height:1.25}
-.controls kbd{font-family:var(--mono);font-size:11px;border:1.5px solid var(--muted);padding:0 4px;border-radius:3px}
-.row{display:flex;gap:8px;flex-wrap:wrap}
+.controls kbd{font:400 12px var(--toon);border:2px solid var(--ink);padding:0 6px;border-radius:999px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
 button{
-  font:700 15px var(--display);border:2px solid var(--ink);padding:10px 14px;cursor:pointer;
-  background:var(--card);color:var(--ink);box-shadow:3px 3px 0 var(--shadow);
+  font:400 17px var(--toon);letter-spacing:.02em;border:3px solid var(--line);border-radius:999px;padding:9px 18px;cursor:pointer;
+  background:var(--card);color:var(--ink);box-shadow:4px 4px 0 var(--shadow);
 }
 button.primary{background:var(--hl);color:var(--on-hl)}
-button.link{border:none;box-shadow:none;background:none;padding:6px 2px;text-decoration:underline;text-underline-offset:3px;font-weight:600;font-size:14px}
-button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+button.link{border:none;box-shadow:none;background:none;padding:6px 2px;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;font-size:15px;align-self:flex-start}
+button:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--shadow)}
 button.link:active{transform:none}
-button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
-.meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-family:var(--mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-.meta b{color:var(--ink);font-weight:700}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-block:1.5px dashed var(--grid);padding-block:10px}
-.grid3 div{display:flex;flex-direction:column;gap:2px;min-width:0}
-.grid3 span{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.grid3 b{font-family:var(--mono);font-size:17px;font-variant-numeric:tabular-nums}
+button:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 14px;font:400 13px var(--toon);letter-spacing:.02em;color:var(--muted);font-variant-numeric:tabular-nums}
+.meta b{color:var(--ink);font-weight:400}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid3 div{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;background:var(--paper);border:2.5px solid var(--line);border-radius:14px;padding:6px 4px}
+.grid3 span{font:400 10.5px var(--toon);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.grid3 b{font:400 19px var(--toon);font-variant-numeric:tabular-nums;white-space:nowrap}
 .trail{font-size:18px;letter-spacing:2px;line-height:1.2;word-break:break-all}
-.newbest{color:var(--red);font-weight:700}
-.copied{font-size:13px;color:var(--muted);min-height:1em}
-textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:6px;resize:none}
+.newbest{color:var(--red)!important}
+.newbest b{color:var(--red)}
+.copied{font:400 14px var(--toon);color:var(--muted);min-height:1em}
+textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:2.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);padding:8px;resize:none}
 @media (max-width:440px){
-  .hud{gap:12px}
-  .brand h1{font-size:21px}
-  .card h2{font-size:25px}
+  .hud{gap:6px}
+  .stat{padding:3px 8px}
+  .brand h1{font-size:28px}
+  .card h2{font-size:26px}
 }
-@media (prefers-reduced-motion: reduce){ button:active{transform:none} }
+@media (prefers-reduced-motion: reduce){ button:active{transform:none} .card{animation:none} }
 </style>
   <script data-goatcounter="https://adikhanna.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -170,7 +178,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
           <div><b>HORN</b><span>Traffic might move</span></div>
           <div><b>M · R</b><span>Sound · radio</span></div>
         </div>
-        <p class="controls">Three shock absorbers. Filter coffee adds 50 m. Rain means puddles, fog hides the road. Keyboard: arrows to steer and set speed, <kbd>H</kbd> or <kbd>Space</kbd> for the horn.</p>
+        <p class="controls">Three shock absorbers. New hazards join the road as you go. Filter coffee adds 50 m. Rain means puddles, fog hides the road. Keyboard: arrows to steer and set speed, <kbd>H</kbd> or <kbd>Space</kbd> for the horn.</p>
       </div>
     </div>
 
@@ -329,6 +337,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     pillar: ['Metro pillar. It was here first.','Pillar 1, scooter 0.'],
     ped: ['Hard brake! The footpath was broken.','Pedestrian detour. Fair enough.','He had nowhere else to walk.'],
     honk: ['HONK. The bus behind ran out of patience.','Too slow. A Volvo bus nudged you.','Honked off the road.'],
+    wrongway: ['Wrong-side rider. Of course.','He was saving a U-turn.','Wrong side, full speed.'],
     auto: ['Auto braked. No indicator.','Auto: “Meter? Extra 20.”','Auto took a U-turn. Mid-road.']
   };
   const pickM = a => a[Math.floor(Math.random()*a.length)];
@@ -404,12 +413,18 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     else if (type==='tanker'){ o.hw = 0.16; o.hh = 0.5; o.drip = rng(); }
     else if (type==='bus'){ o.hw = 0.18; o.hh = 0.72; }
     else if (type==='pillar'){ o.hw = o.hh = 0.22; o.no = ++G.pillarNo; }
+    else if (type==='wrongway'){ o.hw = 0.14; o.hh = 0.3; o.slow = -(1.1 + rng()*0.7); o.col = Math.floor(rng()*4); }
     else { o.hw = o.hh = 0.15; }
     return o;
   }
+  // hazards join the road one at a time, so a new rider learns them in order; long rides keep getting new ones
+  const UNLOCK = [['pothole',0,''],['puddle',120,'Puddles'],['auto',300,'Autos'],['cow',500,'Stray cows'],['barricade',750,'Metro barricades'],
+                  ['bus',1000,'BMTC buses'],['tanker',1300,'Water tankers'],['pillar',1600,'Metro pillars'],['wrongway',2000,'Wrong-side riders']];
+  const RUSH = 2600;
+  const unlocked = t => { const u = UNLOCK.find(x => x[0] === t); return !u || G.meters >= u[1]; };
   function pickType(d, road){
     const h = road.haz || {};
-    const base = [['pothole',0.5],['puddle',0.11+0.1*d],['barricade',0.11],['cow',0.06+0.04*d],['auto',0.08],['tanker',0.05],['bus',0.05],['pillar',0.025]];
+    const base = [['pothole',0.5],['puddle',0.11+0.1*d],['barricade',0.11],['cow',0.06+0.04*d],['auto',0.08],['tanker',0.05],['bus',0.05],['pillar',0.025],['wrongway',0.06]].filter(([t]) => unlocked(t));
     const w = base.map(([t,p]) => [t, p*(h[t]||1)*(t==='puddle' ? (road.rain ? 1.3 : 1)*(1 + 1.3*G.sky.rain) : 1)]);
     let r = rng() * w.reduce((s,x)=>s+x[1],0);
     for (const [t,p] of w){ if ((r -= p) <= 0) return t; }
@@ -423,11 +438,11 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     const lanes = [0,1,2].filter(l => !occ.has(l));
     for (let i=lanes.length-1;i>0;i--){ const j = Math.floor(rng()*(i+1)); [lanes[i],lanes[j]] = [lanes[j],lanes[i]]; }
     if (lanes.length <= 1) return; // keep the only open lane open
-    const n = Math.min(lanes.length - 1, rng() < 0.12 + 0.33*d ? 2 : 1);
+    const n = Math.min(lanes.length - 1, rng() < 0.03 + 0.33*d + (G.meters >= RUSH ? 0.12 : 0) ? 2 : 1);
     for (let i=0;i<n;i++) G.obs.push(makeObs(pickType(d, road), lanes[i], road));
     const free = lanes[n], p = rng();
     if (p < 0.12) G.obs.push(makeObs('coffee', free, road));
-    else if (p < 0.155) G.obs.push(makeObs('repair', free, road));
+    else if (p < 0.175) G.obs.push(makeObs('repair', free, road));
   }
   // pedestrians walk the footpath; where a slab is missing they step onto the road edge
   const pedX = p => p.side < 0 ? -0.55 + 0.85*p.off : 3.55 - 0.85*p.off;
@@ -435,7 +450,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   function fx(txt, color){ G.fx.push({ x: W/2 + (G.x - camX)*LP, y: yP - LP*1.0, txt, color, t:0 }); }
   function damage(msg, type){
     G.lastHit = type || 'pothole'; SND.hit();
-    G.shocks--; G.inv = 1.2; G.shake = reduce ? 0 : 10;
+    G.shocks--; G.inv = 1.4; G.shake = reduce ? 0 : 10;
     G.hits.push(G.meters);
     fx(msg, T.red);
     if (G.shocks <= 0) gameOver();
@@ -447,7 +462,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     G.t += dt;
     const road = curRoad();
     const diff = mode === 'daily' ? TODAY.diff : 1;
-    const d = Math.min(1, G.meters*diff/2600);
+    const d = Math.min(1, G.meters*diff/4200);
     if (running){
       // road sets the cruise speed; the throttle (gear -2..+2) moves you 20% either side of it
       const cruise = 3 + 4.6*Math.pow(d, 0.85);
@@ -513,6 +528,13 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
         if (idx > 0) G.callout = { text:'Now entering ' + ROADS[ROUTE[idx]].name, t:0, big:true };
       }
     }
+    // new hazard joins the road
+    if (running){
+      const next = UNLOCK[G.unlockI || 1];
+      if (next && G.meters >= next[1]){ G.unlockI = (G.unlockI || 1) + 1; G.newHaz = { text: 'NEW: ' + next[2].toUpperCase(), t: 0 }; SND.repair(); }
+      else if (!next && !G.rushShown && G.meters >= RUSH){ G.rushShown = true; G.newHaz = { text: 'RUSH HOUR!', t: 0 }; SND.repair(); }
+      if (G.newHaz){ G.newHaz.t += dt; if (G.newHaz.t > 3) G.newHaz = null; }
+    }
     // landmarks
     if (running){
       G.markAcc -= dy*3.5;
@@ -529,7 +551,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     G.spawnAcc -= dy;
     if (G.spawnAcc <= 0){
       spawnRow(running ? d : 0.15, road);
-      G.spawnAcc = Math.max(1.35, G.v*0.42, 2.7 - 1.2*d) + rng()*0.6;
+      G.spawnAcc = Math.max(1.35, G.v*0.42, 3.4 - 1.9*d) + rng()*0.6;
     }
     G.decoAcc -= dy;
     if (G.decoAcc <= 0){
@@ -568,7 +590,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
         if (!hit){
           if (!o.counted && o.y - o.hh > py + 0.3){
             o.counted = true;
-            if (o.type==='pothole' || o.type==='puddle') G.dodged++;
+            if (!PICKUP(o.type)) G.dodged++;
           }
           continue;
         }
@@ -893,6 +915,24 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     ctx.restore(); ctx.beginPath(); ctx.rect(x, y, w*2*s, 0.32*s); inkLine(lw(s));
     cel(b, -0.1, 0.1, 0.5, 0.6, '#ffffff', 0.015, null, 0.012); text(b, 'P-' + o.no, 0, 0.55, 0.05, INK);
   }
+  function sWrong(o, z){   // oncoming bike on the wrong side, seen head-on
+    const b0 = P(o.x, z), bob = Math.abs(Math.sin(G.t*14 + o.x*7))*0.01;
+    shadow(b0, 0.3);
+    const b = { x: b0.x, y: b0.y - bob*b0.s, s: b0.s }, s = b.s, w = lw(s);
+    const jacket = ['#e2483d','#2e9b5f','#8c5cc4','#f08a2c'][o.col || 0];
+    cel(b, -0.035, 0.035, 0, 0.2, INK, 0.03);                                  // front tyre
+    cel(b, -0.075, 0.075, 0.14, 0.3, '#5d74b4', 0.04, '#4a5f99', 0.016);       // mudguard + fork
+    cel(b, -0.2, 0.2, 0.36, 0.4, INK, 0.015);                                  // handlebar
+    cel(b, -0.12, 0.12, 0.38, 0.66, jacket, 0.06, mix(jacket, '#000000', 0.2)); // rider
+    for (const sx of [-1, 1]) cel(b, sx*0.2 - 0.03, sx*0.2 + 0.03, 0.38, 0.47, SKIN, 0.02, null, 0.012);
+    ell(b.x, b.y - 0.75*s, 0.1*s, 0.1*s, '#ffffff', w);                        // helmet
+    ctx.save(); ctx.beginPath(); ctx.ellipse(b.x, b.y - 0.75*s, 0.1*s, 0.1*s, 0, 0, Math.PI*2); ctx.clip(); flat(b, -0.08, 0.08, 0.7, 0.77, '#3b4d7a', 0.03); ctx.restore();
+    const hl = P(o.x, z, 0.33); ell(hl.x, b.y - 0.33*s, 0.06*s, 0.05*s, '#fff6c8', w*0.8);   // headlight
+    LIGHTS.push({ x: hl.x, y: b.y - 0.33*s, r: 0.45*s, c: '255,245,200' });
+    ctx.globalAlpha *= 0.7; ctx.strokeStyle = '#fff6c8'; ctx.lineWidth = Math.max(1, s*0.015); ctx.lineCap = 'round';
+    for (const sx of [-1, 1]){ ctx.beginPath(); ctx.moveTo(b.x + sx*0.09*s, b.y - 0.36*s); ctx.lineTo(b.x + sx*0.16*s, b.y - 0.42*s); ctx.stroke(); }
+    ctx.globalAlpha /= 0.7;
+  }
   function sCoffee(o, z){
     const bob = 0.3 + Math.sin(G.t*4 + o.x)*0.05, b = P(o.x, z), s = b.s, w = lw(s, 0.014);
     shadow(b, 0.22);
@@ -1024,6 +1064,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
         case 'bus': sBus(it.o, z); break;
         case 'tanker': sTanker(it.o, z); break;
         case 'pillar': sPillar(it.o, z); break;
+        case 'wrongway': sWrong(it.o, z); break;
         case 'coffee': sCoffee(it.o, z); break;
         case 'repair': sRepair(it.o, z); break;
         case 'ped': if (z > -0.2) sPed(it.o, z); break;
@@ -1116,7 +1157,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     const head = mode === 'daily'
       ? 'Pothole Dash · Road of the day #' + DAYNO + ' · ' + TODAY.name
       : 'Pothole Dash · Endless commute · reached ' + curRoad().name;
-    return head + '\n' + trail() + '\n' + fmtDist(score()) + ', dodged ' + G.dodged + ' potholes, top speed ' + kmh(G.top) + ' km/h.';
+    return head + '\n' + trail() + '\n' + fmtDist(score()) + ', dodged ' + G.dodged + ' hazards, top speed ' + kmh(G.top) + ' km/h.';
   }
   function gameOver(){
     state = 'over'; $('bHorn').hidden = true;
@@ -1173,7 +1214,8 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     auto:   { move:0.55, brake:0.2,  moved:['Fine, fine','Moved. Grudgingly.'], ignored:['Auto: no.','Pretends not to hear'], braked:'Stopped dead' },
     cow:    { move:0.3,  brake:0,    moved:['Moo. Moved.','Cow shifts, slowly'], ignored:['Unbothered','Cow: not today'] },
     bus:    { move:0.22, brake:0,    moved:['BMTC obliges?!'], ignored:['BMTC doesn’t care','Bus ignores you'] },
-    tanker: { move:0.15, brake:0,    moved:['Tanker shifts'], ignored:['Tanker: lol','6,000 litres say no'] }
+    tanker: { move:0.15, brake:0,    moved:['Tanker shifts'], ignored:['Tanker: lol','6,000 litres say no'] },
+    wrongway: { move:0.5, brake:0,   moved:['Swerves. Barely.','Oh, sorry sir!'], ignored:['Wrong side, right attitude','Flashes headlight at you'] }
   };
   let audio = null;
   function beep(){
@@ -1361,15 +1403,16 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
   function soundLabel(){ $('bSound').textContent = SND.on ? 'SOUND' : 'MUTED'; $('bSound').setAttribute('aria-pressed', SND.on ? 'true' : 'false'); $('bRadio').textContent = STATIONS[SND.st].kind === 'off' ? 'RADIO OFF' : '♪ RADIO'; $('bRadio').setAttribute('aria-label', 'Radio: ' + STATIONS[SND.st].name); }
   function toggleSound(){ SND.init(); SND.setOn(!SND.on); soundLabel(); }
   function cycleRadio(){ SND.init(); const s = SND.cycle(); soundLabel(); radioToast = { text: s.name, t: 0 }; }
-  const WASTED = { pothole:'POTHOLED', deep:'POTHOLED', foam:'FOAMED', barricade:'DIVERTED', cow:'MOOED', auto:'AUTO-CORRECTED', bus:'BUSTED', tanker:'TANKED', pillar:'METRO-ED', ped:'FOOTPATHED', honk:'HONKED OUT' };
-  const WASTED_LINE = { pothole:'A pothole had the final word.', deep:'That puddle was a pothole in disguise.', foam:'Lake foam. Pothole underneath.', barricade:'Metro work wins again.', cow:'The cow had right of way.', auto:'Auto braked. No indicator.', bus:'BMTC stops where it likes.', tanker:'6,000 litres of right of way.', pillar:'The pillar was here first.', ped:'Nowhere else to walk.', honk:'The bus behind lost patience.' };
+  const WASTED = { pothole:'POTHOLED', deep:'POTHOLED', foam:'FOAMED', barricade:'DIVERTED', cow:'MOOED', auto:'AUTO-CORRECTED', bus:'BUSTED', tanker:'TANKED', wrongway:'WRONG-SIDED', pillar:'METRO-ED', ped:'FOOTPATHED', honk:'HONKED OUT' };
+  const WASTED_LINE = { pothole:'A pothole had the final word.', deep:'That puddle was a pothole in disguise.', foam:'Lake foam. Pothole underneath.', barricade:'Metro work wins again.', cow:'The cow had right of way.', auto:'Auto braked. No indicator.', bus:'BMTC stops where it likes.', tanker:'6,000 litres of right of way.', wrongway:'He was saving a 2 km U-turn.', pillar:'The pillar was here first.', ped:'Nowhere else to walk.', honk:'The bus behind lost patience.' };
 
   // ---------- cartoon HUD (drawn on the canvas over the road) ----------
   let banner = null, lastRoadName = '', impact = null, lastShocks = 3;
   function chip(x, y, w, h, fill){ ctx.fillStyle = INK; rr(x + 3, y + 3, w, h, h/2); ctx.fill(); rr(x, y, w, h, h/2); ctx.fillStyle = fill; ctx.fill(); inkLine(2.5); }
   function ribbon(cx, y, txt, size, fill, alpha){
     ctx.globalAlpha = clamp(alpha, 0, 1);
-    ctx.font = size + 'px ' + TOON; const tw = ctx.measureText(txt).width, w = tw + size*1.6, h = size*1.55, x = cx - w/2, n = h*0.35;
+    ctx.font = size + 'px ' + TOON; while (size > 12 && ctx.measureText(txt).width + size*2.8 > W - 110){ size--; ctx.font = size + 'px ' + TOON; }
+    const tw = ctx.measureText(txt).width, w = tw + size*1.6, h = size*1.55, x = cx - w/2, n = h*0.35;
     const tails = side => { const ex = side < 0 ? x : x + w, d = side*h*0.55; poly([{ x:ex, y:y + h*0.25 }, { x:ex + d, y:y + h*0.25 }, { x:ex + d - side*n, y:y + h*0.75 }, { x:ex + d, y:y + h*1.25 }, { x:ex, y:y + h*1.25 }], mix(fill, '#000000', 0.25), 2.5); };
     tails(-1); tails(1);
     ctx.fillStyle = INK; ctx.fillRect(x + 3, y + 3, w, h);
@@ -1405,7 +1448,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
         star(sx, sy - LP*0.1, r*0.55, r, 10, t*2, '#ffd23c', 3); star(sx, sy - LP*0.1, r*0.3, r*0.55, 10, t*2 + 0.3, '#ffffff', 2); ctx.globalAlpha = 1; }
     }
     // traffic reactions and floating messages
-    const HT = { auto:0.62, bus:1.02, tanker:0.72, cow:0.62 };
+    const HT = { auto:0.62, bus:1.02, tanker:0.72, cow:0.62, wrongway:0.86 };
     for (const o of G.obs){
       if (!o.say) continue; const z = PY - o.y; if (z < 0) continue;
       const p = P(o.x, z, (HT[o.type] || 0.5) + 0.14);
@@ -1442,7 +1485,7 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
     }
     // road title ribbon when a road begins
     if (road.name !== lastRoadName){ lastRoadName = road.name; banner = { t: 0 }; }
-    let by = 62;
+    let by = W < 560 ? 76 : 62;
     if (banner && state !== 'idle'){
       banner.t += dt; const t = banner.t, a = Math.min(1, t*4, (3.6 - t)*1.6);
       if (a > 0){
@@ -1453,6 +1496,11 @@ textarea{width:100%;box-sizing:border-box;font:12px var(--mono);border:1.5px sol
         label(WX[G.sky.key].name, W/2, by + h + 22, 14, T.muted, a);
         by += h + 34;
       } else banner = null;
+    }
+    if (G.newHaz && state === 'run'){
+      const t = G.newHaz.t, a = Math.min(1, t*5, (3 - t)*1.8), pop = reduce ? 1 : 1 + 0.35*Math.max(0, 1 - t*6);
+      ctx.save(); ctx.translate(W/2, by + 4); ctx.scale(pop, pop); ctx.rotate(-0.03); ctx.translate(-W/2, -(by + 4));
+      ribbon(W/2, by + 4, G.newHaz.text, 17, '#8c5cc4', a); ctx.restore(); by += 46;
     }
     // landmarks, weather news, first-ride hints, radio
     if (G.callout){ const a = Math.min(1, (3 - G.callout.t)*1.5, G.callout.t*4); if (!(G.callout.big && banner)) label(G.callout.text, W/2, by + 18, G.callout.big ? 20 : 16, G.callout.big ? T.ink : T.muted, a); }
