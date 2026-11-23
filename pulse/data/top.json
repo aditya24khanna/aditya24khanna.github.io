@@ -1,10 +1,10 @@
 {
  "ai": {
   "topic": "ai",
-  "updatedAt": "2026-11-22T03:23:07Z",
+  "updatedAt": "2026-11-23T03:04:17Z",
   "window": {
-   "from": "2026-10-23T00:00:00Z",
-   "to": "2026-11-22T03:23:07Z"
+   "from": "2026-10-24T00:00:00Z",
+   "to": "2026-11-23T03:04:17Z"
   },
   "method": "Ranked by impact on what product teams can build, buy or must worry about, weighted by how real it is. Max 20.",
   "items": [
@@ -14,7 +14,7 @@
     "id": "anthropic-ipo-record",
     "date": "2026-11-19",
     "headline": "Anthropic lists on Nasdaq in the largest IPO on record",
-    "summary": "Anthropic priced at $83 and raised about $81.3B, opening 34% higher before fading back toward its offer price by week's end. Its filing showed fast-growing revenue alongside very large losses and compute commitments.",
+    "summary": "Anthropic priced at $83 and raised roughly $93.5B after underwriters exercised their full option, plus a $26B private placement. The stock rose 34% on day one but gave most of that back by Friday amid a broad selloff.",
     "why": "Public-market scrutiny of AI economics starts now: margins, pricing and cost per task will shape vendor roadmaps and your AI budget.",
     "real": {
      "score": 5,
@@ -40,11 +40,11 @@
    },
    {
     "rank": 2,
-    "prevRank": 3,
+    "prevRank": 2,
     "id": "nasdaq-ai-selloff",
     "date": "2026-11-21",
     "headline": "Nasdaq's worst week since March 2020 as AI stocks slide",
-    "summary": "The Nasdaq fell 10% in a week and broader US indices entered correction. Analysts cited higher rates, regulatory risk after the midterms, Nvidia's leadership turmoil and worries about circular AI financing.",
+    "summary": "The Nasdaq fell 10% in a week and broader US indices entered correction. Tech stocks saw a brief Friday rebound but remained in correction territory. Analysts cited higher rates, Nvidia's leadership turmoil and worries about circular AI financing.",
     "why": "Expensive capital means AI spend gets judged on ROI. Expect pressure on inference cost and on features that can't show a number.",
     "real": {
      "score": 5,
@@ -60,12 +60,17 @@
       "outlet": "NPR",
       "title": "The AI boom had a really bad week",
       "url": "https://www.mprnews.org/story/2026/11/21/npr-ai-stock-markets-anthropic-nvidia"
+     },
+     {
+      "outlet": "Cboe",
+      "title": "Tech stocks rebound but Nasdaq is still in correction territory",
+      "url": "https://www.cboe.com/insights/posts/tech-stocks-rebound-but-nasdaq-is-still-in-correction-territory"
      }
     ]
    },
    {
     "rank": 3,
-    "prevRank": 2,
+    "prevRank": 3,
     "id": "claude-fable-5-2",
     "date": "2026-11-09",
     "headline": "Claude Fable 5.2 takes the top spot, with lower prices",
@@ -127,7 +132,7 @@
     "id": "jensen-huang-resigns",
     "date": "2026-11-12",
     "headline": "Jensen Huang resigns as Nvidia CEO after 33 years",
-    "summary": "Huang stepped down as CEO and board member amid an investigation into his conduct. CFO Colette Kress became interim CEO and Harvey C. Jones the first board chair. Nvidia had lost roughly $600B in value since the probe began.",
+    "summary": "Huang stepped down as CEO and board member amid an investigation. CFO Colette Kress became interim CEO. Treasury Secretary Bessent said the department is asking Nvidia's temporary management about China chip sales compliance.",
     "why": "The AI hardware leader now has a leadership gap during a capacity crunch. Watch for any effect on chip supply and pricing.",
     "real": {
      "score": 5,
@@ -144,9 +149,9 @@
       "url": "https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000082/nvidiaannouncesceotransiti.htm"
      },
      {
-      "outlet": "The Next Web",
-      "title": "Jensen Huang resigns as Nvidia CEO after 33 years",
-      "url": "https://thenextweb.com/news/jensen-huang-resigns-as-nvidia-ceo-after-33-years-effective-immediately"
+      "outlet": "Nvidia",
+      "title": "NVIDIA Announces CEO Transition",
+      "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-CEO-Transition/"
      }
     ]
    },
@@ -239,7 +244,7 @@
    },
    {
     "rank": 9,
-    "prevRank": null,
+    "prevRank": 9,
     "id": "deepseek-15b-raise",
     "date": "2026-10-30",
     "headline": "DeepSeek raises $15.8B at $86B, mostly from Chinese state funds",
@@ -268,7 +273,7 @@
    },
    {
     "rank": 10,
-    "prevRank": 9,
+    "prevRank": 10,
     "id": "openai-1-25t-valuation",
     "date": "2026-11-06",
     "headline": "OpenAI raises $11B at a $1.25 trillion valuation",
@@ -297,15 +302,44 @@
    },
    {
     "rank": 11,
-    "prevRank": 10,
+    "prevRank": null,
+    "id": "ai-inference-supply-chain",
+    "date": "2026-11-22",
+    "headline": "Canary tests expose prompt logging at AI inference providers",
+    "summary": "Dragos researchers ran 2M canary prompts July-Nov and found at least three compromised AI hosting providers plus resellers logging prompts. OpenRouter dropped three providers and 125 endpoints from its zero-data-retention list. Together AI disclosed that a coding agent leaked a credential to public GitHub, exposing customer prompt samples.",
+    "why": "If you route inference through third parties, your prompts may not be private. Audit your providers and test with canary data.",
+    "real": {
+     "score": 4,
+     "label": "Disclosed, multiple reports"
+    },
+    "trend": {
+     "id": "ai-cyber-arms-race",
+     "label": "AICyberArmsRace"
+    },
+    "sources": [
+     {
+      "outlet": "AI Weekly",
+      "title": "AI News Today, November 23: Top Stories",
+      "url": "https://aiweekly.co/ai-news-today"
+     },
+     {
+      "outlet": "AI News Digest",
+      "title": "AI News Digest — 22 November 2026",
+      "url": "https://aienews.org/digest/2026-11-22/"
+     }
+    ]
+   },
+   {
+    "rank": 12,
+    "prevRank": 11,
     "id": "millennium-prize-claims",
     "date": "2026-11-20",
-    "headline": "AI-assisted proof claims for Riemann and Navier-Stokes",
-    "summary": "An Anthropic mathematician claimed a Riemann hypothesis proof found with Claude, and co-posted an unforced Navier-Stokes blow-up proof with NYU's Tristan Buckmaster. Neither has been independently checked.",
-    "why": "Generation is cheap and verification isn't. Any high-stakes AI output needs a checking layer you trust.",
+    "headline": "AI-assisted Riemann proof passes Lean verification, peer review pending",
+    "summary": "The Lean/Mathlib community certified Alpoge's Riemann hypothesis proof code: 175,187 modules compiled with no errors under Lean 4.33.1. MIT's Andrew Sutherland verified the compilation. The Navier-Stokes proof remains unreviewed. Formal verification confirms the code, not the mathematics.",
+    "why": "Generation is cheap and verification isn't. Lean checking is a necessary but not sufficient bar for any high-stakes AI output.",
     "real": {
-     "score": 2,
-     "label": "Unverified"
+     "score": 3,
+     "label": "Code verified, math unreviewed"
     },
     "trend": {
      "id": "ai-frontier-maths",
@@ -320,14 +354,14 @@
      },
      {
       "outlet": "AI Weekly",
-      "title": "Unforced Navier-Stokes blowup",
-      "url": "https://aiweekly.co/alerts/alpge-buckmaster-post-ai-aided-unforced-navier-stokes-blowup"
+      "title": "Lean community certifies Riemann proof code",
+      "url": "https://aiweekly.co/ai-news-today"
      }
     ]
    },
    {
-    "rank": 12,
-    "prevRank": 11,
+    "rank": 13,
+    "prevRank": 12,
     "id": "nvidia-china-hopper-stop",
     "date": "2026-11-17",
     "headline": "Nvidia stops selling licensed chips to China as US rules tighten",
@@ -355,8 +389,8 @@
     ]
    },
    {
-    "rank": 13,
-    "prevRank": null,
+    "rank": 14,
+    "prevRank": 13,
     "id": "crowdstrike-ai-security-acq",
     "date": "2026-11-10",
     "headline": "CrowdStrike buys two AI security startups for $495M, adds agent kill switch",
@@ -384,8 +418,37 @@
     ]
    },
    {
-    "rank": 14,
+    "rank": 15,
     "prevRank": null,
+    "id": "amazon-decart-7b",
+    "date": "2026-11-22",
+    "headline": "Amazon nears a $7.5B deal for AI chip-switching startup Decart",
+    "summary": "Amazon is close to acquiring Israeli startup Decart, which builds software that helps AI workloads run across different chip architectures. An announcement may come at AWS re:Invent on Nov 30. Anthropic reportedly considered a ~$6B bid earlier.",
+    "why": "If AWS gets chip-switching tech, it could lower inference costs and reduce Nvidia lock-in for anyone building on Amazon's cloud.",
+    "real": {
+     "score": 3,
+     "label": "Reported, not confirmed"
+    },
+    "trend": {
+     "id": "frontier-model-race",
+     "label": "FrontierModelRace"
+    },
+    "sources": [
+     {
+      "outlet": "TechRepublic",
+      "title": "Amazon Reportedly in Talks to Buy Decart AI for Around $7B",
+      "url": "https://www.techrepublic.com/article/news-amazon-decart-ai-acquisition-talks/"
+     },
+     {
+      "outlet": "Let's Data Science",
+      "title": "Amazon in Talks to Acquire Decart for Around $7 Billion",
+      "url": "https://letsdatascience.com/news/amazon-in-talks-to-acquire-decart-for-around-7-billion-e3e3c9e2"
+     }
+    ]
+   },
+   {
+    "rank": 16,
+    "prevRank": 14,
     "id": "fal-inference-1-3b",
     "date": "2026-11-03",
     "headline": "Inference startup fal raises $1.3B at $16B as demand outpaces supply",
@@ -413,8 +476,8 @@
     ]
    },
    {
-    "rank": 15,
-    "prevRank": 12,
+    "rank": 17,
+    "prevRank": 15,
     "id": "gemini-mac-computer-use",
     "date": "2026-11-19",
     "headline": "Gemini gets computer use on Mac, in a background window",
@@ -438,37 +501,8 @@
     ]
    },
    {
-    "rank": 16,
-    "prevRank": 13,
-    "id": "nonprofits-sue-frontier-labs",
-    "date": "2026-11-12",
-    "headline": "Nonprofits sue five labs to halt frontier AI development",
-    "summary": "A coalition filed suit in California against OpenAI, Google, Anthropic, Meta and SpaceX's AI division, seeking to bar further frontier development. Together with the state's case, it opens a new legal front for the labs.",
-    "why": "Long shot, but it adds to regulatory uncertainty for anyone building on frontier models.",
-    "real": {
-     "score": 3,
-     "label": "Filed, outcome uncertain"
-    },
-    "trend": {
-     "id": "agent-safety-liability",
-     "label": "AgentLiability"
-    },
-    "sources": [
-     {
-      "outlet": "James M",
-      "title": "AI Roundup: November 2026",
-      "url": "https://jamesm.blog/ai/ai-roundup-november-2026/"
-     },
-     {
-      "outlet": "Crypto Briefing",
-      "title": "California sues OpenAI (context)",
-      "url": "https://cryptobriefing.com/california-sues-openai-ai-safety/"
-     }
-    ]
-   },
-   {
-    "rank": 17,
-    "prevRank": 14,
+    "rank": 18,
+    "prevRank": 17,
     "id": "india-pax-silica-declaration",
     "date": "2026-11-15",
     "headline": "India signs US-led declaration to secure AI supply chains",
@@ -496,8 +530,8 @@
     ]
    },
    {
-    "rank": 18,
-    "prevRank": 15,
+    "rank": 19,
+    "prevRank": 18,
     "id": "anthropic-s1-filing",
     "date": "2026-10-26",
     "headline": "Anthropic files to go public, revealing AI-lab economics",
@@ -528,16 +562,16 @@
  },
  "startups": {
   "topic": "startups",
-  "updatedAt": "2026-11-22T03:23:07Z",
+  "updatedAt": "2026-11-23T03:04:17Z",
   "window": {
-   "from": "2026-10-23T00:00:00Z",
-   "to": "2026-11-22T03:23:07Z"
+   "from": "2026-10-24T00:00:00Z",
+   "to": "2026-11-23T03:04:17Z"
   },
   "method": "Ranked by impact on what product teams can build, buy or must worry about, weighted by how real it is. Max 20.",
   "items": [
    {
     "rank": 1,
-    "prevRank": null,
+    "prevRank": 1,
     "id": "isomorphic-5b-series-c",
     "date": "2026-11-18",
     "headline": "Isomorphic Labs raises $5B for AI drug discovery",
@@ -567,7 +601,7 @@
    },
    {
     "rank": 2,
-    "prevRank": null,
+    "prevRank": 2,
     "id": "shield-ai-2-5b-defense",
     "date": "2026-11-03",
     "headline": "Shield AI raises $2.5B and buys radar maker Echodyne for $5.3B",
@@ -591,7 +625,7 @@
    },
    {
     "rank": 3,
-    "prevRank": null,
+    "prevRank": 3,
     "id": "zipline-1-5b-drones",
     "date": "2026-11-03",
     "headline": "Zipline raises $1.5B at $21.5B for drone delivery",
@@ -615,7 +649,7 @@
    },
    {
     "rank": 4,
-    "prevRank": null,
+    "prevRank": 4,
     "id": "langchain-300m-3b",
     "date": "2026-11-13",
     "headline": "LangChain raises $300M at a $3B valuation for agent tooling",
@@ -645,7 +679,7 @@
    },
    {
     "rank": 5,
-    "prevRank": null,
+    "prevRank": 5,
     "id": "mercor-750m-ai-hiring",
     "date": "2026-11-14",
     "headline": "AI hiring platform Mercor raises $750M",
@@ -670,7 +704,7 @@
    },
    {
     "rank": 6,
-    "prevRank": null,
+    "prevRank": 6,
     "id": "corma-125m-seed-to-unicorn",
     "date": "2026-11-17",
     "headline": "Security startup Corma hits $1B valuation three months after seed",
@@ -695,7 +729,7 @@
    },
    {
     "rank": 7,
-    "prevRank": null,
+    "prevRank": 7,
     "id": "india-funding-bounce-back",
     "date": "2026-11-20",
     "headline": "Indian startup funding rebounds to $291M after record-low $25M week",
@@ -725,15 +759,15 @@
    },
    {
     "rank": 8,
-    "prevRank": null,
+    "prevRank": 8,
     "id": "razorpay-ipo-udrhp",
     "date": "2026-11-20",
-    "headline": "Razorpay files updated IPO papers, targets February 2027 listing",
-    "summary": "Indian payments giant Razorpay is reportedly filing its updated DRHP this week, targeting a Rs 5,700-crore ($670M) IPO and a February 2027 listing on Indian exchanges.",
+    "headline": "Razorpay gets SEBI nod, targets February 2027 listing",
+    "summary": "Indian payments giant Razorpay received SEBI approval for its Rs 5,000-6,000 crore ($600-700M) IPO, targeting a $5B valuation and a February 2027 listing on Indian exchanges. It filed its confidential DRHP in June 2026.",
     "why": "Razorpay going public would be the biggest Indian fintech IPO and a bellwether for the ecosystem's appetite for tech listings.",
     "real": {
-     "score": 3,
-     "label": "Reported, filing expected"
+     "score": 4,
+     "label": "SEBI approval confirmed"
     },
     "trend": {
      "id": "india-funding-winter",
@@ -741,20 +775,20 @@
     },
     "sources": [
      {
+      "outlet": "YourStory",
+      "title": "Razorpay gets Sebi nod for Rs 5,000-6,000 Cr IPO; eyes $5B valuation",
+      "url": "https://yourstory.com/2026/11/razorpay-gets-sebi-nod-for-rs-5000-6000-cr-ipo-eyes-5b-valuation"
+     },
+     {
       "outlet": "Inc42",
       "title": "Razorpay To File UDRHP By Next Week, Eyes IPO By February 2027",
       "url": "https://inc42.com/buzz/razorpay-to-file-udrhp-by-next-week-eyes-ipo-by-february-2027-report/"
-     },
-     {
-      "outlet": "Business Today",
-      "title": "Razorpay files confidential DRHP for IPO",
-      "url": "https://www.businesstoday.in/amp/markets/ipo-corner/story/fintech-unicorn-razorpay-files-confidential-drhp-to-launch-its-ipo-check-details-537107-2026-06-16"
      }
     ]
    },
    {
     "rank": 9,
-    "prevRank": null,
+    "prevRank": 9,
     "id": "global-vc-oct-59b-china",
     "date": "2026-10-31",
     "headline": "Global VC funding hit $59B in October, lifted by China's largest deal ever",
@@ -778,7 +812,7 @@
    },
    {
     "rank": 10,
-    "prevRank": null,
+    "prevRank": 10,
     "id": "applied-compute-350m",
     "date": "2026-11-03",
     "headline": "Applied Compute raises $350M at $3.25B for AI cloud",
@@ -804,16 +838,16 @@
  },
  "fintech": {
   "topic": "fintech",
-  "updatedAt": "2026-11-22T03:23:07Z",
+  "updatedAt": "2026-11-23T03:04:17Z",
   "window": {
-   "from": "2026-10-23T00:00:00Z",
-   "to": "2026-11-22T03:23:07Z"
+   "from": "2026-10-24T00:00:00Z",
+   "to": "2026-11-23T03:04:17Z"
   },
   "method": "Ranked by impact on what product teams can build, buy or must worry about, weighted by how real it is. Max 20.",
   "items": [
    {
     "rank": 1,
-    "prevRank": null,
+    "prevRank": 1,
     "id": "mastercard-ant-agent-payments",
     "date": "2026-11-19",
     "headline": "Mastercard and Ant prove AI agents can pay, with limits",
@@ -843,7 +877,7 @@
    },
    {
     "rank": 2,
-    "prevRank": null,
+    "prevRank": 2,
     "id": "payhawk-280m-2b",
     "date": "2026-11-18",
     "headline": "Payhawk raises $280M at $2B for AI-powered spend management",
@@ -873,7 +907,7 @@
    },
    {
     "rank": 3,
-    "prevRank": null,
+    "prevRank": 3,
     "id": "lockwood-ai-bank-launch",
     "date": "2026-11-16",
     "headline": "Starling founder launches Lockwood, a bank built for AI agents",
@@ -902,7 +936,7 @@
    },
    {
     "rank": 4,
-    "prevRank": null,
+    "prevRank": 4,
     "id": "model-ml-250m-1-5b",
     "date": "2026-11-18",
     "headline": "Model ML raises $250M at $1.5B to automate banker workflows",
@@ -927,7 +961,7 @@
    },
    {
     "rank": 5,
-    "prevRank": null,
+    "prevRank": 5,
     "id": "qonto-credit-licence",
     "date": "2026-11-18",
     "headline": "Qonto wins a full French banking licence to lend and take deposits",
@@ -952,7 +986,7 @@
    },
    {
     "rank": 6,
-    "prevRank": null,
+    "prevRank": 6,
     "id": "fdic-fintech-deposit-rules",
     "date": "2026-11-14",
     "headline": "FDIC proposes new rules on how banks can pay fintechs in deposit deals",
@@ -981,15 +1015,15 @@
    },
    {
     "rank": 7,
-    "prevRank": null,
+    "prevRank": 7,
     "id": "razorpay-ipo-fintech",
     "date": "2026-11-20",
-    "headline": "Razorpay moves toward India's biggest fintech IPO",
-    "summary": "Indian payments leader Razorpay is reportedly filing its updated DRHP, targeting a Rs 5,700-crore ($670M) IPO and a February 2027 listing. It first filed confidentially with SEBI in mid-2026.",
+    "headline": "Razorpay gets SEBI nod, targets India's biggest fintech IPO",
+    "summary": "Razorpay received SEBI approval for its Rs 5,000-6,000 crore ($600-700M) IPO, targeting a $5B valuation and a February 2027 listing. It first filed its confidential DRHP in June 2026.",
     "why": "A successful Razorpay listing would be a signal that Indian fintech can go public at scale, potentially unlocking the IPO path for peers.",
     "real": {
-     "score": 3,
-     "label": "Reported, filing expected"
+     "score": 4,
+     "label": "SEBI approval confirmed"
     },
     "trend": {
      "id": "fintech-charters",
@@ -997,15 +1031,20 @@
     },
     "sources": [
      {
+      "outlet": "YourStory",
+      "title": "Razorpay gets Sebi nod for Rs 5,000-6,000 Cr IPO; eyes $5B valuation",
+      "url": "https://yourstory.com/2026/11/razorpay-gets-sebi-nod-for-rs-5000-6000-cr-ipo-eyes-5b-valuation"
+     },
+     {
       "outlet": "Inc42",
-      "title": "Razorpay To File UDRHP, Eyes IPO By February 2027",
+      "title": "Razorpay To File UDRHP By Next Week, Eyes IPO By February 2027",
       "url": "https://inc42.com/buzz/razorpay-to-file-udrhp-by-next-week-eyes-ipo-by-february-2027-report/"
      }
     ]
    },
    {
     "rank": 8,
-    "prevRank": null,
+    "prevRank": 8,
     "id": "visa-agentic-ready-expansion",
     "date": "2026-11-19",
     "headline": "Visa connects 40 issuers with 85 partners for agentic commerce",
@@ -1034,7 +1073,7 @@
    },
    {
     "rank": 9,
-    "prevRank": null,
+    "prevRank": 9,
     "id": "fintech-weekly-991m-deals",
     "date": "2026-11-20",
     "headline": "Fintech deals hit $991M in a single week, strongest since summer",
