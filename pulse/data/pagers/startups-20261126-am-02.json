@@ -1,0 +1,42 @@
+{
+ "tldr": "Dante Security ($10M seed, NFX-led) ties AI agent actions to responsible employees. Zipher ($45M Series A) optimises cloud compute costs. AidenAI ($32M Series A) builds AI and ML tools. The pattern: enterprises need to control and cost-manage their agents.",
+ "context": "These three rounds are smaller than the hardware megarounds but tell a sharper story about where enterprise AI is headed.\n\nDante Security was founded by Moshe Lipsker, Gabi Beyo (ex-Imperva) and Shai Feinberg in Tel Aviv. Their pitch is simple: when an AI agent takes an action, someone inside the company should be responsible for it. This is an accountability layer, not a permissions layer \u2014 it doesn't stop agents from acting, it ensures there's a human on the hook for every action.\n\nZipher is based in New York with offices in Tel Aviv. Its software analyses corporate data workloads and picks the optimal cloud compute configuration within cost constraints. Customer Hertz reports 25\u201340% savings on compute. The $45M Series A was co-led by Maor Investments and Glilot Capital, with TLV Partners returning.\n\nAidenAI raised $32M from A91 Partners, an Indian venture firm, suggesting the company has India-linked operations or market focus.\n\nThe pattern across all three: enterprises are past the 'should we use AI agents?' question and into the 'how do we control and afford them?' phase.",
+ "numbers": [
+  {
+   "v": "$10M",
+   "k": "Dante Security seed"
+  },
+  {
+   "v": "$45M",
+   "k": "Zipher Series A"
+  },
+  {
+   "v": "$32M",
+   "k": "AidenAI Series A"
+  },
+  {
+   "v": "25\u201340%",
+   "k": "Hertz compute savings (Zipher claim)"
+  }
+ ],
+ "whyPM": "If you're a product leader shipping AI agents, two of your next headaches are already being productised. Dante answers the question your CISO will ask: 'Who is accountable when this agent does something wrong?' Zipher answers the question your CFO will ask: 'Why did our cloud bill triple?'\n\nThe timing matters. Agent deployment in enterprises is accelerating, and the governance and cost-management tools are trailing by 6\u201312 months. That gap is what these startups are filling. If you're building an agent-powered product, you should expect enterprise buyers to ask about accountability and cost controls in procurement \u2014 and these startups are setting the expectations.",
+ "bull": "Agent accountability and cost management become standard enterprise requirements, creating a large and fast-growing market. These startups define the category and attract follow-on funding.",
+ "bear": "Large platform vendors (AWS, Azure, GCP) bundle agent governance and cost management into their existing services, squeezing standalone tools. The agent-safety market fragments before standards emerge.",
+ "unknowns": [
+  "Will agent accountability become a regulatory requirement or remain a voluntary practice?",
+  "How much of enterprise AI spend is actually reducible through better compute optimisation?",
+  "Is A91 Partners' investment in AidenAI a signal of India enterprise AI demand?"
+ ],
+ "watch": [
+  "Whether cloud providers launch competing agent-governance tools",
+  "Enterprise procurement requirements around agent accountability",
+  "India-specific AI agent tooling demand"
+ ],
+ "deeper": [
+  {
+   "label": "Tech Startups: Nov 25 funding",
+   "note": "Full round details for Dante, Zipher and others",
+   "url": "https://techstartups.com/2026/11/25/startup-funding-news-today-november-25-2026-zipher-peak-energy-atomqubic-dante-security-more/"
+  }
+ ]
+}

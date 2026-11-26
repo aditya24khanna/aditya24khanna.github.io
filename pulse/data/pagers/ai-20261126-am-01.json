@@ -1,0 +1,53 @@
+{
+ "tldr": "OpenAI demonstrated that GPT-6 models can design functional proteins from first principles, using only reasoning and code \u2014 no biology-specific tools. Wet-lab tests validated the designs across five protein targets.",
+ "context": "Protein design has traditionally required specialised software like AlphaFold, Rosetta or RFdiffusion, each trained on domain-specific datasets. OpenAI's result suggests that frontier language models have absorbed enough biochemical knowledge during general training to produce working designs without fine-tuning or domain tools.\n\nThe wet-lab results are specific: 35 of 322 minibinders (10.9%) bound their targets, and 128 of 182 antibody loop redesigns (70%) maintained IL-4Ra binding. The latest internal model scored 0.81 DockQ versus 0.57 for GPT-6.2, while also achieving 92% docking accuracy on the Scarpino dataset.\n\nThis sits in a broader trend of AI moving from prediction (tell me what this protein does) to generation (design me a protein that does X). The difference matters because generation is what drug companies pay for.\n\nThe binding rates are modest compared to purpose-built tools \u2014 RFdiffusion achieves 43.7% on motif scaffolding versus OpenAI's claim of comparable results \u2014 but the fact that a general-purpose model can compete at all is the signal.\n\nOpenAI tested this with a wet-lab partner. The company published binding rates and structural metrics but has not released the full experimental protocol or raw data for independent verification.",
+ "numbers": [
+  {
+   "v": "10.9%",
+   "k": "Minibinder binding rate"
+  },
+  {
+   "v": "70%",
+   "k": "Antibody loop designs that kept binding"
+  },
+  {
+   "v": "0.81",
+   "k": "DockQ score (latest internal model)"
+  },
+  {
+   "v": "92%",
+   "k": "Docking accuracy on Scarpino dataset"
+  },
+  {
+   "v": "5",
+   "k": "Protein targets tested"
+  }
+ ],
+ "whyPM": "For product leaders building AI-powered tools in biotech, drug discovery or diagnostics, this result redraws the build-vs-buy map. If a general-purpose model can design proteins, the specialised tools you're licensing or building may face competition from API calls to frontier models.\n\nThe product implication is about the 'translation layer.' Today, most AI products in regulated domains have an expert-in-the-loop who translates AI output into something testable or actionable. If the AI can produce directly testable output \u2014 a protein sequence that actually binds \u2014 that layer gets thinner. Thinner translation layers mean faster iteration cycles, lower costs per experiment, and potentially fewer specialist hires.\n\nBut the regulatory and safety questions are real. A 10.9% binding rate means 89.1% of designs don't work. In drug development, the cost of a failed experiment is high. Product leaders need to think about where AI-generated designs sit in their quality pipeline, not just whether they work at all.",
+ "bull": "Frontier models become the default starting point for protein design, collapsing the time and cost of early-stage drug discovery. Specialised tools become validation layers rather than generators. API-first biotech companies emerge that treat protein design as a prompt engineering problem.",
+ "bear": "The 10.9% hit rate doesn't scale \u2014 real drug targets are harder than the five proteins tested. Regulatory agencies require reproducibility and transparency that general-purpose models can't provide. Purpose-built tools maintain their lead as they incorporate the same scaling advantages.",
+ "unknowns": [
+  "Will independent labs reproduce the binding rates on the same and different targets?",
+  "How do the designed proteins perform in functional assays beyond binding?",
+  "What is the compute cost per successful design compared to purpose-built tools?",
+  "Will regulatory agencies accept designs from general-purpose models without domain-specific validation?"
+ ],
+ "watch": [
+  "Independent replication attempts of the minibinder and antibody loop results",
+  "Whether OpenAI releases the full experimental protocol",
+  "Pricing and API access for biology-focused GPT-6 capabilities",
+  "Response from AlphaFold/DeepMind and Rosetta teams"
+ ],
+ "deeper": [
+  {
+   "label": "OpenAI blog post",
+   "note": "Full methodology and results",
+   "url": "https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities/"
+  },
+  {
+   "label": "AI Weekly analysis",
+   "note": "Detailed benchmark comparisons",
+   "url": "https://aiweekly.co/alerts/openais-gpt-62-hits-109-wet-lab-rate-on-new-minibinders"
+  }
+ ]
+}

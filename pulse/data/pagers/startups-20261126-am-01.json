@@ -1,0 +1,47 @@
+{
+ "tldr": "Sebastian Thrun's Dulo raised a $130M seed for hardware/semiconductors \u2014 one of the largest seed rounds ever. Avicena closed a $100M+ Series C for microLED optical interconnects promising 1Tbps chip-to-chip data transfer.",
+ "context": "The AI hardware supply chain has three bottlenecks: chips (Nvidia GPUs), interconnects (how chips talk to each other), and power (keeping it all running). Capital is now flowing into all three.\n\nDulo is led by Sebastian Thrun, the Stanford professor who founded Waymo and Udacity. A $130M seed round for a hardware company signals that investors see a gap in the market large enough to justify pre-revenue bets at this scale. The company hasn't disclosed its specific product, but the semiconductor focus and Thrun's robotics background suggest it may be targeting AI accelerators or edge computing.\n\nAvicena's microLED interconnects address the second bottleneck. As AI clusters grow, the speed at which chips communicate becomes the limiting factor. Avicena's technology uses tiny LEDs to send data between chips at 1 terabit per second, which could replace the copper and silicon photonics approaches used today. The company started shipping 1Tbps evaluation kits in August and expects its first commercial product in 2027.\n\nThe investor roster tells a story: AMD Ventures, Samsung Catalyst, SK hynix and Tiger Global are all betting that optical interconnects will be essential for next-generation AI infrastructure.",
+ "numbers": [
+  {
+   "v": "$130M",
+   "k": "Dulo seed round"
+  },
+  {
+   "v": "$100M+",
+   "k": "Avicena Series C"
+  },
+  {
+   "v": "1Tbps",
+   "k": "Avicena interconnect speed"
+  },
+  {
+   "v": "2027",
+   "k": "Avicena first commercial product"
+  }
+ ],
+ "whyPM": "Product leaders don't usually track hardware funding rounds, but these two matter for one reason: they signal where infrastructure costs are headed. When $230M flows into the physical layer of AI in a week, the hardware stack is getting more competitive \u2014 and more competition means better price/performance for the people who build on top of it.\n\nThe interconnect bet is particularly relevant. If your product's AI features are latency-sensitive (real-time inference, streaming, interactive agents), faster chip-to-chip communication directly improves your user experience. The fact that AMD, Samsung and SK hynix are investing means these technologies are likely to be integrated into the platforms you already use.",
+ "bull": "Competition in AI hardware accelerates, driving down compute costs and improving performance for product teams. Optical interconnects become standard in AI data centres by 2028, enabling new latency-sensitive applications.",
+ "bear": "Hardware startups face long development cycles and capital-intensive scaling. Dulo's product hasn't been disclosed; Avicena's commercial product is a year away. Nvidia's ecosystem lock-in may limit the market for alternatives.",
+ "unknowns": [
+  "What is Dulo actually building?",
+  "Can Avicena's microLED interconnects compete with Nvidia's NVLink and similar proprietary solutions?",
+  "Will the AI hardware spending cycle sustain long enough for these startups to reach commercial scale?"
+ ],
+ "watch": [
+  "Dulo's product announcement",
+  "Avicena's evaluation kit adoption by hyperscalers",
+  "Whether Nvidia responds with competing interconnect technologies"
+ ],
+ "deeper": [
+  {
+   "label": "Avicena Series C details",
+   "note": "Round breakdown and technology overview",
+   "url": "https://thenextweb.com/news/avicena-100m-series-c-microled-optical-interconnects-ai"
+  },
+  {
+   "label": "Tech Startups roundup",
+   "note": "Full Nov 25 funding list",
+   "url": "https://techstartups.com/2026/11/25/startup-funding-news-today-november-25-2026-zipher-peak-energy-atomqubic-dante-security-more/"
+  }
+ ]
+}

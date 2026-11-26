@@ -1,0 +1,35 @@
+{
+ "tldr": "DeepMind's Koray Kavukcuoglu revealed that AI agents now control part of the compute and run experiments for upcoming Gemini models. DeepMind avoids training on the agents' chains of thought to keep them interpretable.",
+ "context": "The idea of AI helping to train AI isn't new \u2014 automated hyperparameter tuning and neural architecture search have been standard for years. What's new is agents with general reasoning capabilities running actual research experiments, not just optimisation loops.\n\nKavukcuoglu made the claim on DeepMind's podcast. He didn't specify which experiments, what fraction of compute, or what the agents' success rate is. The statement that full recursive self-improvement is 'far off' is a caveat, but it's also the kind of thing labs say right up until it isn't.\n\nThe interpretability angle is interesting: DeepMind deliberately avoids training on the agents' chains of thought. This suggests they want to be able to audit what the agents are doing, even at the cost of potential performance gains from training on agent reasoning.\n\nThis sits alongside other signals: OpenAI's recent agent benchmarks, Anthropic's MCP Tasks going GA, and the broader industry push toward agents that do multi-step, long-horizon work. The difference is that DeepMind is using agents to build the next model, not just ship features.",
+ "numbers": [
+  {
+   "v": "Part",
+   "k": "Share of DeepMind compute controlled by agents"
+  },
+  {
+   "v": "0",
+   "k": "Agent CoT used for training (deliberately)"
+  }
+ ],
+ "whyPM": "If the labs are using agents to build better models, the agent capabilities they need internally are a preview of what will ship externally. Long-horizon planning, experiment design, failure analysis, resource allocation \u2014 these are the capabilities DeepMind's internal agents need, and they'll show up in the next Gemini release.\n\nFor product leaders, this means agent capabilities will improve faster than you expect. Plan for a world where agents can run multi-day research workflows, not just answer questions. The interpretability choice \u2014 not training on agent CoT \u2014 also signals what enterprise customers will demand: auditable agents whose reasoning you can read.",
+ "bull": "Agents accelerate model development, creating a virtuous cycle where better models produce better agents that produce better models. Capability jumps between model generations accelerate. The labs pull further ahead of open-source alternatives.",
+ "bear": "Agent-driven research introduces systematic biases or blind spots that aren't caught until they ship. The 'far off' caveat on recursive self-improvement becomes a governance problem if it arrives sooner than expected. Interpretability suffers as agents become more capable.",
+ "unknowns": [
+  "What fraction of DeepMind's research compute do agents actually control?",
+  "What is the agents' success rate on experiments compared to human researchers?",
+  "Are other labs doing the same thing without saying so?",
+  "What governance frameworks exist for agent-driven model development?"
+ ],
+ "watch": [
+  "Whether Gemini's next release shows capability jumps consistent with agent-assisted development",
+  "Other labs' disclosures about using agents in their research pipelines",
+  "DeepMind publishing more details on their agent-research methodology"
+ ],
+ "deeper": [
+  {
+   "label": "The Decoder report",
+   "note": "Coverage of Kavukcuoglu's podcast appearance",
+   "url": "https://the-decoder.com/ai-agents-now-control-part-of-deepminds-compute-for-gemini-experiments-but-recursive-self-improvement-remains-distant/"
+  }
+ ]
+}

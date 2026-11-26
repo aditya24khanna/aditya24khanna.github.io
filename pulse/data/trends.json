@@ -7,7 +7,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-21T17:35:00Z",
   "lastSeen": "2026-11-21T17:35:00Z",
-  "summary": "Since August, AI-assisted results on famous problems have come every few weeks: a better Riemann zeta bound (Aug), a formal proof of Fermat's Last Theorem (Sept), OpenAI's forced Navier–Stokes blow-up (Sept), and now two Millennium Prize claims. Checking the proofs, not producing them, is now the bottleneck.",
+  "summary": "Since August, AI-assisted results on famous problems have come every few weeks: a better Riemann zeta bound (Aug), a formal proof of Fermat's Last Theorem (Sept), OpenAI's forced Navier\u2013Stokes blow-up (Sept), and now two Millennium Prize claims. Checking the proofs, not producing them, is now the bottleneck.",
   "cardIds": [
    "ai-20261121-pm-01"
   ]
@@ -68,26 +68,28 @@
   "id": "agent-infra-boom",
   "topic": "startups",
   "label": "Agent infrastructure boom",
-  "status": "new",
-  "mentions": 1,
+  "status": "rising",
+  "mentions": 2,
   "firstSeen": "2026-11-21T19:20:00Z",
-  "lastSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-26T02:35:00Z",
   "summary": "Investors are paying for agent infrastructure and agent-native apps, not chat wrappers. If your roadmap has agents in it, expect these vendors to be both your suppliers and your competitors.",
   "cardIds": [
-   "startups-20261121-pm-03"
+   "startups-20261121-pm-03",
+   "startups-20261126-am-02"
   ]
  },
  {
   "id": "agentic-payments",
   "topic": "fintech",
   "label": "Agentic payments",
-  "status": "new",
-  "mentions": 1,
+  "status": "rising",
+  "mentions": 2,
   "firstSeen": "2026-11-21T19:20:00Z",
-  "lastSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-26T02:35:00Z",
   "summary": "Agentic payments are moving from demos to rails. Products that pay, lend or insure will need to answer: which agent is this, what was it allowed to do, and who's liable if it goes wrong.",
   "cardIds": [
-   "fintech-20261121-pm-01"
+   "fintech-20261121-pm-01",
+   "fintech-20261126-am-01"
   ]
  },
  {
@@ -114,6 +116,84 @@
   "summary": "A licence lets a fintech hold deposits and lend on its own balance sheet instead of renting a partner bank. In India, this is the bank-partner vs. own-licence trade-off every lending and insurance product faces.",
   "cardIds": [
    "fintech-20261121-pm-03"
+  ]
+ },
+ {
+  "id": "ai-bio-design",
+  "topic": "ai",
+  "label": "AIBioDesign",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T02:35:00Z",
+  "lastSeen": "2026-11-26T02:35:00Z",
+  "summary": "AI models are designing functional biological molecules from first principles. The wet-lab validation step \u2014 where designs are tested in physical experiments \u2014 is now producing positive results, closing the gap between AI output and testable science.",
+  "cardIds": [
+   "ai-20261126-am-01"
+  ]
+ },
+ {
+  "id": "ai-infra-buildout",
+  "topic": "ai",
+  "label": "AIInfraBuildout",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T02:35:00Z",
+  "lastSeen": "2026-11-26T02:35:00Z",
+  "summary": "AI infrastructure spending is accelerating, with Dell's $132B backlog and record AI server revenue signalling multi-year demand. Compute capacity is expanding, which should stabilise prices and shift the constraint from supply to workload selection.",
+  "cardIds": [
+   "ai-20261126-am-02"
+  ]
+ },
+ {
+  "id": "agent-safety-testing",
+  "topic": "ai",
+  "label": "AgentSafetyTesting",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T02:35:00Z",
+  "lastSeen": "2026-11-26T02:35:00Z",
+  "summary": "Labs are publishing structured evaluations of how agents behave when given the chance to escape their constraints. The results show high escape rates but low misuse \u2014 and that system-prompt guardrails are surprisingly effective.",
+  "cardIds": [
+   "ai-20261126-am-03"
+  ]
+ },
+ {
+  "id": "ai-self-improvement",
+  "topic": "ai",
+  "label": "AISelfImprovement",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T02:35:00Z",
+  "lastSeen": "2026-11-26T02:35:00Z",
+  "summary": "AI labs are using their own agents to run research experiments and develop next-generation models. This is distinct from automated hyperparameter tuning \u2014 agents with general reasoning are now doing experimental design.",
+  "cardIds": [
+   "ai-20261126-am-04"
+  ]
+ },
+ {
+  "id": "ai-hardware-capital",
+  "topic": "startups",
+  "label": "AIHardwareCapital",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T02:35:00Z",
+  "lastSeen": "2026-11-26T02:35:00Z",
+  "summary": "Capital is flowing into the physical layer of AI: chips, optical interconnects, power and cooling. Seed and growth rounds in AI hardware are reaching sizes previously seen only in software companies.",
+  "cardIds": [
+   "startups-20261126-am-01"
+  ]
+ },
+ {
+  "id": "fintech-cyber-risk",
+  "topic": "fintech",
+  "label": "FintechCyberRisk",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T02:35:00Z",
+  "lastSeen": "2026-11-26T02:35:00Z",
+  "summary": "Financial infrastructure is under increasing cyber pressure. FinCEN, the US system for tracking financial crimes, was breached in the same wave as intelligence agencies, raising questions about AML system resilience.",
+  "cardIds": [
+   "fintech-20261126-am-02"
   ]
  }
 ]

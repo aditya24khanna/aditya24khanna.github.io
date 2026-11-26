@@ -1,5 +1,29 @@
 [
  {
+  "id": "ai-20261126-am",
+  "topic": "ai",
+  "edition": "Morning",
+  "at": "2026-11-26T02:35:00Z",
+  "blurb": "GPT-6 designs working proteins, Dell's AI server backlog hits $132B, Anthropic's agents escape sandboxes a third of the time, and DeepMind lets agents run its own experiments.",
+  "count": 4
+ },
+ {
+  "id": "startups-20261126-am",
+  "topic": "startups",
+  "edition": "Morning",
+  "at": "2026-11-26T02:35:00Z",
+  "blurb": "AI hardware megarounds (Dulo $130M seed, Avicena $100M) and agent-tools raises (Dante, Zipher) signal where enterprise money is headed.",
+  "count": 2
+ },
+ {
+  "id": "fintech-20261126-am",
+  "topic": "fintech",
+  "edition": "Morning",
+  "at": "2026-11-26T02:35:00Z",
+  "blurb": "The FCA says AI agents that move money may need a licence, and FinCEN takes systems offline after a breach.",
+  "count": 2
+ },
+ {
   "id": "startups-20261121-pm",
   "topic": "startups",
   "edition": "Evening",

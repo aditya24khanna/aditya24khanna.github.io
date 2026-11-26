@@ -1,0 +1,46 @@
+{
+ "tldr": "The UK FCA published guidance saying that AI agents that move money, arrange borrowing or make investment decisions may need FCA authorisation. Calling yourself a 'technology provider' is not an exemption.",
+ "context": "The UK's Financial Conduct Authority published 'Our approach to Agentic AI' on 24 November. This is not legislation \u2014 it's guidance \u2014 but it's the first time a major financial regulator has drawn a line around agentic AI specifically.\n\nThe core message is that if an AI agent autonomously makes a financial decision (not just recommends one), the firm operating it may need to be FCA-authorised. This applies even if the firm considers itself a technology provider rather than a financial services company.\n\nThis is an extension of the FCA's Mills Review, published earlier in 2026, which examined AI-driven change in retail financial services and flagged agentic AI as a priority concern. The Mills Review found that AI is already making decisions in lending, insurance underwriting and investment advice \u2014 and the regulatory framework hasn't kept up.\n\nThe FCA's good-and-poor-practice guidance from October set the stage, covering data quality, model governance and consumer duty obligations for AI. The November agentic guidance goes further by addressing autonomous action.\n\nFor Indian product leaders, the RBI and SEBI haven't published equivalent guidance yet, but the FCA often leads on fintech regulation \u2014 India's frameworks tend to follow within 12\u201324 months.",
+ "numbers": [
+  {
+   "v": "1st",
+   "k": "Major regulator to issue agentic AI finance guidance"
+  },
+  {
+   "v": "Nov 24",
+   "k": "Publication date"
+  }
+ ],
+ "whyPM": "If you're building a payment agent, lending bot, robo-advisor or insurance underwriting tool for the UK market, this guidance changes your compliance checklist immediately. The FCA is saying that the 'it's just technology' defence won't work if your product makes autonomous financial decisions.\n\nThe practical question for product leaders is where the line sits between 'AI recommends, human decides' and 'AI decides.' The FCA's guidance suggests that if the human approval step is perfunctory \u2014 a rubber stamp on what the AI already decided \u2014 that may still count as the AI making the decision.\n\nFor products serving India: the RBI's approach to digital lending and the SEBI's fintech sandbox rules don't yet address agentic AI specifically, but the FCA's framing is likely to influence how Indian regulators approach this. Building for FCA compliance now gives you a head start.",
+ "bull": "Clear regulatory expectations accelerate enterprise adoption of agentic fintech products. First-movers who build compliant agents gain a competitive advantage. The FCA's approach becomes a global template, reducing regulatory fragmentation.",
+ "bear": "The guidance is vague enough to create legal uncertainty, slowing product launches as firms wait for clearer rules. Compliance costs for agentic AI products in finance make them viable only for large incumbents. India and other markets adopt stricter versions.",
+ "unknowns": [
+  "Will the FCA issue binding rules, or stay at the guidance level?",
+  "How will the FCA distinguish between AI-assisted and AI-autonomous financial decisions?",
+  "When will the RBI and SEBI address agentic AI specifically?",
+  "Will the FCA require specific technical safeguards (sandboxing, audit trails) for agentic products?"
+ ],
+ "watch": [
+  "FCA enforcement actions or formal investigations involving agentic AI products",
+  "RBI and SEBI public comments on agentic AI in finance",
+  "Whether fintech startups in the FCA sandbox test agentic products",
+  "Industry response and lobbying around the guidance"
+ ],
+ "deeper": [
+  {
+   "label": "FCA: Our approach to Agentic AI",
+   "note": "Primary source",
+   "url": "https://www.fca.org.uk/firms/innovation/ai-approach/agentic-ai"
+  },
+  {
+   "label": "PYMNTS analysis",
+   "note": "Coverage and industry reaction",
+   "url": "https://www.pymnts.com/news/artificial-intelligence/2026/fca-warns-companies-against-unregulated-agentic-activity/"
+  },
+  {
+   "label": "PwC regulatory brief",
+   "note": "Preparing for agentic AI regulation",
+   "url": "https://www.pwc.co.uk/industries/financial-services/understanding-regulatory-developments/agentic-ai-preparing-for-greater-regulatory-attention.html"
+  }
+ ]
+}
