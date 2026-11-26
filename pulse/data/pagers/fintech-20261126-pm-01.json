@@ -1,0 +1,38 @@
+{
+ "tldr": "The FDIC and state banking regulators endorsed a new nonprofit that will create standards for evaluating bank-technology vendors. The idea: assess a fintech once and let all banks use the result. Adoption is voluntary, and banks still bear full liability for their vendors.",
+ "context": "The Third-Party Assessments and Standards Council is a new nonprofit backed by the FDIC and the Conference of State Bank Supervisors (CSBS). Its goal is to standardise how banks evaluate the technology vendors they work with — a process that today involves each bank running its own due diligence, often asking the same questions.\n\nThe model is similar to SOC 2 or ISO 27001 certifications: a vendor gets assessed against a standard once, and multiple banks can rely on the result. This should reduce onboarding friction for fintechs selling to banks, and reduce compliance cost for banks.\n\nThe caveats matter. Adoption is voluntary — no bank is required to use the council's assessments. And banks still bear full legal responsibility for monitoring and managing their vendors, so a council assessment doesn't replace a bank's own oversight.\n\nThe timing is significant. After several years of regulatory pressure on bank-fintech partnerships (including FDIC guidance on third-party risk management and OCC enforcement actions), this is a signal that regulators want to make these partnerships work, not kill them. The FDIC chairman's endorsement suggests this has institutional backing, not just lip service.\n\nFor context, Payoneer recently received a conditional OCC approval for a stablecoin bank, and the broader regulatory environment for fintech-bank partnerships appears to be thawing.",
+ "numbers": [
+  {
+   "v": "2",
+   "k": "Regulators endorsing (FDIC + CSBS)"
+  },
+  {
+   "v": "Voluntary",
+   "k": "Adoption model"
+  },
+  {
+   "v": "Full",
+   "k": "Bank liability for vendors (unchanged)"
+  }
+ ],
+ "whyPM": "If your fintech sells to US banks, this could cut your sales cycle. Today, every bank runs its own vendor assessment — often taking 6-12 months. A standardised assessment that banks trust would remove the biggest friction in bank-fintech partnerships.\n\nBut 'voluntary' means you can't count on it. Large banks may adopt quickly (they spend the most on vendor assessments). Community banks, which could benefit most, may be slow to change their processes.\n\nThe product implication: start tracking what the council's standards will require. If you can get assessed early, you have a sales advantage over competitors who haven't.",
+ "bull": "The council's standards become the de facto requirement. Bank-fintech onboarding drops from months to weeks. More fintechs reach more banks. Innovation accelerates.",
+ "bear": "Large banks ignore the council and keep running their own assessments. The standards add a layer of cost without reducing friction. Small fintechs can't afford the assessment.",
+ "unknowns": [
+  "What will the assessment standards cover?",
+  "When will the first assessments be available?",
+  "Will OCC and Fed also endorse the council?"
+ ],
+ "watch": [
+  "Council's first published standards and assessment criteria",
+  "Early adopter banks and their experiences",
+  "OCC and Fed statements on the council"
+ ],
+ "deeper": [
+  {
+   "label": "American Banker: Regulators support new council",
+   "note": "Coverage of the FDIC and CSBS endorsement",
+   "url": "https://www.americanbanker.com/news/regulators-support-new-council-to-vet-fintechs-cut-red-tape"
+  }
+ ]
+}

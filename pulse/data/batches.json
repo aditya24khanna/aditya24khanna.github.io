@@ -1,5 +1,29 @@
 [
  {
+  "id": "ai-20261126-pm",
+  "topic": "ai",
+  "edition": "Evening",
+  "at": "2026-11-26T12:45:00Z",
+  "blurb": "Google mandates MCP for Workspace agents, Amazon and Meta negotiate AI shopping access, US chip curbs freeze $1B in data centre loans, and a 5.9 GB coding model rivals full-size.",
+  "count": 4
+ },
+ {
+  "id": "startups-20261126-pm",
+  "topic": "startups",
+  "edition": "Evening",
+  "at": "2026-11-26T12:45:00Z",
+  "blurb": "42 state AGs move to block Character.AI's data sale, and Anthropic's enterprise study finds AI reorganises work rather than replacing workers.",
+  "count": 2
+ },
+ {
+  "id": "fintech-20261126-pm",
+  "topic": "fintech",
+  "edition": "Evening",
+  "at": "2026-11-26T12:45:00Z",
+  "blurb": "US regulators back a new fintech-vetting council, and Experian launches a cashflow data bureau in the UK.",
+  "count": 2
+ },
+ {
   "id": "ai-20261126-am",
   "topic": "ai",
   "edition": "Morning",

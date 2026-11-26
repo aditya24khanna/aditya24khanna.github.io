@@ -1,0 +1,55 @@
+{
+ "tldr": "New US export controls require licences for advanced AI chip sales to data centres in Southeast Asia and Brazil that serve Chinese companies. Banks are freezing nearly $1B in data centre loans as legal risk rises. The AI infrastructure buildout in the region is stalling.",
+ "context": "On 16 November, the Commerce Department's Bureau of Industry and Security published an interim final rule closing loopholes that let Chinese companies access advanced AI chips through overseas data centres. The rule requires licences for chip exports to data centres in Singapore, Malaysia, Indonesia, Thailand and Brazil that provide Chinese entities with more than 12 million aggregate TPP of computing power.\n\nThe financial fallout was immediate. Bloomberg reported that banks froze a $480M loan to buy Nvidia hardware for a ByteDance-linked data centre project. A separate $488M loan for an Actis-backed Malaysian data centre was delayed. Bain Capital's Bridge Data Centres is seeking a $6.6B loan for Malaysian facilities amid the uncertainty. ING and Société Générale are selling up to $800M of data centre debt.\n\nNvidia responded by saying it would not sell to customers who rent more than 50% of their GPUs to Chinese companies. AMD's stock fell about 10% on the Friday after the announcement.\n\nThe rule is part of a broader tightening. Existing data centres already serving Chinese companies at the specified scale must obtain a licence within 90 days. Applications are reviewed case by case, which adds uncertainty for lenders who need to price risk.\n\nSingapore was Nvidia's largest revenue source outside the US, with $23.7B (18% of revenue) in fiscal 2025. The region's data centre boom has been fuelled partly by Chinese demand for AI compute that couldn't be sourced domestically.",
+ "numbers": [
+  {
+   "v": "$480M",
+   "k": "ByteDance-linked loan frozen"
+  },
+  {
+   "v": "$488M",
+   "k": "Malaysian DC loan delayed"
+  },
+  {
+   "v": "$6.6B",
+   "k": "Bridge Data Centres loan sought"
+  },
+  {
+   "v": "$800M",
+   "k": "DC debt ING/SocGen selling"
+  },
+  {
+   "v": "90 days",
+   "k": "Existing DCs must get licence"
+  },
+  {
+   "v": "$23.7B",
+   "k": "Nvidia's Singapore revenue (FY25)"
+  }
+ ],
+ "whyPM": "If your AI products depend on cloud compute in Southeast Asia, this changes your capacity planning. Data centres that can't get chip licences can't expand, and the ones that can may raise prices to cover the compliance cost.\n\nThe financing freeze is a second-order effect that matters more than the export rule itself. When banks won't lend for data centres, the buildout slows regardless of whether the chips are available. That means less supply, higher prices, and longer lead times for AI compute in the region.\n\nFor product leaders in India: India isn't on the restricted list, which could make it a beneficiary if data centre investment shifts. But India's power and cooling infrastructure would need to catch up quickly.",
+ "bull": "The licence process is fast and transparent. Banks resume lending. Data centre investment shifts to India and other non-restricted countries, expanding overall supply.",
+ "bear": "Licence uncertainty persists. Banks permanently reprice data centre risk. Southeast Asia's AI infrastructure boom stalls, pushing compute costs up globally. Chinese companies find new workarounds.",
+ "unknowns": [
+  "How quickly will the Commerce Department process licence applications?",
+  "Will banks resume lending once the 90-day window closes?",
+  "Will India capture the redirected investment?"
+ ],
+ "watch": [
+  "Commerce Department licence decisions in the next 90 days",
+  "Nvidia and AMD earnings for regional revenue shifts",
+  "Data centre construction starts in India and the Middle East"
+ ],
+ "deeper": [
+  {
+   "label": "FourWeekMBA: US Curbs Freeze $480M Nvidia Chip Loan",
+   "note": "Detailed breakdown of the Bloomberg reporting",
+   "url": "https://fourweekmba.com/ai-us-curbs-freeze-480m-nvidia-chip-loan-tied-to-bytedance/"
+  },
+  {
+   "label": "China-Global South Project: Southeast Asia data centre risk",
+   "note": "Regional analysis of the export controls",
+   "url": "https://chinaglobalsouth.com/2026/11/17/us-ai-chip-export-controls-southeast-asia/"
+  }
+ ]
+}

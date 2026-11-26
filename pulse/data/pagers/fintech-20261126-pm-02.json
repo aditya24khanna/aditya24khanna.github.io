@@ -1,0 +1,42 @@
+{
+ "tldr": "Experian launched a Cashflow Data Bureau in the UK, combining 100M+ consumer-permissioned cashflow records with its credit bureau data. The company claims lenders can approve a third more marginal applicants. This is what open banking was supposed to enable — and it's arriving through the incumbents, not the challengers.",
+ "context": "Experian's Cashflow Data Bureau merges two data streams: traditional credit bureau records (about 1 billion records covering credit history, defaults and public records) and consumer-permissioned cashflow data (over 100 million records from payroll, HMRC, rental payments and Open Banking connections).\n\nThe data is captured through Experian Verify, an identity and income verification product. Records are matched to consumers, refreshed continuously, and turned into attributes that lenders can plug into existing decisioning systems.\n\nExperian claims that lenders using the combined data can approve about a third more applicants who would otherwise be declined or sent to manual review. These are 'marginal' applicants — people with thin credit files or borderline scores who have strong income and spending patterns.\n\nSeparately, Experian relaunched Boost in the UK. For the first time, UK consumers can add rental payments to their credit profile, alongside BNPL, bills and regular account activity. This follows a similar launch in the US.\n\nThe strategic picture: open banking was supposed to disrupt the credit bureaux by giving lenders direct access to bank data. Instead, the bureaux are absorbing open banking data into their own products, extending their moat rather than losing it. Experian is turning a potential disruptor into a feature.",
+ "numbers": [
+  {
+   "v": "100M+",
+   "k": "Permissioned cashflow records"
+  },
+  {
+   "v": "~1B",
+   "k": "Credit bureau records"
+  },
+  {
+   "v": "~33%",
+   "k": "More marginal applicants approved (Experian claim)"
+  },
+  {
+   "v": "Nov 26",
+   "k": "UK launch date"
+  }
+ ],
+ "whyPM": "If you build lending products in the UK, your underwriting inputs just changed. Competitors with Experian integration will reach a third more borrowers — the same thin-file segment that neobanks and BNPL players have been targeting with alternative data.\n\nThe open banking angle is important. Consumer-permissioned data means users opt in, which creates a consent layer that regulators like. But it also means your conversion depends on users connecting their bank accounts — a friction point that varies by demographic.\n\nFor Indian fintech PMs: RBI has been pushing account aggregators, India's version of open banking. Experian's model — bureau + open banking data — is likely where India's credit infrastructure is heading too. Watch for similar moves from CIBIL and Experian India.",
+ "bull": "Cashflow data becomes standard in UK lending. Thin-file borrowers get better access to credit. Default rates fall because income-based decisions are more accurate than history-based ones.",
+ "bear": "Consumer opt-in rates are low, limiting the data's coverage. The 'third more approvals' claim doesn't hold in practice. Lenders approve marginal borrowers who default at higher rates.",
+ "unknowns": [
+  "What percentage of UK consumers will opt in to sharing cashflow data?",
+  "Will the 33% approval lift hold up across different lending segments?",
+  "When will Experian launch a similar product in India and other markets?"
+ ],
+ "watch": [
+  "Lender adoption rates in Q1 2027",
+  "Consumer opt-in rates for cashflow data sharing",
+  "Equifax and TransUnion's response in the UK market"
+ ],
+ "deeper": [
+  {
+   "label": "The Paypers: Experian Cashflow Data Bureau",
+   "note": "Launch details and Experian's claims",
+   "url": "https://thepaypers.com/fintech/news/experian-launches-cashflow-data-bureau-for-uk-lenders"
+  }
+ ]
+}

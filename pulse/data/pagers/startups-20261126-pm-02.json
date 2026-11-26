@@ -1,0 +1,46 @@
+{
+ "tldr": "Anthropic interviewed 66 people at 58 enterprise customers and found that AI mostly increases output rather than cutting costs. Two-thirds of companies hired less because of AI, but only two eliminated positions entirely. The highest-value deployments reorganised roles and workflows.",
+ "context": "Anthropic published a study based on interviews with 66 people at 58 of its enterprise customers, cataloguing nearly 300 AI deployments. The company acknowledges the sample is not representative — all 58 are Anthropic customers.\n\nThe findings challenge the narrative that AI is primarily a cost-cutting tool. Most value came from increased output: teams doing more work at the same headcount, not fewer people doing the same work. The distinction matters for how AI products are sold and valued.\n\nOn workforce impact: two-thirds of companies hired fewer people than they otherwise would have — a hiring slowdown, not layoffs. Nine companies cut contractors, often offshore teams doing routine work. Only two companies said AI fully eliminated a position.\n\nThe highest-value deployments shared a pattern: they didn't just automate existing tasks. They reorganised who does what, often giving junior team members capabilities that previously required senior expertise. This is closer to 'augmentation' than 'automation' — but the net effect on hiring is still negative.\n\nThe contractor cuts are notable. Offshore teams doing codified, repeatable work are the most exposed to AI displacement. This has implications for India's IT services industry and for any company that relies on outsourced labour for routine knowledge work.",
+ "numbers": [
+  {
+   "v": "58",
+   "k": "Enterprise customers studied"
+  },
+  {
+   "v": "~300",
+   "k": "AI deployments catalogued"
+  },
+  {
+   "v": "66%",
+   "k": "Companies that hired less"
+  },
+  {
+   "v": "9",
+   "k": "Companies that cut contractors"
+  },
+  {
+   "v": "2",
+   "k": "Companies that eliminated positions"
+  }
+ ],
+ "whyPM": "If you're building AI products for the enterprise, this study is your pitch deck's reality check. 'Replace headcount' doesn't match what buyers are seeing. 'Get more done with the same team' does.\n\nThe contractor displacement is a warning for founders relying on offshore teams. If your customers' AI tools can do what your contractors do, you're competing with software, not other service firms.\n\nFor Indian product leaders specifically: the contractor cuts are concentrated in the kind of work India's IT services sector specialises in. This isn't a future risk — it's happening now at Anthropic's enterprise customers.",
+ "bull": "AI augmentation becomes the dominant enterprise narrative. Companies invest in upskilling and role redesign. Productivity rises without mass layoffs.",
+ "bear": "The 'hired less' trend accelerates. Contractor cuts spread to larger outsourcing contracts. India's IT services sector faces structural decline. Junior roles disappear as AI handles entry-level work.",
+ "unknowns": [
+  "Would the findings hold across non-Anthropic customers?",
+  "How much of the 'more output' is real productivity vs busy work?",
+  "Will the contractor cuts scale to larger enterprises?"
+ ],
+ "watch": [
+  "Similar studies from OpenAI, Google and Microsoft's enterprise customers",
+  "Indian IT services companies' quarterly guidance on AI impact",
+  "Enterprise AI deployment patterns beyond Anthropic's customer base"
+ ],
+ "deeper": [
+  {
+   "label": "Kill The AI: Nov 26 roundup",
+   "note": "Summary of the Anthropic study",
+   "url": "https://killtheai.com/news/top-10-ai-news-today-november-26-2026/"
+  }
+ ]
+}

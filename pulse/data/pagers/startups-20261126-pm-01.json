@@ -1,0 +1,42 @@
+{
+ "tldr": "42 US state attorneys general asked a bankruptcy court to block Character.AI's sale and the transfer of 21 million user accounts, including 2.1 million minors. The auction is set for 1 December. The data includes chats about self-harm, eating disorders and sexual content.",
+ "context": "Character.AI, the AI chatbot platform, is in bankruptcy and scheduled to auction its assets on 1 December. The company built one of the largest AI chatbot user bases, with 21 million US accounts. Among them, 2.1 million were registered to minors.\n\nThe data at stake includes IP addresses, metadata, and the full content of conversations — many of which touch on sensitive topics including self-harm, eating disorders and sexual content. This is the kind of data that privacy regulators and plaintiffs' attorneys have been warning about since generative AI chatbots launched.\n\nA bipartisan coalition of 42 state attorneys general filed to block the sale. California AG Rob Bonta called the plan 'appalling.' The coalition's argument is that selling this data to a buyer — especially one that might use it for training or advertising — would violate users' reasonable privacy expectations.\n\nThe case is a first: no AI company of this scale has gone through bankruptcy with this much sensitive user data on the books. The outcome will set precedent for how AI companies' data assets are treated in M&A, bankruptcy and wind-down scenarios.\n\nFor context, Character.AI had previously faced scrutiny over minors' interactions with its chatbots, including a case where a teenager's suicide was linked to conversations on the platform.",
+ "numbers": [
+  {
+   "v": "21M",
+   "k": "US user accounts"
+  },
+  {
+   "v": "2.1M",
+   "k": "Minor accounts"
+  },
+  {
+   "v": "42",
+   "k": "State AGs in the coalition"
+  },
+  {
+   "v": "Dec 1",
+   "k": "Scheduled auction date"
+  }
+ ],
+ "whyPM": "Every AI startup that collects conversation data should be watching this case. The AGs' argument is that AI chat data is fundamentally different from other user data because it captures intimate, unfiltered conversations. If the court agrees, it changes the M&A calculus for AI companies: your user data might be a liability, not an asset.\n\nFor founders: your data retention policies and your terms of service around data transfer in an acquisition just became board-level topics. For investors: add 'what happens to user data in a wind-down' to your due diligence checklist.",
+ "bull": "The court blocks the data sale and sets a precedent that protects users. AI companies adopt clearer data policies. Trust in AI products increases.",
+ "bear": "The court allows the sale with minimal conditions. A buyer uses the data for training. The precedent opens the door to data-stripping acquisitions of struggling AI companies.",
+ "unknowns": [
+  "Will the court grant the AGs' motion before the Dec 1 auction?",
+  "Who are the potential buyers and what do they want the data for?",
+  "Will other countries' regulators weigh in?"
+ ],
+ "watch": [
+  "Court ruling on the AG coalition's motion",
+  "Identity and intentions of auction bidders",
+  "FTC or EU regulatory response"
+ ],
+ "deeper": [
+  {
+   "label": "Kill The AI: Nov 26 roundup",
+   "note": "Coverage of the AG coalition's filing",
+   "url": "https://killtheai.com/news/top-10-ai-news-today-november-26-2026/"
+  }
+ ]
+}

@@ -1,0 +1,38 @@
+{
+ "tldr": "Amazon and Meta are negotiating to let Meta's Muse AI shopping agent operate on Amazon, after Amazon blocked it in September. The talks signal that agent commerce is becoming a strategic battlefield between platforms.",
+ "context": "In September, Amazon blocked Meta's Muse agent from shopping on its platform, alongside Perplexity's shopping agent. The move drew a clear line: Amazon wanted to control how AI agents interact with its marketplace.\n\nNow the two companies are back at the table. The sticking points are revealing: how search results are presented to the agent (and thus to the user), and whether Amazon's advertising appears in agent-mediated shopping. These are the same questions that defined the web-to-mobile transition — who controls the customer experience, and who gets the ad revenue.\n\nMeanwhile, a parallel ecosystem is forming. Walmart, Best Buy, Gap and Sephora have opened their stores to third-party AI agents. Amazon is also promoting its own Alexa for Shopping agent. The market is splitting into platforms that welcome third-party agents and those that want to own the agent experience.\n\nThe CEO-approval requirement suggests both companies see this as a strategic decision, not a tactical one. The outcome will set the template for how agent commerce works across retail.\n\nFor context, Mastercard and Ant International recently completed live agent-payment pilots, so the payment rails for agent commerce are being built in parallel with the marketplace access negotiations.",
+ "numbers": [
+  {
+   "v": "Sept 2026",
+   "k": "Amazon blocked Muse"
+  },
+  {
+   "v": "4+",
+   "k": "Major retailers open to agents"
+  },
+  {
+   "v": "2",
+   "k": "CEOs needed to approve a deal"
+  }
+ ],
+ "whyPM": "Agent commerce changes the funnel. When an AI agent shops on behalf of a user, traditional product discovery — search, browse, compare — collapses into a single agent decision. The agent picks the product, and the user confirms or rejects. That means your listing, your SEO, your product images matter less. What matters is whether the agent's model knows your product and ranks it well.\n\nFor product leaders selling through marketplaces, the Amazon-Meta negotiation is a leading indicator. If Amazon opens to Muse, your products will be surfaced by an agent you don't control, using criteria you can't see. If Amazon stays closed, you're in a walled garden where only Alexa shops.\n\nThe action item is to understand how your products appear to AI agents, not just to humans browsing a website.",
+ "bull": "Amazon and Meta reach a deal that creates an open agent commerce standard. Retailers compete on agent-friendliness. Product discovery becomes more efficient and prices fall for consumers.",
+ "bear": "Negotiations collapse. Agent commerce fragments into incompatible walled gardens. Small retailers can't support multiple agent protocols and lose market share.",
+ "unknowns": [
+  "What advertising model would Amazon accept in agent-mediated shopping?",
+  "Would a Muse-Amazon deal include user data sharing?",
+  "How would returns and disputes work when an agent made the purchase?"
+ ],
+ "watch": [
+  "Any official Amazon or Meta announcement on agent commerce policies",
+  "Walmart and Best Buy's agent commerce adoption metrics",
+  "Agent payment standards from Visa, Mastercard and Ant International"
+ ],
+ "deeper": [
+  {
+   "label": "Kill The AI: Nov 26, 2026 roundup",
+   "note": "Coverage of the Amazon-Meta talks",
+   "url": "https://killtheai.com/news/top-10-ai-news-today-november-26-2026/"
+  }
+ ]
+}

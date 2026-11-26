@@ -1,0 +1,50 @@
+{
+ "tldr": "PrismML released Ternary Bonsai 2.5 27B, a coding model compressed to 5.9 GB using ternary quantisation. It scores 75.6 on SWE-bench Verified (vs 80.6 for the full model) and runs on laptops, iPhones and iPads. Weights are Apache 2.0.",
+ "context": "Ternary quantisation reduces every model weight to one of three values: -1, 0 or 1. This shrinks the model from about 54 GB (at 16-bit precision) to 5.9 GB — a 9x reduction. The technique trades some accuracy for dramatically lower memory and compute requirements.\n\nPrismML's Ternary Bonsai 2.5 27B is based on Qwen3.8 27B. The key benchmarks tell the story: SWE-bench Verified dropped from 80.6 to 75.6 (a 6% hit), while AppWorld jumped from 51.2 to 90.5 (a nearly 2x improvement, suggesting the ternary model handles certain structured tasks better).\n\nThe model runs on Nvidia GPUs, Intel GPUs, Apple Silicon Macs, iPhones and iPads. This is unusual: most coding models of this capability require at least a mid-range GPU. At 5.9 GB, it fits in the memory of a modern smartphone.\n\nThe Apache 2.0 licence means anyone can use it commercially, fine-tune it, or build products on top of it without restrictions. This is significant because most competitive coding models are either proprietary or under more restrictive licences.\n\nThe predecessor model (Ternary Bonsai 2.0) scored 60.8 on SWE-bench, so the 2.5 version represents a 24% improvement in code generation capability at the same model size.",
+ "numbers": [
+  {
+   "v": "5.9 GB",
+   "k": "Model size"
+  },
+  {
+   "v": "~54 GB",
+   "k": "Full model size (16-bit)"
+  },
+  {
+   "v": "75.6",
+   "k": "SWE-bench Verified score"
+  },
+  {
+   "v": "80.6",
+   "k": "Full model SWE-bench score"
+  },
+  {
+   "v": "90.5",
+   "k": "AppWorld score (up from 51.2)"
+  },
+  {
+   "v": "9x",
+   "k": "Compression ratio"
+  }
+ ],
+ "whyPM": "On-device AI coding changes the security and latency equation. No data leaves the device, which matters for enterprises with strict data policies. No network round-trip means instant responses, which matters for developer experience.\n\nAt 75.6 on SWE-bench, this isn't a toy. It's competitive with cloud-hosted models from six months ago. For product leaders building developer tools: local-first code assistance is now viable at a quality level developers will actually use.\n\nThe Apache 2.0 licence means you can ship this in a product tomorrow. The question is whether your users' devices can run it — and at 5.9 GB, most modern laptops can.",
+ "bull": "Ternary quantisation becomes the standard for on-device AI. Developers get private, instant code assistance everywhere. The cloud AI coding market shrinks as local models catch up.",
+ "bear": "The 6% SWE-bench gap matters more in practice than in benchmarks. Developers try it, find edge cases, and go back to cloud models. Ternary quantisation hits a quality ceiling for harder tasks.",
+ "unknowns": [
+  "How does the model perform on real-world enterprise codebases vs benchmarks?",
+  "Will Apple optimise its hardware for ternary models?",
+  "Can the technique scale to larger models without bigger accuracy losses?"
+ ],
+ "watch": [
+  "Developer adoption metrics for Ternary Bonsai 2.5",
+  "Apple's next Neural Engine capabilities in relation to ternary models",
+  "Other labs adopting ternary quantisation for on-device deployment"
+ ],
+ "deeper": [
+  {
+   "label": "Kill The AI: Nov 26 roundup",
+   "note": "Coverage including benchmark details",
+   "url": "https://killtheai.com/news/top-10-ai-news-today-november-26-2026/"
+  }
+ ]
+}

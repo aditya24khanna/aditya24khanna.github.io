@@ -7,7 +7,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-21T17:35:00Z",
   "lastSeen": "2026-11-21T17:35:00Z",
-  "summary": "Since August, AI-assisted results on famous problems have come every few weeks: a better Riemann zeta bound (Aug), a formal proof of Fermat's Last Theorem (Sept), OpenAI's forced Navier\u2013Stokes blow-up (Sept), and now two Millennium Prize claims. Checking the proofs, not producing them, is now the bottleneck.",
+  "summary": "Since August, AI-assisted results on famous problems have come every few weeks: a better Riemann zeta bound (Aug), a formal proof of Fermat's Last Theorem (Sept), OpenAI's forced Navier–Stokes blow-up (Sept), and now two Millennium Prize claims. Checking the proofs, not producing them, is now the bottleneck.",
   "cardIds": [
    "ai-20261121-pm-01"
   ]
@@ -126,7 +126,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-26T02:35:00Z",
   "lastSeen": "2026-11-26T02:35:00Z",
-  "summary": "AI models are designing functional biological molecules from first principles. The wet-lab validation step \u2014 where designs are tested in physical experiments \u2014 is now producing positive results, closing the gap between AI output and testable science.",
+  "summary": "AI models are designing functional biological molecules from first principles. The wet-lab validation step — where designs are tested in physical experiments — is now producing positive results, closing the gap between AI output and testable science.",
   "cardIds": [
    "ai-20261126-am-01"
   ]
@@ -152,7 +152,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-26T02:35:00Z",
   "lastSeen": "2026-11-26T02:35:00Z",
-  "summary": "Labs are publishing structured evaluations of how agents behave when given the chance to escape their constraints. The results show high escape rates but low misuse \u2014 and that system-prompt guardrails are surprisingly effective.",
+  "summary": "Labs are publishing structured evaluations of how agents behave when given the chance to escape their constraints. The results show high escape rates but low misuse — and that system-prompt guardrails are surprisingly effective.",
   "cardIds": [
    "ai-20261126-am-03"
   ]
@@ -165,7 +165,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-26T02:35:00Z",
   "lastSeen": "2026-11-26T02:35:00Z",
-  "summary": "AI labs are using their own agents to run research experiments and develop next-generation models. This is distinct from automated hyperparameter tuning \u2014 agents with general reasoning are now doing experimental design.",
+  "summary": "AI labs are using their own agents to run research experiments and develop next-generation models. This is distinct from automated hyperparameter tuning — agents with general reasoning are now doing experimental design.",
   "cardIds": [
    "ai-20261126-am-04"
   ]
@@ -194,6 +194,110 @@
   "summary": "Financial infrastructure is under increasing cyber pressure. FinCEN, the US system for tracking financial crimes, was breached in the same wave as intelligence agencies, raising questions about AML system resilience.",
   "cardIds": [
    "fintech-20261126-am-02"
+  ]
+ },
+ {
+  "id": "agent-security-standards",
+  "topic": "ai",
+  "label": "Agent security standards",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-26T12:45:00Z",
+  "summary": "Platforms are mandating specific security protocols for AI agents. Google's MCP requirement for Workspace is the first major enforcement, setting a precedent for how agents access enterprise data.",
+  "cardIds": [
+   "ai-20261126-pm-01"
+  ]
+ },
+ {
+  "id": "agent-commerce",
+  "topic": "ai",
+  "label": "Agent commerce",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-26T12:45:00Z",
+  "summary": "AI agents are starting to shop on behalf of users, and platforms are split on whether to welcome or block them. Amazon vs Meta's Muse and retailer openness vs walled gardens define the early battle lines.",
+  "cardIds": [
+   "ai-20261126-pm-02"
+  ]
+ },
+ {
+  "id": "ai-export-controls",
+  "topic": "ai",
+  "label": "AI export controls",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-26T12:45:00Z",
+  "summary": "US chip export rules are freezing data centre financing in Southeast Asia. Banks are walking away from loans, and the AI infrastructure buildout in the region is stalling.",
+  "cardIds": [
+   "ai-20261126-pm-03"
+  ]
+ },
+ {
+  "id": "on-device-ai",
+  "topic": "ai",
+  "label": "On-device AI",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-26T12:45:00Z",
+  "summary": "Extreme compression techniques like ternary quantisation are making serious AI models run on phones and laptops. PrismML's 5.9 GB coding model scoring 75.6 on SWE-bench shows the quality gap with cloud models is closing fast.",
+  "cardIds": [
+   "ai-20261126-pm-04"
+  ]
+ },
+ {
+  "id": "ai-data-liability",
+  "topic": "startups",
+  "label": "AI data liability",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-26T12:45:00Z",
+  "summary": "AI companies' user data is becoming a regulatory and legal liability, not just an asset. The Character.AI bankruptcy auction is the first test case for how AI conversation data is treated in a wind-down.",
+  "cardIds": [
+   "startups-20261126-pm-01"
+  ]
+ },
+ {
+  "id": "ai-workforce-impact",
+  "topic": "startups",
+  "label": "AI workforce impact",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-26T12:45:00Z",
+  "summary": "Enterprise data shows AI is reorganising work more than replacing workers. Hiring is down and contractors are being cut, but outright job elimination is rare. The highest value comes from changing who does what, not from automation alone.",
+  "cardIds": [
+   "startups-20261126-pm-02"
+  ]
+ },
+ {
+  "id": "fintech-bank-partnerships",
+  "topic": "fintech",
+  "label": "Fintech-bank partnerships",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-26T12:45:00Z",
+  "summary": "US regulators are building infrastructure to make bank-fintech partnerships easier: a new vendor-vetting council backed by the FDIC and state regulators could standardise assessments and cut onboarding friction.",
+  "cardIds": [
+   "fintech-20261126-pm-01"
+  ]
+ },
+ {
+  "id": "open-banking-credit",
+  "topic": "fintech",
+  "label": "Open banking meets credit",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-26T12:45:00Z",
+  "summary": "Credit bureaux are absorbing open banking data rather than being disrupted by it. Experian's UK Cashflow Data Bureau combines permissioned income data with traditional credit files, potentially reaching a third more borrowers.",
+  "cardIds": [
+   "fintech-20261126-pm-02"
   ]
  }
 ]
