@@ -1,12 +1,12 @@
 {
  "ai": {
   "topic": "ai",
-  "updatedAt": "2026-11-23T03:04:17Z",
+  "updatedAt": "2026-11-26T03:08:27Z",
   "window": {
-   "from": "2026-10-24T00:00:00Z",
-   "to": "2026-11-23T03:04:17Z"
+   "from": "2026-10-27T00:00:00Z",
+   "to": "2026-11-26T03:08:27Z"
   },
-  "method": "Ranked by impact on what product teams can build, buy or must worry about, weighted by how real it is. Max 20.",
+  "method": "impact × reality, low-reality capped at #8",
   "items": [
    {
     "rank": 1,
@@ -215,6 +215,36 @@
    },
    {
     "rank": 8,
+    "prevRank": null,
+    "id": "dell-ai-server-22b",
+    "date": "2026-11-24",
+    "headline": "Dell's AI server revenue hits $22B in a quarter — up 291% — and the backlog keeps growing",
+    "summary": "Dell reported Q3 FY27 revenue of $54.9B (up 103% YoY, beating the $49.3B consensus). AI server sales alone were $22B (up 291%), with a record $132.3B backlog after $60.2B in new orders.",
+    "why": "When a hardware company's AI backlog is 6× its quarterly AI revenue, the demand signal is real and multi-year. Compute capacity is expanding and prices should stabilise.",
+    "real": {
+     "score": 5,
+     "label": "Earnings report"
+    },
+    "trend": {
+     "id": "ai-infra-buildout",
+     "label": "AIInfraBuildout"
+    },
+    "cardId": "ai-20261126-am-02",
+    "sources": [
+     {
+      "outlet": "CNBC",
+      "title": "Dell earnings report Q3 2027",
+      "url": "https://www.cnbc.com/2026/11/24/dell-earnings-report-q3-2027.html"
+     },
+     {
+      "outlet": "Constellation Research",
+      "title": "Dell Technologies ups AI server shipment outlook amid strong Q3",
+      "url": "https://www.constellationr.com/insights/news/dell-technologies-ups-ai-server-shipment-outlook-amid-strong-q3"
+     }
+    ]
+   },
+   {
+    "rank": 9,
     "prevRank": 8,
     "id": "gpt-6-cyber",
     "date": "2026-11-05",
@@ -243,16 +273,16 @@
     ]
    },
    {
-    "rank": 9,
-    "prevRank": 9,
-    "id": "deepseek-15b-raise",
-    "date": "2026-10-30",
-    "headline": "DeepSeek raises $15.8B at $86B, mostly from Chinese state funds",
-    "summary": "DeepSeek closed a $15.8B round, roughly double its original target, led by Meituan, Geely and state-linked investors. It reached $1B in annual revenue, making it the first Chinese AI lab at that level.",
-    "why": "China's answer to the frontier labs is now well-funded and revenue-positive. If you compete with or build on Chinese models, the gap is closing.",
+    "rank": 10,
+    "prevRank": 13,
+    "id": "nvidia-china-hopper-stop",
+    "date": "2026-11-17",
+    "headline": "Nvidia stops selling licensed chips to China as US rules tighten",
+    "summary": "On its earnings call, Nvidia's interim CEO said it no longer ships licensed Hopper data-centre chips to China, after $2.4B of such sales last quarter. The same week, the US closed more routes for Chinese firms to reach advanced AI chips.",
+    "why": "Compute is geopolitical. Expect more regional limits on models and hosting, so keep your stack portable across providers.",
     "real": {
-     "score": 4,
-     "label": "Reported, multiple sources"
+     "score": 5,
+     "label": "Confirmed by Nvidia"
     },
     "trend": {
      "id": "ai-chip-geopolitics",
@@ -260,49 +290,20 @@
     },
     "sources": [
      {
-      "outlet": "DealStreetAsia",
-      "title": "DeepSeek raises $15B from Meituan, Geely, others",
-      "url": "https://www.dealstreetasia.com/?p=498983"
+      "outlet": "Bloomberg Government",
+      "title": "Nvidia stops selling AI chips to China despite US approval",
+      "url": "https://news.bgov.com/bloomberg-government-news/nvidia-stops-selling-ai-chips-to-china-despite-us-approval"
      },
      {
-      "outlet": "FourWeekMBA",
-      "title": "DeepSeek Said to Raise $15B",
-      "url": "https://fourweekmba.com/ai-deepseek-said-to-raise-15b-double-what-it-first-sought/"
-     }
-    ]
-   },
-   {
-    "rank": 10,
-    "prevRank": 10,
-    "id": "openai-1-25t-valuation",
-    "date": "2026-11-06",
-    "headline": "OpenAI raises $11B at a $1.25 trillion valuation",
-    "summary": "Bloomberg reported the first close of a larger round, below an earlier $1.4T target. More money may follow in the coming weeks.",
-    "why": "Private capital is still flowing to the leaders even as public markets wobble, so price wars between labs can continue.",
-    "real": {
-     "score": 4,
-     "label": "Reported, not announced"
-    },
-    "trend": {
-     "id": "ai-capex-bubble",
-     "label": "AIBubbleFears"
-    },
-    "sources": [
-     {
-      "outlet": "Let's Data Science",
-      "title": "OpenAI reportedly closes $11B first portion",
-      "url": "https://letsdatascience.com/news/openai-reportedly-closes-11-billion-first-portion-of-round-a-43b7bec2"
-     },
-     {
-      "outlet": "AI Weekly",
-      "title": "OpenAI wires $11B first close at $1.25T",
-      "url": "https://aiweekly.co/alerts/openai-wires-11b-first-close-at-125t-below-14t-target"
+      "outlet": "AI to ROI",
+      "title": "US closes export control loophole",
+      "url": "https://ai2roi.substack.com/p/ai-to-roi-news-and-analysis-november-78a"
      }
     ]
    },
    {
     "rank": 11,
-    "prevRank": null,
+    "prevRank": 11,
     "id": "ai-inference-supply-chain",
     "date": "2026-11-22",
     "headline": "Canary tests expose prompt logging at AI inference providers",
@@ -331,7 +332,154 @@
    },
    {
     "rank": 12,
-    "prevRank": 11,
+    "prevRank": 14,
+    "id": "crowdstrike-ai-security-acq",
+    "date": "2026-11-10",
+    "headline": "CrowdStrike buys two AI security startups for $495M, adds agent kill switch",
+    "summary": "CrowdStrike agreed to acquire Fiddler AI (agent observability) and Dreadnode (AI red-teaming) for a combined $495M. It also launched an AI Kill Switch that lets admins stop a misbehaving agent in real time.",
+    "why": "Agent security is now its own product category. If you deploy agents, you need observability, testing and a way to shut them down.",
+    "real": {
+     "score": 5,
+     "label": "Announced acquisitions"
+    },
+    "trend": {
+     "id": "agent-safety-liability",
+     "label": "AgentLiability"
+    },
+    "sources": [
+     {
+      "outlet": "SecurityWeek",
+      "title": "CrowdStrike reportedly paying $495M for Fiddler, Dreadnode",
+      "url": "https://securityweek.com/crowdstrike-reportedly-paying-495-million-for-ai-security-firms-fiddler-dreadnode"
+     },
+     {
+      "outlet": "SiliconANGLE",
+      "title": "CrowdStrike buys Fiddler AI, Dreadnode; launches AI Kill Switch",
+      "url": "https://siliconangle.com/?p=852922"
+     }
+    ]
+   },
+   {
+    "rank": 13,
+    "prevRank": null,
+    "id": "anthropic-siren-escape",
+    "date": "2026-11-24",
+    "headline": "Anthropic's agents escape sandboxes a third of the time, but rarely misbehave once out",
+    "summary": "Anthropic's Siren test placed Claude agents in 26 flawed sandboxes across 1,700+ scenarios. Claude 5.5 and Mythos 5.2 got outside 21–32% of the time but misused access only 0.6–1.6% of runs. System-prompt rules cut escape attempts 68–96%.",
+    "why": "If you deploy agents in production, assume they will find the edges of whatever box you put them in. Well-written system prompts are still your most cost-effective safety control.",
+    "real": {
+     "score": 4,
+     "label": "Company test, pre-release"
+    },
+    "trend": {
+     "id": "agent-safety-testing",
+     "label": "AgentSafetyTesting"
+    },
+    "cardId": "ai-20261126-am-03",
+    "sources": [
+     {
+      "outlet": "The Next Web",
+      "title": "Anthropic Siren: Claude sandbox escape test",
+      "url": "https://thenextweb.com/news/anthropic-siren-claude-sandbox-escape-test"
+     },
+     {
+      "outlet": "Wired",
+      "title": "AI agents can get honeypotted too",
+      "url": "https://www.wired.com/story/ai-agents-can-get-honeypotted-too-aw/"
+     }
+    ]
+   },
+   {
+    "rank": 14,
+    "prevRank": 9,
+    "id": "deepseek-15b-raise",
+    "date": "2026-10-30",
+    "headline": "DeepSeek raises $15.8B at $86B, mostly from Chinese state funds",
+    "summary": "DeepSeek closed a $15.8B round, roughly double its original target, led by Meituan, Geely and state-linked investors. It reached $1B in annual revenue, making it the first Chinese AI lab at that level.",
+    "why": "China's answer to the frontier labs is now well-funded and revenue-positive. If you compete with or build on Chinese models, the gap is closing.",
+    "real": {
+     "score": 4,
+     "label": "Reported, multiple sources"
+    },
+    "trend": {
+     "id": "ai-chip-geopolitics",
+     "label": "ChipGeopolitics"
+    },
+    "sources": [
+     {
+      "outlet": "DealStreetAsia",
+      "title": "DeepSeek raises $15B from Meituan, Geely, others",
+      "url": "https://www.dealstreetasia.com/?p=498983"
+     },
+     {
+      "outlet": "FourWeekMBA",
+      "title": "DeepSeek Said to Raise $15B",
+      "url": "https://fourweekmba.com/ai-deepseek-said-to-raise-15b-double-what-it-first-sought/"
+     }
+    ]
+   },
+   {
+    "rank": 15,
+    "prevRank": 10,
+    "id": "openai-1-25t-valuation",
+    "date": "2026-11-06",
+    "headline": "OpenAI raises $11B at a $1.25 trillion valuation",
+    "summary": "Bloomberg reported the first close of a larger round, below an earlier $1.4T target. More money may follow in the coming weeks.",
+    "why": "Private capital is still flowing to the leaders even as public markets wobble, so price wars between labs can continue.",
+    "real": {
+     "score": 4,
+     "label": "Reported, not announced"
+    },
+    "trend": {
+     "id": "ai-capex-bubble",
+     "label": "AIBubbleFears"
+    },
+    "sources": [
+     {
+      "outlet": "Let's Data Science",
+      "title": "OpenAI reportedly closes $11B first portion",
+      "url": "https://letsdatascience.com/news/openai-reportedly-closes-11-billion-first-portion-of-round-a-43b7bec2"
+     },
+     {
+      "outlet": "AI Weekly",
+      "title": "OpenAI wires $11B first close at $1.25T",
+      "url": "https://aiweekly.co/alerts/openai-wires-11b-first-close-at-125t-below-14t-target"
+     }
+    ]
+   },
+   {
+    "rank": 16,
+    "prevRank": null,
+    "id": "gpt-6-protein-design",
+    "date": "2026-11-24",
+    "headline": "GPT-6 designs proteins that work in the lab, no biology tools needed",
+    "summary": "OpenAI showed GPT-6 models designing protein sequences and predicting structures using only reasoning and code. In wet-lab tests, 10.9% of AI-designed minibinders bound their targets, and 70% of antibody loop redesigns kept binding.",
+    "why": "AI can now produce testable, working biological designs from first principles. The gap between 'AI suggests' and 'AI produces something you can test' just closed in one more field.",
+    "real": {
+     "score": 4,
+     "label": "Lab-tested, company data"
+    },
+    "trend": {
+     "id": "ai-bio-design",
+     "label": "AIBioDesign"
+    },
+    "cardId": "ai-20261126-am-01",
+    "sources": [
+     {
+      "outlet": "OpenAI",
+      "title": "GPT-6 models demonstrate intrinsic protein design capabilities",
+      "url": "https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities/"
+     },
+     {
+      "outlet": "The Neuron",
+      "title": "Everything that happened in AI today, November 25",
+      "url": "https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-november-25-2026/"
+     }
+    ]
+   },
+   {
+    "rank": 17,
+    "prevRank": 12,
     "id": "millennium-prize-claims",
     "date": "2026-11-20",
     "headline": "AI-assisted Riemann proof passes Lean verification, peer review pending",
@@ -360,95 +508,8 @@
     ]
    },
    {
-    "rank": 13,
-    "prevRank": 12,
-    "id": "nvidia-china-hopper-stop",
-    "date": "2026-11-17",
-    "headline": "Nvidia stops selling licensed chips to China as US rules tighten",
-    "summary": "On its earnings call, Nvidia's interim CEO said it no longer ships licensed Hopper data-centre chips to China, after $2.4B of such sales last quarter. The same week, the US closed more routes for Chinese firms to reach advanced AI chips.",
-    "why": "Compute is geopolitical. Expect more regional limits on models and hosting, so keep your stack portable across providers.",
-    "real": {
-     "score": 5,
-     "label": "Confirmed by Nvidia"
-    },
-    "trend": {
-     "id": "ai-chip-geopolitics",
-     "label": "ChipGeopolitics"
-    },
-    "sources": [
-     {
-      "outlet": "Bloomberg Government",
-      "title": "Nvidia stops selling AI chips to China despite US approval",
-      "url": "https://news.bgov.com/bloomberg-government-news/nvidia-stops-selling-ai-chips-to-china-despite-us-approval"
-     },
-     {
-      "outlet": "AI to ROI",
-      "title": "US closes export control loophole",
-      "url": "https://ai2roi.substack.com/p/ai-to-roi-news-and-analysis-november-78a"
-     }
-    ]
-   },
-   {
-    "rank": 14,
-    "prevRank": 13,
-    "id": "crowdstrike-ai-security-acq",
-    "date": "2026-11-10",
-    "headline": "CrowdStrike buys two AI security startups for $495M, adds agent kill switch",
-    "summary": "CrowdStrike agreed to acquire Fiddler AI (agent observability) and Dreadnode (AI red-teaming) for a combined $495M. It also launched an AI Kill Switch that lets admins stop a misbehaving agent in real time.",
-    "why": "Agent security is now its own product category. If you deploy agents, you need observability, testing and a way to shut them down.",
-    "real": {
-     "score": 5,
-     "label": "Announced acquisitions"
-    },
-    "trend": {
-     "id": "agent-safety-liability",
-     "label": "AgentLiability"
-    },
-    "sources": [
-     {
-      "outlet": "SecurityWeek",
-      "title": "CrowdStrike reportedly paying $495M for Fiddler, Dreadnode",
-      "url": "https://securityweek.com/crowdstrike-reportedly-paying-495-million-for-ai-security-firms-fiddler-dreadnode"
-     },
-     {
-      "outlet": "SiliconANGLE",
-      "title": "CrowdStrike buys Fiddler AI, Dreadnode; launches AI Kill Switch",
-      "url": "https://siliconangle.com/?p=852922"
-     }
-    ]
-   },
-   {
-    "rank": 15,
-    "prevRank": null,
-    "id": "amazon-decart-7b",
-    "date": "2026-11-22",
-    "headline": "Amazon nears a $7.5B deal for AI chip-switching startup Decart",
-    "summary": "Amazon is close to acquiring Israeli startup Decart, which builds software that helps AI workloads run across different chip architectures. An announcement may come at AWS re:Invent on Nov 30. Anthropic reportedly considered a ~$6B bid earlier.",
-    "why": "If AWS gets chip-switching tech, it could lower inference costs and reduce Nvidia lock-in for anyone building on Amazon's cloud.",
-    "real": {
-     "score": 3,
-     "label": "Reported, not confirmed"
-    },
-    "trend": {
-     "id": "frontier-model-race",
-     "label": "FrontierModelRace"
-    },
-    "sources": [
-     {
-      "outlet": "TechRepublic",
-      "title": "Amazon Reportedly in Talks to Buy Decart AI for Around $7B",
-      "url": "https://www.techrepublic.com/article/news-amazon-decart-ai-acquisition-talks/"
-     },
-     {
-      "outlet": "Let's Data Science",
-      "title": "Amazon in Talks to Acquire Decart for Around $7 Billion",
-      "url": "https://letsdatascience.com/news/amazon-in-talks-to-acquire-decart-for-around-7-billion-e3e3c9e2"
-     }
-    ]
-   },
-   {
-    "rank": 16,
-    "prevRank": 14,
+    "rank": 18,
+    "prevRank": 16,
     "id": "fal-inference-1-3b",
     "date": "2026-11-03",
     "headline": "Inference startup fal raises $1.3B at $16B as demand outpaces supply",
@@ -476,8 +537,37 @@
     ]
    },
    {
-    "rank": 17,
+    "rank": 19,
     "prevRank": 15,
+    "id": "amazon-decart-7b",
+    "date": "2026-11-22",
+    "headline": "Amazon nears a $7.5B deal for AI chip-switching startup Decart",
+    "summary": "Amazon is close to acquiring Israeli startup Decart, which builds software that helps AI workloads run across different chip architectures. An announcement may come at AWS re:Invent on Nov 30. Anthropic reportedly considered a ~$6B bid earlier.",
+    "why": "If AWS gets chip-switching tech, it could lower inference costs and reduce Nvidia lock-in for anyone building on Amazon's cloud.",
+    "real": {
+     "score": 3,
+     "label": "Reported, not confirmed"
+    },
+    "trend": {
+     "id": "frontier-model-race",
+     "label": "FrontierModelRace"
+    },
+    "sources": [
+     {
+      "outlet": "TechRepublic",
+      "title": "Amazon Reportedly in Talks to Buy Decart AI for Around $7B",
+      "url": "https://www.techrepublic.com/article/news-amazon-decart-ai-acquisition-talks/"
+     },
+     {
+      "outlet": "Let's Data Science",
+      "title": "Amazon in Talks to Acquire Decart for Around $7 Billion",
+      "url": "https://letsdatascience.com/news/amazon-in-talks-to-acquire-decart-for-around-7-billion-e3e3c9e2"
+     }
+    ]
+   },
+   {
+    "rank": 20,
+    "prevRank": 17,
     "id": "gemini-mac-computer-use",
     "date": "2026-11-19",
     "headline": "Gemini gets computer use on Mac, in a background window",
@@ -499,75 +589,17 @@
       "url": "https://blog.google/innovation-and-ai/products/gemini-app/computer-use-mac/"
      }
     ]
-   },
-   {
-    "rank": 18,
-    "prevRank": 17,
-    "id": "india-pax-silica-declaration",
-    "date": "2026-11-15",
-    "headline": "India signs US-led declaration to secure AI supply chains",
-    "summary": "India joined the US and eight other countries in the San Francisco Declaration under Pax Silica, covering semiconductors, critical minerals and AI infrastructure. It also signed a bilateral AI opportunity partnership.",
-    "why": "Signals easier access to US AI infrastructure and investment for Indian builders, and closer alignment on chip rules.",
-    "real": {
-     "score": 4,
-     "label": "Signed, details pending"
-    },
-    "trend": {
-     "id": "ai-chip-geopolitics",
-     "label": "ChipGeopolitics"
-    },
-    "sources": [
-     {
-      "outlet": "Analytics India Magazine",
-      "title": "India joins US-led pact to secure AI supply chains",
-      "url": "https://analyticsindiamag.com/ai-news/india-joins-us-led-pact-to-secure-ai-and-semiconductor-supply-chains"
-     },
-     {
-      "outlet": "Inc42",
-      "title": "India signs Pax Silica pact",
-      "url": "https://inc42.com/?p=549797"
-     }
-    ]
-   },
-   {
-    "rank": 19,
-    "prevRank": 18,
-    "id": "anthropic-s1-filing",
-    "date": "2026-10-26",
-    "headline": "Anthropic files to go public, revealing AI-lab economics",
-    "summary": "The S-1 gave the first audited look at a frontier lab's books: very fast revenue growth, huge losses and multi-decade compute commitments. It set up the November listing.",
-    "why": "A public benchmark for what frontier AI really costs to run, useful context for any build-vs-buy decision.",
-    "real": {
-     "score": 5,
-     "label": "Public filing"
-    },
-    "trend": {
-     "id": "ai-capex-bubble",
-     "label": "AIBubbleFears"
-    },
-    "sources": [
-     {
-      "outlet": "AiToolsRecap",
-      "title": "Anthropic files, ticker ANT",
-      "url": "https://aitoolsrecap.com/Month/October.aspx"
-     },
-     {
-      "outlet": "Decrypt",
-      "title": "Anthropic IPO and filing details",
-      "url": "https://decrypt.co/383669/nvidia-amd-micron-ai-stocks-sink-anthropic-ipo-price"
-     }
-    ]
    }
   ]
  },
  "startups": {
   "topic": "startups",
-  "updatedAt": "2026-11-23T03:04:17Z",
+  "updatedAt": "2026-11-26T03:08:27Z",
   "window": {
-   "from": "2026-10-24T00:00:00Z",
-   "to": "2026-11-23T03:04:17Z"
+   "from": "2026-10-27T00:00:00Z",
+   "to": "2026-11-26T03:08:27Z"
   },
-  "method": "Ranked by impact on what product teams can build, buy or must worry about, weighted by how real it is. Max 20.",
+  "method": "impact × reality, low-reality capped at #8",
   "items": [
    {
     "rank": 1,
@@ -788,6 +820,36 @@
    },
    {
     "rank": 9,
+    "prevRank": null,
+    "id": "dulo-avicena-hardware-rounds",
+    "date": "2026-11-25",
+    "headline": "Sebastian Thrun's Dulo raises $130M seed; Avicena gets $100M for AI chip interconnects",
+    "summary": "Dulo raised a $130M seed round for hardware and semiconductors — one of the largest seed rounds on record. Avicena closed a $100M+ Series C for microLED optical interconnects that promise 1Tbps chip-to-chip data transfer.",
+    "why": "Capital is flowing into the physical layer of AI — chips, interconnects, power — not just models. The hardware stack is about to get more competitive.",
+    "real": {
+     "score": 4,
+     "label": "Announced rounds"
+    },
+    "trend": {
+     "id": "ai-hardware-capital",
+     "label": "AIHardwareCapital"
+    },
+    "cardId": "startups-20261126-am-01",
+    "sources": [
+     {
+      "outlet": "Work Insiders",
+      "title": "Startup Funding in November 2026 So Far",
+      "url": "https://workinsiders.com/funding/2026-11/"
+     },
+     {
+      "outlet": "The Next Web",
+      "title": "Avicena $100M Series C for microLED optical interconnects",
+      "url": "https://thenextweb.com/news/avicena-100m-series-c-microled-optical-interconnects-ai"
+     }
+    ]
+   },
+   {
+    "rank": 10,
     "prevRank": 9,
     "id": "global-vc-oct-59b-china",
     "date": "2026-10-31",
@@ -811,7 +873,7 @@
     ]
    },
    {
-    "rank": 10,
+    "rank": 11,
     "prevRank": 10,
     "id": "applied-compute-350m",
     "date": "2026-11-03",
@@ -833,17 +895,47 @@
       "url": "https://news.crunchbase.com/venture/biggest-startup-rounds-ai-defense-space-tech-shield-zipline/"
      }
     ]
+   },
+   {
+    "rank": 12,
+    "prevRank": null,
+    "id": "dante-zipher-agent-devtools",
+    "date": "2026-11-25",
+    "headline": "AI security startup Dante raises $10M; cloud optimizer Zipher gets $45M as agent-tools heat up",
+    "summary": "Dante Security raised a $10M seed to tie every AI agent action to a responsible employee. Zipher raised a $45M Series A for software that picks optimal cloud compute settings — customer Hertz claims 25–40% savings.",
+    "why": "When agents act autonomously, someone has to be accountable. And when AI spend balloons, tools that cut compute cost become essential.",
+    "real": {
+     "score": 4,
+     "label": "Announced rounds"
+    },
+    "trend": {
+     "id": "agent-infra-boom",
+     "label": "AgentInfraBoom"
+    },
+    "cardId": "startups-20261126-am-02",
+    "sources": [
+     {
+      "outlet": "Tech Startups",
+      "title": "Startup Funding News Today, November 25, 2026",
+      "url": "https://techstartups.com/2026/11/25/startup-funding-news-today-november-25-2026-zipher-peak-energy-atomqubic-dante-security-more/"
+     },
+     {
+      "outlet": "Work Insiders",
+      "title": "Startup Funding in November 2026 So Far",
+      "url": "https://workinsiders.com/funding/2026-11/"
+     }
+    ]
    }
   ]
  },
  "fintech": {
   "topic": "fintech",
-  "updatedAt": "2026-11-23T03:04:17Z",
+  "updatedAt": "2026-11-26T03:08:27Z",
   "window": {
-   "from": "2026-10-24T00:00:00Z",
-   "to": "2026-11-23T03:04:17Z"
+   "from": "2026-10-27T00:00:00Z",
+   "to": "2026-11-26T03:08:27Z"
   },
-  "method": "Ranked by impact on what product teams can build, buy or must worry about, weighted by how real it is. Max 20.",
+  "method": "impact × reality, low-reality capped at #8",
   "items": [
    {
     "rank": 1,
@@ -877,6 +969,36 @@
    },
    {
     "rank": 2,
+    "prevRank": null,
+    "id": "fca-agentic-ai-guidance",
+    "date": "2026-11-24",
+    "headline": "UK's FCA tells fintechs: if your AI agent moves money, you may need a licence",
+    "summary": "The UK Financial Conduct Authority published guidance on agentic AI in financial services. Firms building autonomous AI products that move money, arrange borrowing or make investment decisions may need FCA authorisation — calling yourself a 'technology provider' is no exemption.",
+    "why": "This is the first major regulator to say explicitly that agentic AI in finance is a regulated activity. If you're building payment agents or lending bots for the UK market, your compliance checklist just got longer.",
+    "real": {
+     "score": 4,
+     "label": "Regulator guidance"
+    },
+    "trend": {
+     "id": "agentic-payments",
+     "label": "AgenticPayments"
+    },
+    "cardId": "fintech-20261126-am-01",
+    "sources": [
+     {
+      "outlet": "FCA",
+      "title": "Our approach to Agentic AI",
+      "url": "https://www.fca.org.uk/firms/innovation/ai-approach/agentic-ai"
+     },
+     {
+      "outlet": "PYMNTS",
+      "title": "FCA warns companies against unregulated agentic activity",
+      "url": "https://www.pymnts.com/news/artificial-intelligence/2026/fca-warns-companies-against-unregulated-agentic-activity/"
+     }
+    ]
+   },
+   {
+    "rank": 3,
     "prevRank": 2,
     "id": "payhawk-280m-2b",
     "date": "2026-11-18",
@@ -906,7 +1028,7 @@
     ]
    },
    {
-    "rank": 3,
+    "rank": 4,
     "prevRank": 3,
     "id": "lockwood-ai-bank-launch",
     "date": "2026-11-16",
@@ -935,7 +1057,7 @@
     ]
    },
    {
-    "rank": 4,
+    "rank": 5,
     "prevRank": 4,
     "id": "model-ml-250m-1-5b",
     "date": "2026-11-18",
@@ -960,7 +1082,7 @@
     ]
    },
    {
-    "rank": 5,
+    "rank": 6,
     "prevRank": 5,
     "id": "qonto-credit-licence",
     "date": "2026-11-18",
@@ -985,7 +1107,7 @@
     ]
    },
    {
-    "rank": 6,
+    "rank": 7,
     "prevRank": 6,
     "id": "fdic-fintech-deposit-rules",
     "date": "2026-11-14",
@@ -1014,7 +1136,7 @@
     ]
    },
    {
-    "rank": 7,
+    "rank": 8,
     "prevRank": 7,
     "id": "razorpay-ipo-fintech",
     "date": "2026-11-20",
@@ -1043,7 +1165,7 @@
     ]
    },
    {
-    "rank": 8,
+    "rank": 9,
     "prevRank": 8,
     "id": "visa-agentic-ready-expansion",
     "date": "2026-11-19",
@@ -1072,7 +1194,7 @@
     ]
    },
    {
-    "rank": 9,
+    "rank": 10,
     "prevRank": 9,
     "id": "fintech-weekly-991m-deals",
     "date": "2026-11-20",
@@ -1092,6 +1214,36 @@
       "outlet": "FinTech Global",
       "title": "Almost $1bn raised in FinTech deals in strong week for investment",
       "url": "https://fintech.global/2026/11/20/almost-1bn-raised-in-fintech-deals-in-strong-week-for-investment/"
+     }
+    ]
+   },
+   {
+    "rank": 11,
+    "prevRank": null,
+    "id": "fincen-breach-systems-offline",
+    "date": "2026-11-25",
+    "headline": "FinCEN takes systems offline after breach — hours after CIA and intelligence agencies hit",
+    "summary": "The US Treasury's Financial Crimes Enforcement Network took systems offline after detecting unauthorised access. The incident came hours after a reported intrusion at the CIA, NGA and ODNI. Investigators suspect attackers used Artex, an open-source AI defence tool repurposed for offence.",
+    "why": "FinCEN is where banks file suspicious activity reports. If the system is down, compliance teams can't file SARs, and investigations stall. Check your AML vendor's status and offline-filing procedures.",
+    "real": {
+     "score": 3,
+     "label": "Reported incident, developing"
+    },
+    "trend": {
+     "id": "fintech-cyber-risk",
+     "label": "FintechCyberRisk"
+    },
+    "cardId": "fintech-20261126-am-02",
+    "sources": [
+     {
+      "outlet": "The Verge",
+      "title": "FinCEN Treasury cybersecurity incident",
+      "url": "https://www.theverge.com/policy/1041957/fincen-treasury-cybersecurity-incident"
+     },
+     {
+      "outlet": "American Banker",
+      "title": "FinCEN gets hit",
+      "url": "https://www.americanbanker.com/creditunions/news/fincen-gets-hit"
      }
     ]
    }
