@@ -1,0 +1,49 @@
+{
+ "tldr": "Google Research's Cogentic system — a multi-agent framework built on Gemini — autonomously solved five open problems in applied mathematics without human guidance. The results span online learning, auction theory and mechanism design, and were verified by domain experts.",
+ "context": "Cogentic is a multi-agent system where specialised agents (provers, verifiers, literature reviewers, auditors) are orchestrated by a coordinator that itself makes no mathematical judgments. Given only a problem statement, the system explores approaches, generates candidate proofs, and iteratively refines them. Each result required roughly 100-1,000 Gemini API calls.\n\nThe five problems are in applied mathematics — specifically online learning theory, auction design and mechanism design — not pure mathematics like the Millennium Prize problems. The distinction matters: these are the kinds of optimisation problems that directly connect to real-world systems like ad auctions, pricing algorithms and recommendation engines.\n\nThis builds on a year of AI mathematics results: Alpöge's AI-assisted Riemann zeta bound (August 2026), a formal proof of Fermat's Last Theorem (September), and OpenAI's Navier-Stokes blow-up claim (September). But Cogentic is different in a key way — the other results involved human mathematicians directing AI tools. Cogentic ran start-to-finish without human input.\n\nThe results are published as an arXiv preprint and are domain-expert verified but not formally machine-checked (no Lean or Coq proofs). The problems were chosen from the authors' own research areas, which means they could verify results but also raises selection bias questions.",
+ "numbers": [
+  {
+   "v": "5",
+   "k": "Open problems solved"
+  },
+  {
+   "v": "100-1,000",
+   "k": "Gemini calls per problem"
+  },
+  {
+   "v": "0",
+   "k": "Human interventions needed"
+  },
+  {
+   "v": "3",
+   "k": "Mathematical domains covered"
+  }
+ ],
+ "whyPM": "The immediate product implication isn't 'AI does maths.' It's that multi-agent systems can now produce novel, verified results in domains that directly map to product problems — pricing, auction design, matching and allocation.\n\nIf your product uses any kind of optimisation (ad bidding, loan pricing, insurance underwriting, marketplace matching), the approach Cogentic used — parallel solvers with independent verifiers — could potentially find better solutions than your current heuristics. The compute cost (100-1,000 API calls per problem) is well within what a product team could budget for a high-value optimisation.",
+ "bull": "The technique generalises beyond the five demonstrated problems. Product teams start using multi-agent systems to find better pricing algorithms, bidding strategies and allocation mechanisms — not just faster, but provably better than human-designed heuristics.",
+ "bear": "The results are cherry-picked from problems the authors knew well. The technique doesn't generalise to messier real-world optimisation problems with noisy data and shifting constraints. Formal verification remains a bottleneck — domain expert sign-off doesn't scale.",
+ "unknowns": [
+  "Will the results survive formal machine-checked verification (Lean/Coq)?",
+  "Can the approach work on problems the system designers don't already understand?",
+  "What is the failure rate — how many problems did Cogentic attempt but not solve?",
+  "Does the technique transfer to applied problems with real-world noise and constraints?"
+ ],
+ "watch": [
+  "Peer review and independent replication of the five results",
+  "Whether Google productises Cogentic for internal optimisation problems",
+  "Other labs attempting similar multi-agent approaches to open problems",
+  "Whether the approach works on problems outside the authors' expertise areas"
+ ],
+ "deeper": [
+  {
+   "label": "FourWeekMBA Coverage",
+   "note": "Summary of the Cogentic system and its five results",
+   "url": "https://fourweekmba.com/ai-google-research-cogentic-multi-agent-math/"
+  },
+  {
+   "label": "CryptoBriefing Report",
+   "note": "Details on the multi-agent architecture and verification process",
+   "url": "https://cryptobriefing.com/google-gemini-proofs-unsolved-math-problems/"
+  }
+ ]
+}

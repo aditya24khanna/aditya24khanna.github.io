@@ -1,15 +1,55 @@
 [
  {
+  "id": "ai-security-consolidation",
+  "topic": "ai",
+  "label": "AI security consolidation",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T12:47:58Z",
+  "lastSeen": "2026-11-27T12:47:58Z",
+  "summary": "Cybersecurity is consolidating around AI-driven threats. CrowdStrike's $44B Zscaler acquisition is the largest deal ever in the sector, driven by the thesis that AI threats need unified endpoint + network + cloud defence.",
+  "cardIds": [
+   "ai-20261127-pm-01"
+  ]
+ },
+ {
+  "id": "ai-enterprise-privacy",
+  "topic": "ai",
+  "label": "AI enterprise privacy",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T12:47:58Z",
+  "lastSeen": "2026-11-27T12:47:58Z",
+  "summary": "Enterprise AI privacy is moving from policy promises to cryptographic guarantees. OpenAI's Private Inference uses hardware enclaves so customers can verify what code handles their data, potentially unlocking regulated industries.",
+  "cardIds": [
+   "ai-20261127-pm-04"
+  ]
+ },
+ {
+  "id": "ai-agent-threats",
+  "topic": "ai",
+  "label": "AI agent threats",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T12:47:58Z",
+  "lastSeen": "2026-11-27T12:47:58Z",
+  "summary": "Autonomous AI agents are being used in real cyberattacks, not just AI-assisted human attacks. Switzerland's BACS confirmed five such attacks with an 80% success rate, changing the threat model from human operators to autonomous systems.",
+  "cardIds": [
+   "startups-20261127-pm-02"
+  ]
+ },
+ {
   "id": "ai-frontier-maths",
   "topic": "ai",
   "label": "AI does frontier maths",
   "status": "rising",
-  "mentions": 1,
+  "mentions": 2,
   "firstSeen": "2026-11-21T17:35:00Z",
-  "lastSeen": "2026-11-21T17:35:00Z",
+  "lastSeen": "2026-11-27T12:47:58Z",
   "summary": "Since August, AI-assisted results on famous problems have come every few weeks: a better Riemann zeta bound (Aug), a formal proof of Fermat's Last Theorem (Sept), OpenAI's forced Navier–Stokes blow-up (Sept), and now two Millennium Prize claims. Checking the proofs, not producing them, is now the bottleneck.",
   "cardIds": [
-   "ai-20261121-pm-01"
+   "ai-20261121-pm-01",
+   "ai-20261127-pm-02"
   ]
  },
  {
@@ -17,12 +57,14 @@
   "topic": "ai",
   "label": "AI bubble fears",
   "status": "rising",
-  "mentions": 1,
+  "mentions": 3,
   "firstSeen": "2026-11-21T17:35:00Z",
-  "lastSeen": "2026-11-21T17:35:00Z",
+  "lastSeen": "2026-11-27T12:47:58Z",
   "summary": "Higher rates, huge losses at AI labs and chipmakers funding their own customers have turned 'is this a bubble?' from a talking point into a market move. Watch capex guidance and AI pricing.",
   "cardIds": [
-   "ai-20261121-pm-02"
+   "ai-20261121-pm-02",
+   "startups-20261127-pm-01",
+   "fintech-20261127-pm-01"
   ]
  },
  {
@@ -83,14 +125,15 @@
   "topic": "fintech",
   "label": "Agentic payments",
   "status": "rising",
-  "mentions": 3,
+  "mentions": 4,
   "firstSeen": "2026-11-21T19:20:00Z",
-  "lastSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-27T12:47:58Z",
   "summary": "Agentic payments are moving from demos to rails. Products that pay, lend or insure will need to answer: which agent is this, what was it allowed to do, and who's liable if it goes wrong.",
   "cardIds": [
    "fintech-20261121-pm-01",
    "fintech-20261126-am-01",
-   "fintech-20261127-am-02"
+   "fintech-20261127-am-02",
+   "fintech-20261127-pm-02"
   ]
  },
  {
@@ -228,12 +271,13 @@
   "topic": "ai",
   "label": "AI export controls",
   "status": "new",
-  "mentions": 1,
+  "mentions": 2,
   "firstSeen": "2026-11-26T12:45:00Z",
-  "lastSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-27T12:47:58Z",
   "summary": "US chip export rules are freezing data centre financing in Southeast Asia. Banks are walking away from loans, and the AI infrastructure buildout in the region is stalling.",
   "cardIds": [
-   "ai-20261126-pm-03"
+   "ai-20261126-pm-03",
+   "ai-20261127-pm-03"
   ]
  },
  {

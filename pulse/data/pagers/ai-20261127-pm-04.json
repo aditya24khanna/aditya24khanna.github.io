@@ -1,0 +1,40 @@
+{
+ "tldr": "OpenAI launched an alpha of Private Inference, where API prompts are processed inside hardware security enclaves. Customers can cryptographically verify what code is running on the hardware that handles their data — a potential game-changer for regulated industries.",
+ "context": "Private Inference is part of a privacy framework OpenAI unveiled at DevDay in September 2026. The core idea: instead of trusting OpenAI's promise that they won't look at your data, you can cryptographically attest what code is running on the hardware that processes your prompts. This is similar to how Apple's Private Cloud Compute works for Apple Intelligence.\n\nHardware enclaves (also called trusted execution environments, or TEEs) are a well-established technology in cloud computing — AWS Nitro Enclaves, Azure Confidential Computing and GCP Confidential VMs all use them. What's new is applying them to AI inference, where the compute is more intensive and the data flowing through (prompts and completions) is often the most sensitive.\n\nThe alpha is currently limited and details on scope, pricing and availability haven't been published. Sam Altman's announcement positioned it as addressing the core enterprise objection to cloud AI: the trade-off between using the best models and maintaining data control.\n\nThe timing is notable: it arrives alongside increasing regulatory pressure on AI data handling (the EU AI Act's transparency requirements, US state privacy laws) and competitive pressure from on-device models that keep data local by design.",
+ "numbers": [
+  {
+   "v": "Alpha",
+   "k": "Current stage (not GA)"
+  },
+  {
+   "v": "Sep 2026",
+   "k": "DevDay framework announcement"
+  },
+  {
+   "v": "3",
+   "k": "Major cloud providers with existing TEE offerings"
+  }
+ ],
+ "whyPM": "The biggest blocker for AI adoption in regulated industries — banking, healthcare, government, legal — has been 'who can see the data.' On-premises deployment is expensive and limits model quality. Private Inference could break that trade-off.\n\nIf you're a product leader in a regulated industry, this changes the conversation with your compliance team. The question moves from 'can we use cloud AI at all?' to 'does this specific attestation mechanism meet our regulatory requirements?' That's a much more tractable question.\n\nFor AI product builders: if Private Inference reaches GA, it eliminates one of the strongest arguments for self-hosted or on-device AI. Your competitive moat based on 'we keep data local' may shrink.",
+ "bull": "Private Inference reaches GA within 6 months, regulated industries flood into OpenAI's API, and the enterprise AI market doubles. Competitors (Anthropic, Google) ship equivalent features, making hardware-attested inference the industry standard.",
+ "bear": "Hardware enclaves add latency and cost that make them impractical for high-volume inference. The alpha stalls in limited preview. Enterprises decide the attestation model doesn't meet their specific regulatory requirements. On-device models improve enough that the cloud trade-off becomes moot.",
+ "unknowns": [
+  "What models are available through Private Inference — the full API lineup or a subset?",
+  "What's the latency and cost overhead compared to standard API calls?",
+  "Does the attestation satisfy HIPAA, PCI-DSS and EU AI Act requirements specifically?",
+  "When is GA planned, and will it be available outside the US?"
+ ],
+ "watch": [
+  "OpenAI's GA timeline and pricing announcements",
+  "Whether Anthropic, Google or Mistral announce equivalent features",
+  "Regulatory guidance on whether hardware attestation meets specific compliance frameworks",
+  "Enterprise adoption signals — large bank or healthcare system deployments"
+ ],
+ "deeper": [
+  {
+   "label": "VentureBeat Coverage",
+   "note": "Details on the Private Intelligence framework and enterprise positioning",
+   "url": "https://venturebeat.com/ai/openais-new-private-intelligence-targets-a-growing-enterprise-concern-who-can-see-your-ai-data/"
+  }
+ ]
+}

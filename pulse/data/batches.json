@@ -1,5 +1,29 @@
 [
  {
+  "id": "ai-20261127-pm",
+  "topic": "ai",
+  "edition": "Evening",
+  "at": "2026-11-27T12:47:58Z",
+  "blurb": "CrowdStrike buys Zscaler for $44B, Google's Cogentic solves five open math problems, Nvidia distributors cut off neoclouds renting to China, and OpenAI launches hardware-enclave inference.",
+  "count": 4
+ },
+ {
+  "id": "startups-20261127-pm",
+  "topic": "startups",
+  "edition": "Evening",
+  "at": "2026-11-27T12:47:58Z",
+  "blurb": "Foreign funds pull a record $33B from Taiwan stocks as the AI trade unwinds, and Switzerland confirms five AI-agent cyberattacks on firms and infrastructure.",
+  "count": 2
+ },
+ {
+  "id": "fintech-20261127-pm",
+  "topic": "fintech",
+  "edition": "Evening",
+  "at": "2026-11-27T12:47:58Z",
+  "blurb": "The Bank of England warns of a $4.1T AI debt bubble and says 'remember Netscape,' and Carrington Labs ships an MCP server for AI lending.",
+  "count": 2
+ },
+ {
   "id": "ai-20261127-am",
   "topic": "ai",
   "edition": "Morning",

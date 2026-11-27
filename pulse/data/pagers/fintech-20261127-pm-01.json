@@ -1,0 +1,45 @@
+{
+ "tldr": "Bank of England Governor Andrew Bailey warned that AI asset prices risk a bubble, citing JP Morgan's estimate of $4.1 trillion in AI capex financed by debt through 2030. AI hyperscalers already make up 47% of UK corporate bond issuance in 2026.",
+ "context": "Bailey's speech in Zurich laid out four scenarios for how an AI bubble could burst: markets overshoot real returns, returns arrive later than expected, everyone is priced to be a winner ('remember Netscape'), or public trust in AI collapses. The 'remember Netscape' line is pointed — Netscape had 90% browser market share before losing everything to Internet Explorer.\n\nThe Financial Policy Committee (FPC) flagged JP Morgan's estimate of $4.1T in AI capex financed through debt by 2030. To put that in context: total US corporate bond issuance in 2025 was about $1.5T. The AI debt pipeline is roughly three years of total US corporate bond issuance concentrated in one sector.\n\nThe 47% figure for UK corporate bond issuance is equally striking: nearly half of all UK corporate bonds issued in 2026 came from AI hyperscalers. That's a concentration risk that financial regulators are trained to worry about.\n\nBailey's speech was notably not about AI itself — it was about the financial system's exposure to AI through lending, bond holdings and equity positions. The concern is that a correction in AI valuations could transmit through the financial system, similar to how the dot-com bust affected banks with tech lending exposure.",
+ "numbers": [
+  {
+   "v": "$4.1T",
+   "k": "AI capex financed by debt through 2030 (JP Morgan est.)"
+  },
+  {
+   "v": "47%",
+   "k": "UK corporate bond issuance from AI hyperscalers in 2026"
+  },
+  {
+   "v": "4",
+   "k": "Bubble-burst scenarios Bailey outlined"
+  }
+ ],
+ "whyPM": "If your fintech product touches lending, insurance or risk management, the BoE just told you that AI-exposed borrowers are a concentration risk. The $4.1T debt figure means your credit models need to understand which of your borrowers have AI infrastructure exposure — data centres, GPU financing, cloud commitments, AI hiring plans.\n\nFor insurance PMs: if you underwrite business interruption or D&O for AI companies, the bubble scenario analysis is directly relevant to your pricing models. For payments PMs: if your volume depends on AI company spending (cloud services, hardware purchases), a correction could hit your transaction volumes.\n\nThe broader signal: when the Bank of England's Governor compares your sector to Netscape in a public speech, the era of cheap, easy financing for AI infrastructure is ending.",
+ "bull": "Bailey's warning proves premature. AI returns materialise faster than expected, debt is serviced comfortably, and the comparison to Netscape becomes a footnote. The speech itself triggers healthier lending standards that prevent a bubble from forming.",
+ "bear": "AI returns disappoint over the next 18 months. Bond markets reprice AI-exposed debt. Data centre loans default. The 47% concentration in UK corporate bonds triggers forced selling. Financial contagion spreads to banks and insurers with AI lending exposure.",
+ "unknowns": [
+  "What percentage of the $4.1T is variable-rate vs fixed-rate debt?",
+  "Which banks have the highest concentration of AI lending exposure?",
+  "Will other central banks (Fed, ECB) echo Bailey's warning?",
+  "How much of hyperscaler AI capex is backed by customer commitments vs speculative?"
+ ],
+ "watch": [
+  "Fed and ECB financial stability reports for similar AI risk language",
+  "AI hyperscaler bond spreads and credit default swap prices",
+  "Data centre loan default rates and lending standard changes",
+  "Whether Bailey's speech triggers any supervisory action by the PRA"
+ ],
+ "deeper": [
+  {
+   "label": "FourWeekMBA Coverage",
+   "note": "Details on Bailey's Zurich speech and bubble scenarios",
+   "url": "https://fourweekmba.com/ai-boes-bailey-says-ai-bubble-risk-exists-remember-netscape/"
+  },
+  {
+   "label": "Computing Report",
+   "note": "FPC analysis and the 47% bond issuance figure",
+   "url": "https://www.computing.co.uk/news/2026/ai/bank-of-england-sounds-alarm-over-financial-risks-from-ai-boom"
+  }
+ ]
+}

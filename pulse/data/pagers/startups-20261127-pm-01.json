@@ -1,0 +1,40 @@
+{
+ "tldr": "Foreign investors pulled a record $33.1 billion from Taiwanese equities in November 2026, driven by growing doubts about whether hyperscaler AI spending will generate adequate returns. Taiwan's market is a proxy for the global AI hardware trade.",
+ "context": "Taiwan's stock market is dominated by TSMC and the AI chip supply chain. When foreign funds sell Taiwan, they're expressing a view on the entire AI hardware buildout — from chip fabrication to server assembly to data centre construction.\n\nThe NT$1.09 trillion ($33.1B) net sell-off in November is a new monthly record and comes after a year of increasing scepticism about AI infrastructure returns. The concern isn't that AI doesn't work — it's that the amount being spent on AI infrastructure may not generate commensurate returns for the companies doing the spending.\n\nThis connects to a broader pattern: the Bank of England's warning about $4.1T in AI debt (see the BoE story in this edition), Nvidia distributors cutting off neoclouds, and multiple analysts questioning whether hyperscaler capex plans are sustainable. The Taiwan outflow is the market voting with its feet.\n\nThe sell-off also reflects currency dynamics: a strengthening US dollar makes emerging market assets less attractive, and Taiwan's export-dependent economy is particularly sensitive to dollar moves. So the AI narrative isn't the only driver, but it's the dominant one given the composition of the index.",
+ "numbers": [
+  {
+   "v": "$33.1B",
+   "k": "Net foreign sell-off in November"
+  },
+  {
+   "v": "NT$1.09T",
+   "k": "Same figure in New Taiwan Dollars"
+  },
+  {
+   "v": "1 month",
+   "k": "Record broken (single-month outflow)"
+  }
+ ],
+ "whyPM": "The Taiwan sell-off is a leading indicator for AI startup funding. When public market investors lose confidence in AI infrastructure returns, the effect cascades: hedge funds cut AI positions, LPs reduce commitments to AI-focused VCs, and growth-stage AI companies face tougher fundraising.\n\nFor founders and product leaders: if your company's next raise depends on the AI narrative staying strong, the Taiwan data is a warning sign. Investors who were bullish on AI six months ago are now asking harder questions about unit economics and payback periods. The fundraising environment may tighten before your next board meeting.",
+ "bull": "The sell-off is a healthy correction that resets AI valuations to more sustainable levels. Capital rotates from hardware (picks-and-shovels) to software (applications with proven revenue), benefiting AI product companies over infrastructure plays.",
+ "bear": "The AI trade continues to unwind, dragging down both hardware and software valuations. VC funding for AI companies drops 30-40% in Q1 2027. Startups that raised at peak valuations face down rounds or fail to raise at all.",
+ "unknowns": [
+  "Is this a tactical rotation or the start of a sustained de-risking from AI?",
+  "Will TSMC's January 2027 earnings guidance stabilise or accelerate the sell-off?",
+  "How much of the outflow is AI-specific vs broader emerging market risk-off?",
+  "Will the sell-off extend to US-listed AI stocks (Nvidia, AMD, cloud providers)?"
+ ],
+ "watch": [
+  "December fund flow data for Taiwan and Korea (another AI proxy market)",
+  "TSMC's Q4 earnings call and Q1 2027 guidance",
+  "Hyperscaler capex guidance in Q4 earnings (Microsoft, Google, Amazon, Meta)",
+  "VC fundraising data for AI-focused funds in Q1 2027"
+ ],
+ "deeper": [
+  {
+   "label": "AI Weekly Market Data",
+   "note": "Bloomberg-sourced net sell figures and analysis",
+   "url": "https://aiweekly.co/ai-news-today"
+  }
+ ]
+}

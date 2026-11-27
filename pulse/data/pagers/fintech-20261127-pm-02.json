@@ -1,0 +1,40 @@
+{
+ "tldr": "Carrington Labs released a Model Context Protocol (MCP) server for lending, allowing AI agents to query credit risk models directly. This is MCP's first significant entry into financial services infrastructure, following Google's MCP mandate for Workspace agents.",
+ "context": "The Model Context Protocol (MCP) is an open standard that lets AI agents access tools and data sources through a uniform interface. Anthropic released it in late 2025, and it's gained rapid adoption — Google mandated it for all Workspace agents (covered in yesterday's Pulse edition), and it's become the de facto standard for agentic tool integration.\n\nCarrington Labs' MCP server exposes credit risk model outputs — credit scores, risk assessments, default probabilities — as MCP resources that AI agents can query in real time. For lenders using agentic AI for underwriting, decisioning or servicing, this means their agents can access credit risk data without custom API integrations.\n\nThe significance isn't the technology (it's a relatively straightforward API wrapper) but the signal: MCP is reaching financial services infrastructure. If credit risk models are MCP-accessible, payment rails, KYC providers, fraud detection systems and regulatory reporting tools will follow.\n\nThis connects to the 'agentic payments' trend Pulse has been tracking: AI agents are moving from chatbots to autonomous actors in financial workflows. Each new MCP integration makes it easier for agents to operate across the lending stack without human handoffs.",
+ "numbers": [
+  {
+   "v": "1st",
+   "k": "Major MCP server for lending infrastructure"
+  },
+  {
+   "v": "Late 2025",
+   "k": "MCP protocol released by Anthropic"
+  },
+  {
+   "v": "Nov 2026",
+   "k": "Google mandates MCP for Workspace agents"
+  }
+ ],
+ "whyPM": "If you're building AI-powered lending, underwriting or credit products, MCP compatibility is becoming a vendor selection criterion. The question for every tool in your lending stack is: can my AI agents access this directly, or do I need custom integrations?\n\nFor existing fintech PMs: check whether your credit risk, identity verification and fraud detection vendors offer MCP servers. If they don't, ask when — the direction of travel is clear, and you don't want to be building custom connectors while competitors plug in directly.\n\nFor founders: if you're building fintech infrastructure, MCP support is now a feature you should ship. It's the difference between being a tool that agents can use and a tool that requires human intermediation.",
+ "bull": "MCP becomes the universal standard for financial services APIs. AI agents seamlessly access credit risk, payments, compliance and reporting tools. Lending decisions that took days happen in minutes. New entrants build agent-first lenders from scratch.",
+ "bear": "Financial regulators require human-in-the-loop for credit decisions, limiting how much agents can do autonomously. MCP adoption in fintech stalls because banks' compliance teams won't approve agent-to-agent workflows. Security concerns about agents accessing credit data slow adoption.",
+ "unknowns": [
+  "Will regulators treat MCP-connected AI credit decisions differently from API-driven ones?",
+  "Which fintech infrastructure providers will add MCP servers next?",
+  "How will audit trails work when AI agents make credit decisions via MCP?",
+  "Will banks' security and compliance teams approve MCP-based agent workflows?"
+ ],
+ "watch": [
+  "Other fintech infrastructure providers announcing MCP servers",
+  "Regulatory guidance on AI agents in credit decisioning",
+  "Adoption metrics from Carrington Labs (number of integrations, query volume)",
+  "Whether major credit bureaux (Experian, TransUnion, Equifax) build MCP interfaces"
+ ],
+ "deeper": [
+  {
+   "label": "Finovate Weekly Rundown",
+   "note": "Coverage of Carrington Labs' MCP server launch",
+   "url": "https://finovate.com/fintech-rundown-a-rapid-review-of-weekly-news-92/"
+  }
+ ]
+}

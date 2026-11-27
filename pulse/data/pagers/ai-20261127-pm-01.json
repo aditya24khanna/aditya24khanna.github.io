@@ -1,0 +1,53 @@
+{
+ "tldr": "CrowdStrike is acquiring Zscaler for $43.9B in an all-stock deal — the largest cybersecurity acquisition ever. The merger combines endpoint (CrowdStrike) and network/zero-trust (Zscaler) security into one platform, driven by the thesis that AI-generated threats require unified defence.",
+ "context": "CrowdStrike has been the dominant force in endpoint security, with $6.26B in ARR and 28% year-over-year revenue growth as of Q3 FY27. Zscaler pioneered cloud-delivered zero-trust network security and has been growing at roughly 25% annually. Both companies have been investing heavily in AI capabilities — CrowdStrike through its Charlotte AI assistant and Zscaler through AI-powered threat classification.\n\nThe deal structure is all-stock: each Zscaler share converts to 1.135 CrowdStrike shares. CrowdStrike expects the deal to be immediately accretive to free cash flow per share and to add network security — the largest total addressable market in cybersecurity — to its platform.\n\nThis follows a broader pattern of cybersecurity consolidation. Palo Alto Networks acquired QRadar's SaaS assets from IBM in 2024. Cisco bought Splunk for $28B. The thesis across all these deals is the same: customers want fewer vendors, and AI threats move too fast for point solutions.\n\nThe deal requires regulatory approval and is expected to close in the first half of calendar 2027. The all-stock structure means CrowdStrike shareholders are betting that combining the two businesses is worth the dilution.",
+ "numbers": [
+  {
+   "v": "$43.9B",
+   "k": "Deal value (all-stock)"
+  },
+  {
+   "v": "1.135",
+   "k": "CrowdStrike shares per Zscaler share"
+  },
+  {
+   "v": "$6.26B",
+   "k": "CrowdStrike ARR (Q3 FY27)"
+  },
+  {
+   "v": "28%",
+   "k": "CrowdStrike YoY revenue growth"
+  },
+  {
+   "v": "$1.58B",
+   "k": "CrowdStrike Q3 revenue"
+  }
+ ],
+ "whyPM": "If your security stack includes both CrowdStrike and Zscaler, you're about to have one vendor instead of two. That usually means pricing shifts (up or down depending on your contract timing), feature consolidation (some Zscaler features may move into the CrowdStrike console), and API changes that affect integrations.\n\nMore broadly, this deal validates the 'platform play' in cybersecurity. If you're evaluating security vendors, the question is no longer 'best-of-breed vs platform' — it's 'which platform.' For AI product leaders specifically: the deal was explicitly motivated by AI-generated threats, which means your AI features are now part of the threat model that security vendors sell against.",
+ "bull": "The combined platform becomes the default enterprise security stack, capturing network + endpoint + cloud in one console. Cross-sell drives margins higher, and AI-driven threat detection works better with unified data across all three layers.",
+ "bear": "Integration takes 2-3 years and distracts both engineering teams. Customers locked into multi-year contracts with both vendors see no near-term benefit. A recession or AI spending pullback hits the stock price, making the all-stock deal dilutive for CrowdStrike shareholders.",
+ "unknowns": [
+  "Will antitrust regulators in the US or EU challenge the deal?",
+  "How will existing Zscaler channel partners be integrated — or displaced?",
+  "What happens to Zscaler's standalone product roadmap during the 12-18 month integration?",
+  "Will enterprise customers accelerate or delay purchases while waiting for the combined platform?"
+ ],
+ "watch": [
+  "Regulatory filing timeline and any conditions attached to approval",
+  "CrowdStrike's next earnings call for integration plan details",
+  "Customer contract renewal rates for both companies during the transition",
+  "Competitor responses — especially Palo Alto Networks and Microsoft"
+ ],
+ "deeper": [
+  {
+   "label": "CrowdStrike Q3 FY27 8-K Filing",
+   "note": "The SEC filing with the definitive agreement and deal terms",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001535527/000153552726000035/crwd-20261123xex991.htm"
+  },
+  {
+   "label": "Yahoo Finance Analysis",
+   "note": "Comparison of CrowdStrike's mature phase vs Zscaler's acceleration",
+   "url": "https://finance.yahoo.com/news/crowdstrike-enters-mature-phase-while-174956925.html"
+  }
+ ]
+}
