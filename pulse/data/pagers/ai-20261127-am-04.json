@@ -1,0 +1,49 @@
+{
+ "tldr": "Volvo Cars and Hexagon Robotics are training AEON humanoid robots inside Volvo's Ghent factory on real industrial tasks, targeting production use from mid-2027 — the first major automaker to move humanoids from demo to factory training.",
+ "context": "Humanoid robots have been in development for years, but deployments have been limited to controlled demos and labs. Hexagon launched the AEON humanoid in collaboration with Nvidia, using Nvidia's robotics and AI software stack for training.\n\nThe Volvo deployment is different from previous announcements in several ways. The robots are training in a working factory, not a lab. Volvo's own manufacturing team is running the training, not Hexagon's engineers. And the target tasks are specific: repetitive and ergonomically demanding work that contributes to worker injuries.\n\nHexagon has also partnered with Schaeffler, the German automotive supplier, which has set up a dedicated training gym for AEON ahead of a planned thousand-unit deployment across its global factory network.\n\nThe timeline is aggressive: factory pilot in H1 2027 with more units, production use from mid-2027. Whether that holds depends on how well the robots handle the variability and safety requirements of a live automotive plant.",
+ "numbers": [
+  {
+   "v": "H1 2027",
+   "k": "Factory pilot with more AEON units"
+  },
+  {
+   "v": "Mid-2027",
+   "k": "Target for production use"
+  },
+  {
+   "v": "1,000+",
+   "k": "Planned Schaeffler deployment (separate)"
+  },
+  {
+   "v": "Ghent",
+   "k": "Volvo plant location (Belgium)"
+  }
+ ],
+ "whyPM": "The shift from demo to training is the signal. When a company like Volvo assigns its own manufacturing team to train robots on its own tasks, that's an operational commitment, not a PR exercise.\n\nThe ergonomics angle matters: worker injury claims and retention problems in manufacturing are expensive. If humanoids can take over the tasks that hurt people, the ROI calculation is about injury costs avoided, not just labour savings.\n\nFor product leaders outside manufacturing, the pattern to watch is the transition from vendor-led demos to customer-led training. When customers start doing the training themselves, adoption is about to accelerate.",
+ "bull": "Volvo's mid-2027 production target holds. Other automakers follow within 12 months. Humanoid robots become standard equipment in automotive plants by 2029, dramatically reducing workplace injuries and enabling 24/7 production on dangerous tasks.",
+ "bear": "The robots can handle structured demo tasks but fail on the variability of real production: unexpected part positions, tool changes, human co-workers nearby. Mid-2027 slips to 2028 or later. The Schaeffler thousand-unit plan quietly scales back.",
+ "unknowns": [
+  "Cost per AEON unit and ROI timeline compared to traditional automation",
+  "Safety certification requirements for humanoids working alongside humans",
+  "Whether the Nvidia AI software stack creates vendor lock-in",
+  "How the robots handle tasks that vary from shift to shift"
+ ],
+ "watch": [
+  "Whether Volvo hits the H1 2027 pilot date with additional units",
+  "Schaeffler's thousand-unit deployment progress",
+  "Other automakers announcing humanoid robot programs",
+  "Safety incident reports from any factory humanoid deployment"
+ ],
+ "deeper": [
+  {
+   "label": "Hexagon press release",
+   "note": "Official announcement with training details",
+   "url": "https://hexagon.com/company/newsroom/press-releases/2026/towards-factory-deployment-how-aeon-is-trained-to-perform"
+  },
+  {
+   "label": "Nvidia blog on AEON",
+   "note": "Technical details of the AI software stack",
+   "url": "https://blogs.nvidia.com/blog/hexagon-robotics-ai-software-aeon-humanoid"
+  }
+ ]
+}

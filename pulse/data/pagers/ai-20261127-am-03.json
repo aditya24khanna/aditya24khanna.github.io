@@ -1,0 +1,52 @@
+{
+ "tldr": "Three xAI co-founders launched Epochal AI with $100M in personal funding and a product called Time Portal that archives 1 trillion web pages across 30 years, letting AI agents browse the web as it looked at any point in the past.",
+ "context": "xAI's founding team has largely dispersed since SpaceX absorbed the company in February 2026. Nine of xAI's twelve co-founders have left. Igor Babuschkin raised $1.1 billion for River AI in August. Now Guodong Zhang, Zihang Dai and Manuel Kroiss have launched Epochal, with former Anthropic, OpenAI and Google DeepMind researchers on the team.\n\nThe core product, Time Portal, addresses a specific problem in AI forecasting: if you train or evaluate a model using today's web, the model has access to information that wasn't available when the forecast was made. That's data leakage, and it makes backtesting unreliable.\n\nEpochal's archive covers 7 trillion URLs with minute-level granularity on fast-changing pages. In self-reported benchmarks replaying 347 Kalshi and Polymarket forecasting questions, Time Portal achieved 0.98 Pearson correlation with original live runs, versus 0.16 for browsing the resolved web.\n\nBloomberg reports the team built the product in 90 days. The $100M comes from Zhang personally — no outside investors.",
+ "numbers": [
+  {
+   "v": "$100M",
+   "k": "Personal funding from CEO"
+  },
+  {
+   "v": "1T+",
+   "k": "Archived web pages"
+  },
+  {
+   "v": "7T",
+   "k": "URLs tracked"
+  },
+  {
+   "v": "30+ years",
+   "k": "Archive depth"
+  },
+  {
+   "v": "0.98",
+   "k": "Correlation with live forecasting runs (self-reported)"
+  }
+ ],
+ "whyPM": "The forecasting use case is compelling but narrow. The bigger play is infrastructure: any AI agent that needs to reason about past events — legal discovery, competitive intelligence, market analysis — needs access to historical web data, not just today's snapshot.\n\nThe self-funded model is unusual. Zhang putting in $100M of his own money signals conviction, but also means no outside investor has validated the business model or the archive's legal standing.\n\nFor product leaders building AI features that touch historical data: Epochal's approach — time-stamped, granular web archives — could become a standard data source. The question is whether the archive is legally licensed or scraped, which Epochal hasn't disclosed.",
+ "bull": "Time Portal becomes essential infrastructure for AI agents, like how search engines became essential for web browsers. Forecasting, legal, compliance and competitive intelligence products all need historical web access, and Epochal owns the best archive.",
+ "bear": "The archive's legal basis is unclear. If it's scraped content, copyright holders will sue. The 0.98 benchmark is self-reported and may not generalise. The $100M runs out fast if the product doesn't find paying customers beyond the forecasting niche.",
+ "unknowns": [
+  "How the archive was collected and whether the content is licensed",
+  "Whether the 0.98 correlation holds on out-of-sample forecasting questions",
+  "Pricing model and target customer base",
+  "Whether Zhang will raise external capital or stay self-funded"
+ ],
+ "watch": [
+  "Independent replication of the forecasting benchmark",
+  "Any copyright or data-licensing challenges",
+  "Whether other xAI alumni launch competing products"
+ ],
+ "deeper": [
+  {
+   "label": "Daily AI Caffeine coverage",
+   "note": "Summary with Time Portal details",
+   "url": "https://dailyaicaffeinenobs.substack.com/p/todays-real-ai-news-27-nov-26"
+  },
+  {
+   "label": "The Decoder on xAI exodus",
+   "note": "Context on xAI co-founders leaving",
+   "url": "https://the-decoder.com/half-of-xais-co-founders-have-now-left-elon-musks-ai-startup/"
+  }
+ ]
+}

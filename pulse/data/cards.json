@@ -1,5 +1,301 @@
 [
  {
+  "id": "ai-20261127-am-01",
+  "topic": "ai",
+  "batch": "ai-20261127-am",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-27T02:45:00Z",
+  "dedupeKey": "anthropic-api-rust-rewrite-claude-80pct-code-nov-2026",
+  "headline": "Anthropic rewrites its API in Rust — and Claude wrote 80% of the code",
+  "what": "Anthropic migrated its Messages API from Python to Rust after traffic grew roughly 1,800× since early 2024. Claude agents wrote about 80% of the merged code on the project, producing a first version of the core request path in about a week. The Rust service went live in September 2026 with no downtime.",
+  "why": "This isn't an AI demo — it's a production rewrite of a critical revenue path. If an AI lab trusts its own model to rewrite its own API, the bar for 'can AI do our backend work' just moved. For product leaders: the 70% CPU savings also show that Rust rewrites pay for themselves faster when AI does the porting.",
+  "tryThis": {
+   "text": "Pick your most CPU-intensive Python service and estimate what a 70% CPU reduction would save annually. That's the business case for an AI-assisted Rust rewrite."
+  },
+  "trend": {
+   "id": "ai-builds-ai",
+   "label": "AIBuildsAI"
+  },
+  "real": {
+   "score": 4,
+   "label": "Shipped · company post",
+   "reason": "Published on Anthropic's engineering blog. The 70% CPU and 20% TTFT improvements are self-reported production metrics, not independently benchmarked."
+  },
+  "sources": [
+   {
+    "title": "Migrating our API to Rust",
+    "outlet": "Anthropic Engineering",
+    "url": "https://www.anthropic.com/research/migrating-api-to-rust"
+   },
+   {
+    "title": "AI Daily Digest: November 27, 2026",
+    "outlet": "DEV Community",
+    "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-27-2026-gpt-56-gets-a-sunset-date-anthropic-rewrites-its-api-in-d86"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "ai-20261127-am-02",
+  "topic": "ai",
+  "batch": "ai-20261127-am",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-27T02:45:00Z",
+  "dedupeKey": "openai-gpt-62-sol-rollout-gpt-56-sunset-dec-2026",
+  "headline": "OpenAI rolls out GPT-6.2 Sol and kills GPT-5.6 on December 23 — under six months as flagship",
+  "what": "OpenAI began rolling out GPT-6.2 Sol to ChatGPT Plus, Pro, Business and Enterprise users from November 23. GPT-5.6 Sol will be removed from ChatGPT, Work and Codex on December 23 — giving it under six months as the flagship model. API pricing stays at $2/$10 per million tokens (input/output). Image understanding jumped from 47.4% to 71.7%.",
+  "why": "Model lifecycles are compressing to months, not years. If your product depends on a specific model's behaviour — fine-tuned prompts, eval suites, edge-case workarounds — you need a migration plan before the sunset date, not after. The December 23 deadline is a holiday-season surprise for any team on code freeze.",
+  "tryThis": {
+   "text": "Check whether your product pins a specific model version in its API calls. If it uses 'gpt-5.6' anywhere, you have 26 days to migrate and test."
+  },
+  "trend": {
+   "id": "model-lifecycle-compression",
+   "label": "ModelLifecycleCompression"
+  },
+  "real": {
+   "score": 5,
+   "label": "Solid · company announcement",
+   "reason": "Published on OpenAI's blog. The rollout and sunset dates are official."
+  },
+  "sources": [
+   {
+    "title": "Previewing GPT-5.6 Sol",
+    "outlet": "OpenAI",
+    "url": "https://openai.com/index/previewing-gpt-5-6-sol/"
+   },
+   {
+    "title": "AI Daily Digest: November 27, 2026",
+    "outlet": "DEV Community",
+    "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-27-2026-gpt-56-gets-a-sunset-date-anthropic-rewrites-its-api-in-d86"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "ai-20261127-am-03",
+  "topic": "ai",
+  "batch": "ai-20261127-am",
+  "kind": "news",
+  "order": 3,
+  "publishedAt": "2026-11-27T02:45:00Z",
+  "dedupeKey": "epochal-ai-time-portal-ex-xai-founders-100m-nov-2026",
+  "headline": "Ex-xAI co-founders launch Epochal with $100M and an archive of 1 trillion web pages",
+  "what": "Three xAI co-founders — Guodong Zhang (CEO), Zihang Dai and Manuel Kroiss — launched Epochal AI on November 24, funded with $100M from Zhang personally. Its first product, Time Portal, is a cloud service that lets AI agents browse the web as it looked at any point in the past 30 years, with minute-level granularity on fast-changing pages and 7 trillion URLs tracked. Bloomberg reports the team built it in 90 days.",
+  "why": "Forecasting models are only as good as the data they train on, and training on the resolved web is cheating — you're giving the model tomorrow's answer. Epochal's self-reported benchmark shows 0.98 correlation with live runs vs 0.16 for browsing the current web. If this holds up, it could become infrastructure for every AI agent that needs to reason about the past.",
+  "tryThis": {
+   "text": "Think about where your product's AI features use web data for context. Would they give different answers if they saw the web as it was six months ago? That's the gap Epochal is targeting."
+  },
+  "trend": {
+   "id": "ai-data-infrastructure",
+   "label": "AIDataInfrastructure"
+  },
+  "real": {
+   "score": 3,
+   "label": "Credible · company launch",
+   "reason": "Bloomberg report and company announcement. The benchmark is self-reported and the archive's licensing is undisclosed."
+  },
+  "sources": [
+   {
+    "title": "Today's (real) AI news 27 Nov '26",
+    "outlet": "Daily AI Caffeine",
+    "url": "https://dailyaicaffeinenobs.substack.com/p/todays-real-ai-news-27-nov-26"
+   },
+   {
+    "title": "Half of xAI's co-founders have now left",
+    "outlet": "The Decoder",
+    "url": "https://the-decoder.com/half-of-xais-co-founders-have-now-left-elon-musks-ai-startup/"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "ai-20261127-am-04",
+  "topic": "ai",
+  "batch": "ai-20261127-am",
+  "kind": "news",
+  "order": 4,
+  "publishedAt": "2026-11-27T02:45:00Z",
+  "dedupeKey": "volvo-hexagon-aeon-humanoid-ghent-factory-nov-2026",
+  "headline": "Volvo puts humanoid robots on its factory floor — not for a demo, for training",
+  "what": "Hexagon Robotics and Volvo Cars announced on November 26 that AEON humanoid robots are training inside Volvo's Ghent, Belgium plant on real industrial tasks. Volvo's manufacturing team is running the training, targeting repetitive and ergonomically demanding work. A factory pilot with more AEON units is planned for H1 2027, with production use from mid-2027.",
+  "why": "Humanoid robots have been demo-ware for years. This is different: a major automaker is training them in a real plant, with its own staff, on tasks it actually needs done. The timeline — production use by mid-2027 — is aggressive but specific. For product leaders in manufacturing or logistics: the question is shifting from 'will humanoids work?' to 'what tasks should we train them on first?'",
+  "tryThis": {
+   "text": "List the three most ergonomically demanding or repetitive tasks in your operation. Those are the ones humanoid robots will reach first — and the ones you should be automating now with whatever's available."
+  },
+  "trend": {
+   "id": "humanoid-factory-deployment",
+   "label": "HumanoidFactoryDeployment"
+  },
+  "real": {
+   "score": 4,
+   "label": "Confirmed · company announcement",
+   "reason": "Joint announcement from Hexagon Robotics and Volvo Cars. Training is confirmed; production deployment timeline is a plan, not a commitment."
+  },
+  "sources": [
+   {
+    "title": "Towards factory deployment: How AEON is trained to perform",
+    "outlet": "Hexagon",
+    "url": "https://hexagon.com/company/newsroom/press-releases/2026/towards-factory-deployment-how-aeon-is-trained-to-perform"
+   },
+   {
+    "title": "AI Daily Digest: November 27, 2026",
+    "outlet": "DEV Community",
+    "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-27-2026-gpt-56-gets-a-sunset-date-anthropic-rewrites-its-api-in-d86"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "startups-20261127-am-01",
+  "topic": "startups",
+  "batch": "startups-20261127-am",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-27T02:45:00Z",
+  "dedupeKey": "sierra-175b-series-f-30b-valuation-nov-2026",
+  "headline": "Sierra doubles to a $30B valuation on $1.75B raise — the AI customer-agent bet keeps growing",
+  "what": "Sierra, the enterprise AI customer-service company co-founded by former Salesforce CEO Bret Taylor, is raising $1.75B in a Series F led by Greenoaks and Lightspeed, valuing the company at $30B. That's roughly double its $15B valuation from a $950M raise in May. Sierra has over $400M in annual recurring revenue and uses outcome-based pricing — customers pay for resolved issues, not seats.",
+  "why": "A $30B valuation at 75× revenue is a bet that AI agents will own the customer-service layer, not just assist it. The outcome-based pricing model is the tell: if your product charges per seat, you're about to compete against vendors who charge per result. That changes the buying conversation entirely.",
+  "tryThis": {
+   "text": "Calculate your customer-support cost per resolved ticket. That's the number Sierra's customers are comparing against. If you can't calculate it, that's the first problem."
+  },
+  "trend": {
+   "id": "ai-customer-agents",
+   "label": "AICustomerAgents"
+  },
+  "real": {
+   "score": 3,
+   "label": "Credible · sourced report",
+   "reason": "Reported by The Information and multiple outlets citing people familiar with the deal. Sierra has not confirmed the round publicly."
+  },
+  "sources": [
+   {
+    "title": "Bret Taylor's Sierra in talks at $30B valuation",
+    "outlet": "The Information",
+    "url": "https://www.theinformation.com/articles/bret-taylors-sierra-talks-raise-30-billion-valuation"
+   },
+   {
+    "title": "Sierra eyes $30B valuation, 75x its $400M revenue run rate",
+    "outlet": "FourWeekMBA",
+    "url": "https://fourweekmba.com/ai-sierra-eyes-30b-valuation-75x-its-400m-revenue-run-rate/"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "startups-20261127-am-02",
+  "topic": "startups",
+  "batch": "startups-20261127-am",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-27T02:45:00Z",
+  "dedupeKey": "ai-startups-47pct-november-vc-499b-513-deals-2026",
+  "headline": "AI startups captured 47% of all VC money in November — $49.9B across 513 deals",
+  "what": "AI startups captured 47% of all disclosed venture funding in November 2026, with $49.9B raised across 513 deals. That's nearly half of all venture capital going to a single category. The concentration is driven by mega-rounds: Sierra ($1.75B), Hone Health ($228M), and infrastructure plays like Epochal ($100M) all closed in the same week.",
+  "why": "When one category takes half the money, every other category is fighting over what's left. For non-AI startups, fundraising just got harder. For AI startups, the bar is higher too — investors have so many options that only clear differentiation and revenue traction win. For product leaders: your next vendor or partner is probably AI-first, whether you asked for it or not.",
+  "tryThis": {
+   "text": "Look at your vendor stack. How many of your tools launched in the last two years? For each, check whether they've raised recently — well-funded vendors can subsidise pricing to win share, then raise prices later."
+  },
+  "trend": {
+   "id": "ai-funding-concentration",
+   "label": "AIFundingConcentration"
+  },
+  "real": {
+   "score": 4,
+   "label": "Confirmed · tracker data",
+   "reason": "Data from funding trackers aggregating disclosed deals. Actual totals are higher since many rounds go undisclosed."
+  },
+  "sources": [
+   {
+    "title": "AI Startups Capture 47% of November 2026 Venture Rounds",
+    "outlet": "DigiPortfolio",
+    "url": "https://mydigifolio.com/news/story/ai-startups-capture-47-percent-november-2026-funding-49-9-billion"
+   },
+   {
+    "title": "Weekly TOP Startup / VC news of November 26, 2026",
+    "outlet": "Parsers VC",
+    "url": "https://parsers.substack.com/p/weekly-top-startup-vc-news-of-november-76a"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "fintech-20261127-am-01",
+  "topic": "fintech",
+  "batch": "fintech-20261127-am",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-27T02:45:00Z",
+  "dedupeKey": "phonepe-ipo-15b-valuation-sebi-approved-q1-2027",
+  "headline": "PhonePe gets SEBI approval for its IPO — $15B valuation, Q1 2027 listing",
+  "what": "Walmart-backed PhonePe has secured SEBI approval for its IPO, targeting a valuation of up to $15 billion with a Q1 2027 listing. The offering is a pure offer-for-sale: existing shareholders including Walmart, Tiger Global and Microsoft will sell $1.2–1.5 billion of shares. PhonePe has over 650 million registered users and handles about 45% of India's UPI transactions. It has expanded into lending, insurance, investments and merchant services.",
+  "why": "This is India's biggest fintech IPO and a test of whether UPI-first platforms can be valued like banks. At $15B, the market is pricing in PhonePe's expansion beyond payments into lending and insurance — the same playbook Paytm tried at a higher valuation and couldn't sustain. For fintech PMs in India: PhonePe's public financials will finally show whether UPI-adjacent businesses actually make money.",
+  "tryThis": {
+   "text": "If you compete with PhonePe in any category — payments, lending, insurance, investments — its IPO prospectus will be the most detailed public look at unit economics in Indian fintech. Read it when it drops."
+  },
+  "trend": {
+   "id": "india-fintech-ipo",
+   "label": "IndiaFintechIPO"
+  },
+  "real": {
+   "score": 4,
+   "label": "Confirmed · regulatory approval",
+   "reason": "SEBI approval reported by multiple outlets including TechCrunch and Bloomberg Law. The $15B valuation is a target, not a final price."
+  },
+  "sources": [
+   {
+    "title": "PhonePe secures SEBI approval for IPO",
+    "outlet": "Entrepreneur India",
+    "url": "https://india.entrepreneur.com/news-and-trends/walmart-backed-phonepe-secures-sebi-approval-for-ipo-eyes/502068"
+   },
+   {
+    "title": "Walmart's India Payments App PhonePe Files for $1.5 Billion IPO",
+    "outlet": "Bloomberg Law",
+    "url": "https://news.bloomberglaw.com/capital-markets/walmarts-india-payments-app-phonepe-files-for-1-5-billion-ipo"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "fintech-20261127-am-02",
+  "topic": "fintech",
+  "batch": "fintech-20261127-am",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-27T02:45:00Z",
+  "dedupeKey": "visa-ai-agent-payments-50k-week-reality-check-nov-2026",
+  "headline": "Visa says AI agents make just $50K in payments per week — a reality check on agentic commerce",
+  "what": "Visa's head of crypto Cuy Sheffield said AI agents make about $50,000 in payments per week across the x402 and MPP stablecoin protocols — and volume has barely grown in the past 6–8 months. Card-based agent payments are not included in this figure. Meanwhile, Walmart opened its stores to Meta's Muse agent for Black Friday, and Ant International and BNY signed a deal to develop 24/7 cross-border agent payment solutions.",
+  "why": "Everyone's talking about agentic payments. Visa just put a number on it: $50K a week. That's a rounding error for a company that processes $14 trillion a year. The gap between infrastructure readiness (Visa, Mastercard, Ant are all building) and actual agent spending is enormous. For fintech PMs: build for agents, but price for humans — agents aren't paying the bills yet.",
+  "tryThis": {
+   "text": "Ask your payments team what percentage of your transaction volume comes from automated or agent-initiated payments today. If it's near zero, you have time to build the infrastructure right instead of rushing."
+  },
+  "trend": {
+   "id": "agentic-payments",
+   "label": "AgenticPayments"
+  },
+  "real": {
+   "score": 4,
+   "label": "Confirmed · executive statement",
+   "reason": "Cuy Sheffield's statement reported by Behind Fintech. The $50K figure covers only stablecoin protocols, not card payments, so actual agent payment volume may be higher."
+  },
+  "sources": [
+   {
+    "title": "Behind Fintech - Daily / 26 November 2026",
+    "outlet": "Behind Fintech",
+    "url": "https://behindfintech.substack.com/p/behind-fintech-daily-26-november"
+   },
+   {
+    "title": "Visa expands AI agent infrastructure and stablecoin settlement",
+    "outlet": "The Asian Banker",
+    "url": "https://www.theasianbanker.com/press-releases/visa-expands-ai-agent-infrastructure-and-stablecoin-settlement-capabilities-at-annual-payments-forum"
+   }
+  ],
+  "hasPager": true
+ },
+ {
   "id": "ai-20261126-pm-01",
   "topic": "ai",
   "batch": "ai-20261126-pm",

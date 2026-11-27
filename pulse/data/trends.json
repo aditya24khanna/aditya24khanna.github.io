@@ -83,13 +83,14 @@
   "topic": "fintech",
   "label": "Agentic payments",
   "status": "rising",
-  "mentions": 2,
+  "mentions": 3,
   "firstSeen": "2026-11-21T19:20:00Z",
-  "lastSeen": "2026-11-26T02:35:00Z",
+  "lastSeen": "2026-11-27T02:45:00Z",
   "summary": "Agentic payments are moving from demos to rails. Products that pay, lend or insure will need to answer: which agent is this, what was it allowed to do, and who's liable if it goes wrong.",
   "cardIds": [
    "fintech-20261121-pm-01",
-   "fintech-20261126-am-01"
+   "fintech-20261126-am-01",
+   "fintech-20261127-am-02"
   ]
  },
  {
@@ -298,6 +299,97 @@
   "summary": "Credit bureaux are absorbing open banking data rather than being disrupted by it. Experian's UK Cashflow Data Bureau combines permissioned income data with traditional credit files, potentially reaching a third more borrowers.",
   "cardIds": [
    "fintech-20261126-pm-02"
+  ]
+ },
+ {
+  "id": "ai-builds-ai",
+  "topic": "ai",
+  "label": "AI builds AI",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-27T02:45:00Z",
+  "summary": "AI models are writing production code for their own infrastructure. Anthropic's Claude wrote 80% of its own API rewrite, cutting CPU use 70% — the strongest evidence yet that AI can do critical systems work, not just prototyping.",
+  "cardIds": [
+   "ai-20261127-am-01"
+  ]
+ },
+ {
+  "id": "model-lifecycle-compression",
+  "topic": "ai",
+  "label": "Model lifecycle compression",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-27T02:45:00Z",
+  "summary": "Flagship AI models are being replaced in under six months. OpenAI's GPT-5.6 lasted five months before GPT-6.2 Sol replaced it, forcing teams to build migration plans into their product roadmaps.",
+  "cardIds": [
+   "ai-20261127-am-02"
+  ]
+ },
+ {
+  "id": "ai-data-infrastructure",
+  "topic": "ai",
+  "label": "AI data infrastructure",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-27T02:45:00Z",
+  "summary": "New infrastructure is emerging to give AI agents access to historical and temporal data. Epochal's Time Portal archives 1 trillion web pages across 30 years, targeting forecasting and backtesting use cases.",
+  "cardIds": [
+   "ai-20261127-am-03"
+  ]
+ },
+ {
+  "id": "humanoid-factory-deployment",
+  "topic": "ai",
+  "label": "Humanoid factory deployment",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-27T02:45:00Z",
+  "summary": "Humanoid robots are moving from demos to real factory training. Volvo's Ghent plant and Schaeffler's training gym are preparing AEON humanoids for production use by mid-2027.",
+  "cardIds": [
+   "ai-20261127-am-04"
+  ]
+ },
+ {
+  "id": "ai-customer-agents",
+  "topic": "startups",
+  "label": "AI customer agents",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-27T02:45:00Z",
+  "summary": "AI agents are replacing traditional customer service, with outcome-based pricing models challenging per-seat SaaS. Sierra's $30B valuation on $400M ARR shows the market believes agents will own this layer.",
+  "cardIds": [
+   "startups-20261127-am-01"
+  ]
+ },
+ {
+  "id": "ai-funding-concentration",
+  "topic": "startups",
+  "label": "AI funding concentration",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-27T02:45:00Z",
+  "summary": "AI startups captured 47% of all VC funding in November 2026 — $49.9B across 513 deals. Capital concentration is reshaping the startup ecosystem, squeezing non-AI companies.",
+  "cardIds": [
+   "startups-20261127-am-02"
+  ]
+ },
+ {
+  "id": "india-fintech-ipo",
+  "topic": "fintech",
+  "label": "India fintech IPO",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-27T02:45:00Z",
+  "summary": "PhonePe's $15B IPO will be the first public test of whether UPI-first platforms can be valued like banks. The prospectus will reveal whether cross-selling lending and insurance to 650M users actually generates revenue.",
+  "cardIds": [
+   "fintech-20261127-am-01"
   ]
  }
 ]

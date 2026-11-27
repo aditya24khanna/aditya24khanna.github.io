@@ -1,0 +1,49 @@
+{
+ "tldr": "Visa's crypto head says AI agents make just $50K in payments per week via stablecoin protocols, barely growing over 6–8 months — a stark reality check against the agentic commerce hype, even as Walmart, Ant International and BNY build agent payment infrastructure.",
+ "context": "Cuy Sheffield, Visa's head of crypto, made the $50K figure public, covering payments across the x402 and MPP stablecoin payment protocols. Card-based agent payments are not included, so total agent payment volume is somewhat higher — but even so, $50K/week is negligible.\n\nThe stagnation over 6–8 months is the more important data point. It suggests that the bottleneck isn't infrastructure (Visa, Mastercard and Stripe have all launched agent payment tools) but demand: agents aren't buying enough to move the needle.\n\nMeanwhile, the infrastructure buildout continues. Walmart opened its stores to Meta's Muse agent for Black Friday shopping. Ant International and BNY signed a deal to develop 24/7 FX, treasury and cross-border payment solutions, exploring tokenised deposits and money market funds. And the UK's CMA and ICO secured commitments from Meta before Muse's UK launch.\n\nThe gap between infrastructure readiness and actual transaction volume is the story. Everyone is building for agent commerce; almost no one is using it yet.",
+ "numbers": [
+  {
+   "v": "$50K/week",
+   "k": "AI agent stablecoin payment volume"
+  },
+  {
+   "v": "6–8 months",
+   "k": "Period of stagnant growth"
+  },
+  {
+   "v": "$14T/year",
+   "k": "Visa's total payment volume (for scale)"
+  },
+  {
+   "v": "650M+",
+   "k": "PhonePe users (Walmart ecosystem context)"
+  }
+ ],
+ "whyPM": "This is the most useful data point in agentic payments right now: a credible insider saying the numbers are tiny and not growing. That doesn't mean agentic payments won't happen — the infrastructure investments say otherwise — but it means the timeline is longer than the hype suggests.\n\nFor fintech PMs, the implication is strategic: build the agent payment infrastructure now (it's cheap when volume is low), but don't staff up or bet revenue on it yet. The companies that win will be ready when volume inflects, not the ones that over-invested before it did.\n\nThe UK regulatory response to Muse is also a leading indicator. When regulators start setting terms before an AI agent launches, every market will follow. India's RBI, SEBI and NPCI will eventually need to address agent-initiated payments on UPI.",
+ "bull": "Agent payment volume inflects in 2027 as shopping agents (Muse, ChatGPT) reach mass adoption. The companies that built infrastructure now capture disproportionate share. Visa and Mastercard extend their network effects into the agent economy.",
+ "bear": "Agent commerce stays a niche. Consumers prefer to control their own purchases. The $50K/week figure is still $50K/week in a year. Infrastructure investments are written off as premature.",
+ "unknowns": [
+  "What card-based agent payment volume looks like (Sheffield excluded it)",
+  "Whether Walmart's Muse integration moves meaningful transaction volume",
+  "How RBI and NPCI will treat agent-initiated UPI payments",
+  "Whether the stagnation is a demand problem or a trust problem"
+ ],
+ "watch": [
+  "Post-Black Friday data on Muse shopping volume via Walmart",
+  "Any RBI or NPCI commentary on AI agent payments",
+  "Whether Sheffield's $50K figure gets updated at Visa's next public event",
+  "UK CMA and ICO enforcement actions if Muse terms are violated"
+ ],
+ "deeper": [
+  {
+   "label": "Behind Fintech daily",
+   "note": "Sheffield's statement and context",
+   "url": "https://behindfintech.substack.com/p/behind-fintech-daily-26-november"
+  },
+  {
+   "label": "Visa Payments Forum announcements",
+   "note": "Visa's full AI and stablecoin product announcements",
+   "url": "https://corporate.visa.com/en/sites/visa-perspectives/company-news/visa-payments-forum-showcases-intelligent-programmable-commerce.html"
+  }
+ ]
+}

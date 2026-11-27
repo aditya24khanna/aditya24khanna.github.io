@@ -1,0 +1,51 @@
+{
+ "tldr": "OpenAI is rolling out GPT-6.2 Sol to ChatGPT users and sunsetting GPT-5.6 on December 23, giving the previous flagship under six months of life. API pricing stays flat at $2/$10 per million tokens.",
+ "context": "OpenAI's model lifecycle has been compressing steadily. GPT-4o lasted about a year as the default. GPT-5.6 Sol launched in limited preview in June 2026, reached general availability in July, and is being replaced in December — about five months as the flagship.\n\nGPT-6.2 Sol is a conversation-tuned model with significant gains in image understanding (47.4% to 71.7%) and complex instruction following (78.1%). BrowseComp scores 64.5%. API pricing stays at the GPT-6.1 Sol level: $2 per million input tokens and $10 per million output tokens.\n\nThe December 23 sunset means teams on GPT-5.6 have about four weeks to migrate. This falls during the holiday code-freeze period for many enterprises, creating a timing pressure that has drawn complaints on developer forums.\n\nThis follows a pattern: OpenAI retired GPT-4o and GPT-4.5 on similarly compressed timelines, drawing similar complaints each time.",
+ "numbers": [
+  {
+   "v": "<6 months",
+   "k": "GPT-5.6 lifespan as flagship"
+  },
+  {
+   "v": "71.7%",
+   "k": "GPT-6.2 image understanding (up from 47.4%)"
+  },
+  {
+   "v": "$2/$10",
+   "k": "API price per million tokens (input/output)"
+  },
+  {
+   "v": "Dec 23",
+   "k": "GPT-5.6 sunset date"
+  },
+  {
+   "v": "78.1%",
+   "k": "Complex instruction following score"
+  }
+ ],
+ "whyPM": "Model deprecation is becoming a product-management problem, not just an engineering one. When your upstream model provider can sunset a version in under six months, every integration point becomes a maintenance liability.\n\nThe pricing stability ($2/$10) is the silver lining — costs aren't going up even as capabilities improve. But the migration cost is real: prompt regression testing, eval suite updates, edge-case validation, and the opportunity cost of engineering time spent on migrations instead of features.\n\nFor product leaders building on OpenAI's API, the strategic question is whether to pin versions (and accept eventual forced migrations) or track the latest (and accept ongoing regression testing). Neither is free.",
+ "bull": "Faster model cycles mean capabilities improve faster too. Teams that build robust eval suites and automated migration testing turn this into a competitive advantage — they ship better AI features faster than competitors stuck on old models.",
+ "bear": "The holiday-season sunset catches teams during code freezes. Some products break over Christmas when GPT-5.6 goes dark. The pattern of compressed lifecycles makes enterprises less willing to build on OpenAI's API, pushing them toward self-hosted or open-source models they control.",
+ "unknowns": [
+  "Whether OpenAI will extend the December 23 deadline if enterprise pushback is strong enough",
+  "How GPT-6.2 Sol performs on tasks where GPT-5.6 was fine-tuned or specifically optimised",
+  "Whether the compressed lifecycle reflects faster capability gains or faster monetisation pressure"
+ ],
+ "watch": [
+  "Enterprise developer sentiment and adoption speed in the four-week window",
+  "Whether competitors (Anthropic, Google) match the compressed deprecation cycle",
+  "Pricing changes when GPT-6.2 moves from rollout to sole default"
+ ],
+ "deeper": [
+  {
+   "label": "OpenAI GPT-5.6 Sol preview",
+   "note": "Original launch post for context on what's being replaced",
+   "url": "https://openai.com/index/previewing-gpt-5-6-sol/"
+  },
+  {
+   "label": "SiliconANGLE coverage",
+   "note": "Industry analysis of the GPT-6.2 rollout",
+   "url": "https://siliconangle.com/?p=773931"
+  }
+ ]
+}

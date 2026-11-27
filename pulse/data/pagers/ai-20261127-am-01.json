@@ -1,0 +1,51 @@
+{
+ "tldr": "Anthropic rewrote its Messages API from Python to Rust, with Claude agents writing about 80% of the merged code. The result: 70% less CPU per request and 20% lower median time to first token, deployed to production in September 2026 with no downtime.",
+ "context": "Anthropic's Messages API is the core revenue path for its Claude models — every API call runs through it. As traffic grew roughly 1,800× from early 2024 to fall 2026, the Python service hit performance limits.\n\nThe team started with a Rust parser called from Python, which saved 8–10% CPU. That was enough to justify a full rewrite. Claude agents wrote a first version of the core request path in about a week. By May 2026, over 80% of merged code on the project was Claude's.\n\nThe verification approach was notable: the production Python service acted as the ground truth, with privacy-preserving fingerprints (byte offsets and length differences only) comparing outputs. Sandboxed reproduction and shadowed production traffic caught discrepancies before the cutover.\n\nPublic traffic moved to the Rust service in September 2026. The migration required no downtime — both services ran in parallel during the transition.",
+ "numbers": [
+  {
+   "v": "~1,800×",
+   "k": "API traffic growth since early 2024"
+  },
+  {
+   "v": "80%+",
+   "k": "Code written by Claude agents"
+  },
+  {
+   "v": "70%",
+   "k": "CPU reduction per request"
+  },
+  {
+   "v": "20%",
+   "k": "Lower median time to first token"
+  },
+  {
+   "v": "~1 week",
+   "k": "Time for Claude to write first version"
+  }
+ ],
+ "whyPM": "This is the strongest evidence yet that AI can do production-grade systems work, not just prototyping. The fact that Anthropic trusted Claude to rewrite its own revenue-critical API — and verified the output rigorously — sets a template for any team considering AI-assisted rewrites.\n\nThe business case is clear: 70% CPU savings on a high-traffic API pays for the engineering investment many times over. But the deeper signal is about development velocity. If a rewrite that would normally take a team months can be drafted in a week, the ROI calculation for performance optimization changes fundamentally.\n\nFor product leaders in regulated or high-volume businesses, the verification methodology matters as much as the speed. Privacy-preserving fingerprints and production shadowing let you validate AI-written code without exposing sensitive data — a pattern worth stealing.",
+ "bull": "AI-assisted rewrites become standard practice for performance-critical services. Teams that adopt this approach get 3–5× faster migration cycles, making it economical to rewrite services that were previously 'too expensive to touch.' Rust adoption accelerates as AI lowers the learning-curve barrier.",
+ "bear": "The 80% figure overstates AI's contribution — human engineers still architected, reviewed and debugged. Teams that try to replicate this without Anthropic-level AI expertise produce buggy rewrites that require more human effort to fix than writing from scratch. The verification overhead eats the speed gains.",
+ "unknowns": [
+  "How much human review and debugging time was required on top of Claude's 80% code contribution?",
+  "Whether the approach works as well for less structured codebases than an API service",
+  "Whether Anthropic will offer this as a service or keep it as an internal capability"
+ ],
+ "watch": [
+  "Other AI labs publishing similar 'AI built our infrastructure' case studies",
+  "Emergence of AI-assisted rewrite tools targeting Python-to-Rust specifically",
+  "Whether the 70% CPU savings hold as traffic continues to grow"
+ ],
+ "deeper": [
+  {
+   "label": "Anthropic engineering post",
+   "note": "Full technical details of the migration approach",
+   "url": "https://www.anthropic.com/research/migrating-api-to-rust"
+  },
+  {
+   "label": "The New Stack coverage",
+   "note": "Third-party analysis of the claims",
+   "url": "https://thenewstack.io/?p=22842598"
+  }
+ ]
+}

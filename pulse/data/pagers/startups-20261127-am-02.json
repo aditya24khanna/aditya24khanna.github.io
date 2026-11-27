@@ -1,0 +1,53 @@
+{
+ "tldr": "AI startups captured 47% of all disclosed VC funding in November 2026, with $49.9B across 513 deals. The concentration is unprecedented and reshapes the funding landscape for every other startup category.",
+ "context": "The 47% share is a November figure compiled from disclosed rounds. The real total is likely higher, since many rounds go undisclosed. For comparison, AI's share of VC funding was roughly 30% a year ago.\n\nThe concentration is driven by mega-rounds in AI infrastructure and applications: Sierra ($1.75B), Hone Health ($228M for AI-powered longevity), Epochal ($100M for temporal web data), and dozens of $10M–$100M rounds in agent tools, security, and developer infrastructure.\n\nIn Europe, total VC hit a projected $81B for 2026, up 62% year over year, with Germany at $13.4B. But even in Europe, deal volume at the early stage is falling even as total dollars rise — fewer companies are getting funded, but the ones that do raise more.\n\nThe pattern: capital is bifurcating. AI companies with traction get mega-rounds. Everyone else competes for the remaining 53%.",
+ "numbers": [
+  {
+   "v": "47%",
+   "k": "AI share of all VC funding in November"
+  },
+  {
+   "v": "$49.9B",
+   "k": "Total AI VC in November 2026"
+  },
+  {
+   "v": "513",
+   "k": "AI deals in November"
+  },
+  {
+   "v": "$81B",
+   "k": "Europe VC projected for 2026 (+62% YoY)"
+  },
+  {
+   "v": "30%",
+   "k": "AI share of VC one year ago (approx.)"
+  }
+ ],
+ "whyPM": "When half the money goes to one category, it distorts everything: talent, pricing, partnerships. AI-funded competitors can outspend you on engineering, offer below-cost pricing to win customers, and attract talent with higher salaries and equity.\n\nThe flip side: if you're building an AI product, the money is there — but so is the competition. With 513 deals in one month, differentiation is harder than ever. Generic 'AI for X' pitches don't work when investors have hundreds of options.\n\nFor non-AI startups, the fundraising math is brutal: 53% of VC dollars, divided among many more companies. The strategic response is either to become AI-native or to compete in spaces where AI isn't the primary differentiator.",
+ "bull": "AI's VC share peaks and stabilises as the best companies consolidate. Early-stage non-AI startups benefit from less competition and more focused investors. The $49.9B creates a generation of well-funded AI companies that become reliable enterprise vendors.",
+ "bear": "Half the $49.9B is wasted on companies that can't differentiate. A correction wipes out the weakest, dragging down the whole AI brand. Non-AI startups starved of capital shut down, reducing ecosystem diversity.",
+ "unknowns": [
+  "How much of the $49.9B is follow-on rounds vs. new company formation",
+  "Whether the 47% share is sustainable or a peak",
+  "How much undisclosed AI funding adds to the real total",
+  "Whether LP appetite for AI-heavy VC funds is showing fatigue"
+ ],
+ "watch": [
+  "December VC numbers — does the concentration hold through year-end?",
+  "AI startup failure rates in the next 12–18 months",
+  "Whether non-AI sectors see a rebound in Q1 2027",
+  "LP sentiment surveys on AI allocation"
+ ],
+ "deeper": [
+  {
+   "label": "AI VC tracker report",
+   "note": "Full data on November 2026 AI funding",
+   "url": "https://mydigifolio.com/news/story/ai-startups-capture-47-percent-november-2026-funding-49-9-billion"
+  },
+  {
+   "label": "Parsers weekly VC roundup",
+   "note": "Individual deals and market context",
+   "url": "https://parsers.substack.com/p/weekly-top-startup-vc-news-of-november-76a"
+  }
+ ]
+}

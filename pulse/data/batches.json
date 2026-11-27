@@ -1,5 +1,29 @@
 [
  {
+  "id": "ai-20261127-am",
+  "topic": "ai",
+  "edition": "Morning",
+  "at": "2026-11-27T02:45:00Z",
+  "blurb": "Anthropic rewrites its API in Rust with Claude writing 80% of the code, OpenAI sunsets GPT-5.6 in under six months, ex-xAI founders launch Epochal with $100M, and Volvo trains humanoid robots in a real factory.",
+  "count": 4
+ },
+ {
+  "id": "startups-20261127-am",
+  "topic": "startups",
+  "edition": "Morning",
+  "at": "2026-11-27T02:45:00Z",
+  "blurb": "Sierra doubles to $30B on a $1.75B raise, and AI startups capture 47% of all VC funding in November — $49.9B across 513 deals.",
+  "count": 2
+ },
+ {
+  "id": "fintech-20261127-am",
+  "topic": "fintech",
+  "edition": "Morning",
+  "at": "2026-11-27T02:45:00Z",
+  "blurb": "PhonePe gets SEBI approval for a $15B IPO, and Visa reveals AI agents make just $50K in payments per week.",
+  "count": 2
+ },
+ {
   "id": "ai-20261126-pm",
   "topic": "ai",
   "edition": "Evening",
