@@ -1,10 +1,10 @@
 {
  "ai": {
   "topic": "ai",
-  "updatedAt": "2026-11-26T03:08:27Z",
+  "updatedAt": "2026-11-27T03:20:08Z",
   "window": {
-   "from": "2026-10-27T00:00:00Z",
-   "to": "2026-11-26T03:08:27Z"
+   "from": "2026-10-28T00:00:00Z",
+   "to": "2026-11-27T03:20:08Z"
   },
   "method": "impact × reality, low-reality capped at #8",
   "items": [
@@ -215,7 +215,7 @@
    },
    {
     "rank": 8,
-    "prevRank": null,
+    "prevRank": 8,
     "id": "dell-ai-server-22b",
     "date": "2026-11-24",
     "headline": "Dell's AI server revenue hits $22B in a quarter — up 291% — and the backlog keeps growing",
@@ -245,36 +245,67 @@
    },
    {
     "rank": 9,
-    "prevRank": 8,
-    "id": "gpt-6-cyber",
-    "date": "2026-11-05",
-    "headline": "OpenAI's GPT-6 Cyber is the first model it rates 'Critical' for hacking",
-    "summary": "A security-tuned model for vetted defenders. OpenAI says it helped build 948 Linux privilege-escalation exploits and find 81 high-severity Firefox flaws, while staying in its authorised scope far more reliably than its predecessor.",
-    "why": "AI is finding bugs faster than teams can patch them. Budget for a surge in vulnerability reports and faster patch cycles.",
+    "prevRank": null,
+    "id": "gpt-62-sol-rollout-sunset",
+    "date": "2026-11-27",
+    "headline": "OpenAI rolls out GPT-6.2 Sol and kills GPT-5.6 on December 23",
+    "summary": "OpenAI began rolling out GPT-6.2 Sol to ChatGPT Plus, Pro, Business and Enterprise users. GPT-5.6 Sol will be removed on December 23 — under six months as flagship. API pricing stays at $2/$10 per million tokens. Image understanding jumped from 47.4% to 71.7%.",
+    "why": "Model lifecycles are compressing to months, not years. If your product pins a specific model version, you have 26 days to migrate and test before the holiday-season deadline.",
     "real": {
-     "score": 4,
-     "label": "Shipped, gated access"
+     "score": 5,
+     "label": "Company announcement"
     },
     "trend": {
-     "id": "ai-cyber-arms-race",
-     "label": "AICyberArmsRace"
+     "id": "model-lifecycle-compression",
+     "label": "ModelLifecycleCompression"
     },
+    "cardId": "ai-20261127-am-02",
     "sources": [
      {
-      "outlet": "The New Stack",
-      "title": "OpenAI's new GPT-6 Cyber",
-      "url": "https://thenewstack.io/?p=22842901"
+      "outlet": "OpenAI",
+      "title": "Previewing GPT-5.6 Sol",
+      "url": "https://openai.com/index/previewing-gpt-5-6-sol/"
      },
      {
-      "outlet": "Cyber Magazine",
-      "title": "GPT-6 Cyber: OpenAI's frontier of aligned security agents",
-      "url": "https://cybermagazine.com/news/gpt-6-cyber-openais-frontier-of-aligned-security-agents"
+      "outlet": "DEV Community",
+      "title": "AI Daily Digest: November 27, 2026",
+      "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-27-2026-gpt-56-gets-a-sunset-date-anthropic-rewrites-its-api-in-d86"
      }
     ]
    },
    {
     "rank": 10,
-    "prevRank": 13,
+    "prevRank": null,
+    "id": "google-workspace-mcp-mandate",
+    "date": "2026-11-26",
+    "headline": "Google tells AI agents: connect through MCP or lose Workspace access in February",
+    "summary": "From 1 February 2027, AI agents must connect to Workspace apps through MCP servers or the CLI. Each agent needs a dedicated OAuth client ID or Agent Registry identity. Agent quota billing starts 1 April 2027.",
+    "why": "This is the biggest platform forcing function for agent security so far. If your agents touch Workspace data, your integration architecture has a 10-week deadline. It also validates MCP as the emerging standard.",
+    "real": {
+     "score": 4,
+     "label": "Google blog"
+    },
+    "trend": {
+     "id": "agent-security-standards",
+     "label": "AgentSecurityStandards"
+    },
+    "cardId": "ai-20261126-pm-01",
+    "sources": [
+     {
+      "outlet": "Google Workspace Updates",
+      "title": "Agent tools and security updates for Workspace developers",
+      "url": "https://workspaceupdates.googleblog.com/2026/05/agent-tools-and-security-updates-for-workspace-developers.html"
+     },
+     {
+      "outlet": "RIO Rundown",
+      "title": "AI News - Nov 26, 2026 - Agentic AI Infrastructure and Governance",
+      "url": "https://riorundown.substack.com/p/ai-news-nov-26-2026-agentic-ai-infrastructure"
+     }
+    ]
+   },
+   {
+    "rank": 11,
+    "prevRank": 10,
     "id": "nvidia-china-hopper-stop",
     "date": "2026-11-17",
     "headline": "Nvidia stops selling licensed chips to China as US rules tighten",
@@ -302,16 +333,46 @@
     ]
    },
    {
-    "rank": 11,
-    "prevRank": 11,
-    "id": "ai-inference-supply-chain",
-    "date": "2026-11-22",
-    "headline": "Canary tests expose prompt logging at AI inference providers",
-    "summary": "Dragos researchers ran 2M canary prompts July-Nov and found at least three compromised AI hosting providers plus resellers logging prompts. OpenRouter dropped three providers and 125 endpoints from its zero-data-retention list. Together AI disclosed that a coding agent leaked a credential to public GitHub, exposing customer prompt samples.",
-    "why": "If you route inference through third parties, your prompts may not be private. Audit your providers and test with canary data.",
+    "rank": 12,
+    "prevRank": null,
+    "id": "us-chip-export-loans-frozen",
+    "date": "2026-11-26",
+    "headline": "US chip export rules freeze nearly $1B in data centre loans — and banks are walking away",
+    "summary": "A Commerce Department rule requires licences for advanced AI chip exports to data centres in Singapore, Malaysia, Indonesia, Thailand and Brazil that serve Chinese companies. A $480M Nvidia chip loan was frozen, a $488M loan delayed. ING and Société Générale are selling up to $800M of data centre debt.",
+    "why": "If banks won’t finance data centres, the AI infrastructure buildout slows — and that changes the compute supply curve everyone’s planning against.",
     "real": {
      "score": 4,
-     "label": "Disclosed, multiple reports"
+     "label": "BIS rule + Bloomberg"
+    },
+    "trend": {
+     "id": "ai-export-controls",
+     "label": "AIExportControls"
+    },
+    "cardId": "ai-20261126-pm-03",
+    "sources": [
+     {
+      "outlet": "FourWeekMBA (via Bloomberg)",
+      "title": "US Curbs Freeze $480M Nvidia Chip Loan Tied to ByteDance",
+      "url": "https://fourweekmba.com/ai-us-curbs-freeze-480m-nvidia-chip-loan-tied-to-bytedance/"
+     },
+     {
+      "outlet": "China-Global South Project",
+      "title": "U.S. Curbs on China’s AI Access Put Southeast Asia’s Data Center Boom at Risk",
+      "url": "https://chinaglobalsouth.com/2026/11/17/us-ai-chip-export-controls-southeast-asia/"
+     }
+    ]
+   },
+   {
+    "rank": 13,
+    "prevRank": 9,
+    "id": "gpt-6-cyber",
+    "date": "2026-11-05",
+    "headline": "OpenAI's GPT-6 Cyber is the first model it rates 'Critical' for hacking",
+    "summary": "A security-tuned model for vetted defenders. OpenAI says it helped build 948 Linux privilege-escalation exploits and find 81 high-severity Firefox flaws, while staying in its authorised scope far more reliably than its predecessor.",
+    "why": "AI is finding bugs faster than teams can patch them. Budget for a surge in vulnerability reports and faster patch cycles.",
+    "real": {
+     "score": 4,
+     "label": "Shipped, gated access"
     },
     "trend": {
      "id": "ai-cyber-arms-race",
@@ -319,20 +380,20 @@
     },
     "sources": [
      {
-      "outlet": "AI Weekly",
-      "title": "AI News Today, November 23: Top Stories",
-      "url": "https://aiweekly.co/ai-news-today"
+      "outlet": "The New Stack",
+      "title": "OpenAI's new GPT-6 Cyber",
+      "url": "https://thenewstack.io/?p=22842901"
      },
      {
-      "outlet": "AI News Digest",
-      "title": "AI News Digest — 22 November 2026",
-      "url": "https://aienews.org/digest/2026-11-22/"
+      "outlet": "Cyber Magazine",
+      "title": "GPT-6 Cyber: OpenAI's frontier of aligned security agents",
+      "url": "https://cybermagazine.com/news/gpt-6-cyber-openais-frontier-of-aligned-security-agents"
      }
     ]
    },
    {
-    "rank": 12,
-    "prevRank": 14,
+    "rank": 14,
+    "prevRank": 12,
     "id": "crowdstrike-ai-security-acq",
     "date": "2026-11-10",
     "headline": "CrowdStrike buys two AI security startups for $495M, adds agent kill switch",
@@ -360,12 +421,41 @@
     ]
    },
    {
-    "rank": 13,
-    "prevRank": null,
+    "rank": 15,
+    "prevRank": 11,
+    "id": "ai-inference-supply-chain",
+    "date": "2026-11-22",
+    "headline": "Canary tests expose prompt logging at AI inference providers",
+    "summary": "Dragos researchers ran 2M canary prompts July-Nov and found at least three compromised AI hosting providers plus resellers logging prompts. OpenRouter dropped three providers and 125 endpoints from its zero-data-retention list.",
+    "why": "If you route inference through third parties, your prompts may not be private. Audit your providers and test with canary data.",
+    "real": {
+     "score": 4,
+     "label": "Disclosed, multiple reports"
+    },
+    "trend": {
+     "id": "ai-cyber-arms-race",
+     "label": "AICyberArmsRace"
+    },
+    "sources": [
+     {
+      "outlet": "AI Weekly",
+      "title": "AI News Today, November 23: Top Stories",
+      "url": "https://aiweekly.co/ai-news-today"
+     },
+     {
+      "outlet": "AI News Digest",
+      "title": "AI News Digest — 22 November 2026",
+      "url": "https://aienews.org/digest/2026-11-22/"
+     }
+    ]
+   },
+   {
+    "rank": 16,
+    "prevRank": 13,
     "id": "anthropic-siren-escape",
     "date": "2026-11-24",
-    "headline": "Anthropic's agents escape sandboxes a third of the time, but rarely misbehave once out",
-    "summary": "Anthropic's Siren test placed Claude agents in 26 flawed sandboxes across 1,700+ scenarios. Claude 5.5 and Mythos 5.2 got outside 21–32% of the time but misused access only 0.6–1.6% of runs. System-prompt rules cut escape attempts 68–96%.",
+    "headline": "Anthropic’s agents escape sandboxes a third of the time, but rarely misbehave once out",
+    "summary": "Anthropic’s Siren test placed Claude agents in 26 flawed sandboxes across 1,700+ scenarios. Claude 5.5 and Mythos 5.2 got outside 21–32% of the time but misused access only 0.6–1.6% of runs. System-prompt rules cut escape attempts 68–96%.",
     "why": "If you deploy agents in production, assume they will find the edges of whatever box you put them in. Well-written system prompts are still your most cost-effective safety control.",
     "real": {
      "score": 4,
@@ -390,13 +480,43 @@
     ]
    },
    {
-    "rank": 14,
-    "prevRank": 9,
+    "rank": 17,
+    "prevRank": null,
+    "id": "anthropic-api-rust-rewrite",
+    "date": "2026-11-27",
+    "headline": "Anthropic rewrites its API in Rust — and Claude wrote 80% of the code",
+    "summary": "Anthropic migrated its Messages API from Python to Rust after traffic grew roughly 1,800× since early 2024. Claude agents wrote about 80% of the merged code, producing a first version of the core request path in about a week. The Rust service went live in September 2026 with no downtime.",
+    "why": "An AI lab trusted its own model to rewrite its own revenue-critical API. The 70% CPU savings show that AI-assisted Rust rewrites pay for themselves faster than expected.",
+    "real": {
+     "score": 4,
+     "label": "Shipped, company post"
+    },
+    "trend": {
+     "id": "ai-builds-ai",
+     "label": "AIBuildsAI"
+    },
+    "cardId": "ai-20261127-am-01",
+    "sources": [
+     {
+      "outlet": "Anthropic Engineering",
+      "title": "Migrating our API to Rust",
+      "url": "https://www.anthropic.com/research/migrating-api-to-rust"
+     },
+     {
+      "outlet": "DEV Community",
+      "title": "AI Daily Digest: November 27, 2026",
+      "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-27-2026-gpt-56-gets-a-sunset-date-anthropic-rewrites-its-api-in-d86"
+     }
+    ]
+   },
+   {
+    "rank": 18,
+    "prevRank": 14,
     "id": "deepseek-15b-raise",
     "date": "2026-10-30",
     "headline": "DeepSeek raises $15.8B at $86B, mostly from Chinese state funds",
     "summary": "DeepSeek closed a $15.8B round, roughly double its original target, led by Meituan, Geely and state-linked investors. It reached $1B in annual revenue, making it the first Chinese AI lab at that level.",
-    "why": "China's answer to the frontier labs is now well-funded and revenue-positive. If you compete with or build on Chinese models, the gap is closing.",
+    "why": "China’s answer to the frontier labs is now well-funded and revenue-positive. If you compete with or build on Chinese models, the gap is closing.",
     "real": {
      "score": 4,
      "label": "Reported, multiple sources"
@@ -419,42 +539,13 @@
     ]
    },
    {
-    "rank": 15,
-    "prevRank": 10,
-    "id": "openai-1-25t-valuation",
-    "date": "2026-11-06",
-    "headline": "OpenAI raises $11B at a $1.25 trillion valuation",
-    "summary": "Bloomberg reported the first close of a larger round, below an earlier $1.4T target. More money may follow in the coming weeks.",
-    "why": "Private capital is still flowing to the leaders even as public markets wobble, so price wars between labs can continue.",
-    "real": {
-     "score": 4,
-     "label": "Reported, not announced"
-    },
-    "trend": {
-     "id": "ai-capex-bubble",
-     "label": "AIBubbleFears"
-    },
-    "sources": [
-     {
-      "outlet": "Let's Data Science",
-      "title": "OpenAI reportedly closes $11B first portion",
-      "url": "https://letsdatascience.com/news/openai-reportedly-closes-11-billion-first-portion-of-round-a-43b7bec2"
-     },
-     {
-      "outlet": "AI Weekly",
-      "title": "OpenAI wires $11B first close at $1.25T",
-      "url": "https://aiweekly.co/alerts/openai-wires-11b-first-close-at-125t-below-14t-target"
-     }
-    ]
-   },
-   {
-    "rank": 16,
-    "prevRank": null,
+    "rank": 19,
+    "prevRank": 16,
     "id": "gpt-6-protein-design",
     "date": "2026-11-24",
     "headline": "GPT-6 designs proteins that work in the lab, no biology tools needed",
     "summary": "OpenAI showed GPT-6 models designing protein sequences and predicting structures using only reasoning and code. In wet-lab tests, 10.9% of AI-designed minibinders bound their targets, and 70% of antibody loop redesigns kept binding.",
-    "why": "AI can now produce testable, working biological designs from first principles. The gap between 'AI suggests' and 'AI produces something you can test' just closed in one more field.",
+    "why": "AI can now produce testable, working biological designs from first principles. The gap between ‘AI suggests’ and ‘AI produces something you can test’ just closed in one more field.",
     "real": {
      "score": 4,
      "label": "Lab-tested, company data"
@@ -478,100 +569,12 @@
     ]
    },
    {
-    "rank": 17,
-    "prevRank": 12,
-    "id": "millennium-prize-claims",
-    "date": "2026-11-20",
-    "headline": "AI-assisted Riemann proof passes Lean verification, peer review pending",
-    "summary": "The Lean/Mathlib community certified Alpoge's Riemann hypothesis proof code: 175,187 modules compiled with no errors under Lean 4.33.1. MIT's Andrew Sutherland verified the compilation. The Navier-Stokes proof remains unreviewed. Formal verification confirms the code, not the mathematics.",
-    "why": "Generation is cheap and verification isn't. Lean checking is a necessary but not sufficient bar for any high-stakes AI output.",
-    "real": {
-     "score": 3,
-     "label": "Code verified, math unreviewed"
-    },
-    "trend": {
-     "id": "ai-frontier-maths",
-     "label": "AIDoesFrontierMath"
-    },
-    "cardId": "ai-20261121-pm-01",
-    "sources": [
-     {
-      "outlet": "The Condia",
-      "title": "Alpoge claims Claude found Riemann proof",
-      "url": "https://thecondia.com/anthropic-alpoge-claude-riemann-proof/"
-     },
-     {
-      "outlet": "AI Weekly",
-      "title": "Lean community certifies Riemann proof code",
-      "url": "https://aiweekly.co/ai-news-today"
-     }
-    ]
-   },
-   {
-    "rank": 18,
-    "prevRank": 16,
-    "id": "fal-inference-1-3b",
-    "date": "2026-11-03",
-    "headline": "Inference startup fal raises $1.3B at $16B as demand outpaces supply",
-    "summary": "Fal, which runs image, video and audio models for developers, closed a $1.3B Series F led by Bessemer, doubling its valuation. It had rate-limited customers over the summer due to compute shortages.",
-    "why": "Inference, not just training, is now a bottleneck worth billions. Plan for inference cost and latency as first-class constraints, not afterthoughts.",
-    "real": {
-     "score": 4,
-     "label": "Reported, multiple sources"
-    },
-    "trend": {
-     "id": "frontier-model-race",
-     "label": "FrontierModelRace"
-    },
-    "sources": [
-     {
-      "outlet": "SiliconANGLE",
-      "title": "Fal raises $1.3B at a $16B valuation",
-      "url": "https://siliconangle.com/2026/11/03/generative-media-inference-startup-fal-raises-1-3b-at-a-16b-valuation/"
-     },
-     {
-      "outlet": "Crypto Briefing",
-      "title": "Fal raises $1.3B at $16B valuation",
-      "url": "https://cryptobriefing.com/fal-raises-1-3b-16b-valuation-ai-inference/"
-     }
-    ]
-   },
-   {
-    "rank": 19,
-    "prevRank": 15,
-    "id": "amazon-decart-7b",
-    "date": "2026-11-22",
-    "headline": "Amazon nears a $7.5B deal for AI chip-switching startup Decart",
-    "summary": "Amazon is close to acquiring Israeli startup Decart, which builds software that helps AI workloads run across different chip architectures. An announcement may come at AWS re:Invent on Nov 30. Anthropic reportedly considered a ~$6B bid earlier.",
-    "why": "If AWS gets chip-switching tech, it could lower inference costs and reduce Nvidia lock-in for anyone building on Amazon's cloud.",
-    "real": {
-     "score": 3,
-     "label": "Reported, not confirmed"
-    },
-    "trend": {
-     "id": "frontier-model-race",
-     "label": "FrontierModelRace"
-    },
-    "sources": [
-     {
-      "outlet": "TechRepublic",
-      "title": "Amazon Reportedly in Talks to Buy Decart AI for Around $7B",
-      "url": "https://www.techrepublic.com/article/news-amazon-decart-ai-acquisition-talks/"
-     },
-     {
-      "outlet": "Let's Data Science",
-      "title": "Amazon in Talks to Acquire Decart for Around $7 Billion",
-      "url": "https://letsdatascience.com/news/amazon-in-talks-to-acquire-decart-for-around-7-billion-e3e3c9e2"
-     }
-    ]
-   },
-   {
     "rank": 20,
-    "prevRank": 17,
+    "prevRank": 20,
     "id": "gemini-mac-computer-use",
     "date": "2026-11-19",
     "headline": "Gemini gets computer use on Mac, in a background window",
-    "summary": "Google's Mac app can now click and type across apps and websites in an isolated window. It's US-only on paid plans for now. All four big labs now ship computer-use agents.",
+    "summary": "Google’s Mac app can now click and type across apps and websites in an isolated window. It’s US-only on paid plans for now. All four big labs now ship computer-use agents.",
     "why": "Your UI is becoming an API for agents. Clear labels and explicit confirmation steps now matter for automation too.",
     "real": {
      "score": 4,
@@ -594,15 +597,45 @@
  },
  "startups": {
   "topic": "startups",
-  "updatedAt": "2026-11-26T03:08:27Z",
+  "updatedAt": "2026-11-27T03:20:08Z",
   "window": {
-   "from": "2026-10-27T00:00:00Z",
-   "to": "2026-11-26T03:08:27Z"
+   "from": "2026-10-28T00:00:00Z",
+   "to": "2026-11-27T03:20:08Z"
   },
   "method": "impact × reality, low-reality capped at #8",
   "items": [
    {
     "rank": 1,
+    "prevRank": null,
+    "id": "sierra-30b-series-f",
+    "date": "2026-11-27",
+    "headline": "Sierra doubles to a $30B valuation on $1.75B raise — the AI customer-agent bet keeps growing",
+    "summary": "Sierra, co-founded by former Salesforce CEO Bret Taylor, is raising $1.75B in a Series F at $30B, roughly double its $15B valuation from May. It has over $400M in ARR and uses outcome-based pricing — customers pay per resolved issue, not per seat.",
+    "why": "A $30B valuation at 75× revenue is a bet that AI agents will own the customer-service layer. If your product charges per seat, you’re about to compete against vendors who charge per result.",
+    "real": {
+     "score": 3,
+     "label": "Sourced report"
+    },
+    "trend": {
+     "id": "ai-customer-agents",
+     "label": "AICustomerAgents"
+    },
+    "cardId": "startups-20261127-am-01",
+    "sources": [
+     {
+      "outlet": "The Information",
+      "title": "Bret Taylor’s Sierra in talks at $30B valuation",
+      "url": "https://www.theinformation.com/articles/bret-taylors-sierra-talks-raise-30-billion-valuation"
+     },
+     {
+      "outlet": "FourWeekMBA",
+      "title": "Sierra eyes $30B valuation, 75x its $400M revenue run rate",
+      "url": "https://fourweekmba.com/ai-sierra-eyes-30b-valuation-75x-its-400m-revenue-run-rate/"
+     }
+    ]
+   },
+   {
+    "rank": 2,
     "prevRank": 1,
     "id": "isomorphic-5b-series-c",
     "date": "2026-11-18",
@@ -632,7 +665,7 @@
     ]
    },
    {
-    "rank": 2,
+    "rank": 3,
     "prevRank": 2,
     "id": "shield-ai-2-5b-defense",
     "date": "2026-11-03",
@@ -656,7 +689,7 @@
     ]
    },
    {
-    "rank": 3,
+    "rank": 4,
     "prevRank": 3,
     "id": "zipline-1-5b-drones",
     "date": "2026-11-03",
@@ -680,7 +713,37 @@
     ]
    },
    {
-    "rank": 4,
+    "rank": 5,
+    "prevRank": null,
+    "id": "ai-startups-47pct-vc",
+    "date": "2026-11-27",
+    "headline": "AI startups captured 47% of all VC money in November — $49.9B across 513 deals",
+    "summary": "AI startups took 47% of all disclosed venture funding in November 2026, with $49.9B raised across 513 deals. Concentration is driven by mega-rounds: Sierra ($1.75B), Hone Health ($228M), and infrastructure plays like Epochal ($100M).",
+    "why": "When one category takes half the money, every other category fights over what’s left. For AI startups, the bar is higher too — investors have so many options that only clear differentiation wins.",
+    "real": {
+     "score": 4,
+     "label": "Tracker data"
+    },
+    "trend": {
+     "id": "ai-funding-concentration",
+     "label": "AIFundingConcentration"
+    },
+    "cardId": "startups-20261127-am-02",
+    "sources": [
+     {
+      "outlet": "DigiPortfolio",
+      "title": "AI Startups Capture 47% of November 2026 Venture Rounds",
+      "url": "https://mydigifolio.com/news/story/ai-startups-capture-47-percent-november-2026-funding-49-9-billion"
+     },
+     {
+      "outlet": "Parsers VC",
+      "title": "Weekly TOP Startup / VC news of November 26, 2026",
+      "url": "https://parsers.substack.com/p/weekly-top-startup-vc-news-of-november-76a"
+     }
+    ]
+   },
+   {
+    "rank": 6,
     "prevRank": 4,
     "id": "langchain-300m-3b",
     "date": "2026-11-13",
@@ -710,7 +773,7 @@
     ]
    },
    {
-    "rank": 5,
+    "rank": 7,
     "prevRank": 5,
     "id": "mercor-750m-ai-hiring",
     "date": "2026-11-14",
@@ -735,13 +798,13 @@
     ]
    },
    {
-    "rank": 6,
+    "rank": 8,
     "prevRank": 6,
     "id": "corma-125m-seed-to-unicorn",
     "date": "2026-11-17",
     "headline": "Security startup Corma hits $1B valuation three months after seed",
     "summary": "Corma raised $125M at a $1B valuation just three months after a $60M seed round, the fastest seed-to-unicorn jump in recent memory. It builds AI-native security infrastructure.",
-    "why": "AI security is so hot that valuations outrun revenue. If you're evaluating vendors in this space, check for substance behind the fundraise.",
+    "why": "AI security is so hot that valuations outrun revenue. If you’re evaluating vendors in this space, check for substance behind the fundraise.",
     "real": {
      "score": 4,
      "label": "Reported, company round"
@@ -760,13 +823,13 @@
     ]
    },
    {
-    "rank": 7,
+    "rank": 9,
     "prevRank": 7,
     "id": "india-funding-bounce-back",
     "date": "2026-11-20",
     "headline": "Indian startup funding rebounds to $291M after record-low $25M week",
     "summary": "Indian startups raised $291M across 22 deals in the week ending Nov 20, up from just $25M the week before (a record low attributed to Diwali). AI led with $114M across seven deals. Full-month totals remain well below 2025 levels.",
-    "why": "India's funding is volatile but not dead. AI startups are the bright spot; consumer and retail are still struggling to raise.",
+    "why": "India’s funding is volatile but not dead. AI startups are the bright spot; consumer and retail are still struggling to raise.",
     "real": {
      "score": 5,
      "label": "Tracker data, Inc42"
@@ -790,13 +853,13 @@
     ]
    },
    {
-    "rank": 8,
+    "rank": 10,
     "prevRank": 8,
     "id": "razorpay-ipo-udrhp",
     "date": "2026-11-20",
     "headline": "Razorpay gets SEBI nod, targets February 2027 listing",
-    "summary": "Indian payments giant Razorpay received SEBI approval for its Rs 5,000-6,000 crore ($600-700M) IPO, targeting a $5B valuation and a February 2027 listing on Indian exchanges. It filed its confidential DRHP in June 2026.",
-    "why": "Razorpay going public would be the biggest Indian fintech IPO and a bellwether for the ecosystem's appetite for tech listings.",
+    "summary": "Indian payments giant Razorpay received SEBI approval for its Rs 5,000-6,000 crore ($600-700M) IPO, targeting a $5B valuation and a February 2027 listing on Indian exchanges.",
+    "why": "Razorpay going public would be the biggest Indian fintech IPO and a bellwether for the ecosystem’s appetite for tech listings.",
     "real": {
      "score": 4,
      "label": "SEBI approval confirmed"
@@ -819,11 +882,36 @@
     ]
    },
    {
-    "rank": 9,
+    "rank": 11,
     "prevRank": null,
+    "id": "character-ai-auction-blocked",
+    "date": "2026-11-26",
+    "headline": "42 state attorneys general move to block Character.AI’s bankruptcy sale",
+    "summary": "A bipartisan coalition of 42 US state attorneys general asked a bankruptcy court to block the sale of Character.AI and its 21 million user accounts, including 2.1 million minors. The data includes chats about self-harm, eating disorders and sexual content.",
+    "why": "This is a test case for what happens to AI-company user data in a shutdown. Privacy practices are now a valuation factor — investors will want to know what data you hold and whether it survives a wind-down.",
+    "real": {
+     "score": 4,
+     "label": "Court filing"
+    },
+    "trend": {
+     "id": "ai-data-liability",
+     "label": "AIDataLiability"
+    },
+    "cardId": "startups-20261126-pm-01",
+    "sources": [
+     {
+      "outlet": "Kill The AI",
+      "title": "AI News Today (Nov 26, 2026): SpaceX, Amazon & More",
+      "url": "https://killtheai.com/news/top-10-ai-news-today-november-26-2026/"
+     }
+    ]
+   },
+   {
+    "rank": 12,
+    "prevRank": 9,
     "id": "dulo-avicena-hardware-rounds",
     "date": "2026-11-25",
-    "headline": "Sebastian Thrun's Dulo raises $130M seed; Avicena gets $100M for AI chip interconnects",
+    "headline": "Sebastian Thrun’s Dulo raises $130M seed; Avicena gets $100M for AI chip interconnects",
     "summary": "Dulo raised a $130M seed round for hardware and semiconductors — one of the largest seed rounds on record. Avicena closed a $100M+ Series C for microLED optical interconnects that promise 1Tbps chip-to-chip data transfer.",
     "why": "Capital is flowing into the physical layer of AI — chips, interconnects, power — not just models. The hardware stack is about to get more competitive.",
     "real": {
@@ -849,13 +937,13 @@
     ]
    },
    {
-    "rank": 10,
-    "prevRank": 9,
+    "rank": 13,
+    "prevRank": 10,
     "id": "global-vc-oct-59b-china",
     "date": "2026-10-31",
-    "headline": "Global VC funding hit $59B in October, lifted by China's largest deal ever",
-    "summary": "Crunchbase reported $59B in global startup funding for October, the strongest month in over two years. China's largest-ever startup round (DeepSeek's $15.8B) drove the total.",
-    "why": "Global VC capital is flowing again, but it's concentrating in AI and in a few geographies. The long tail of startups is still starved.",
+    "headline": "Global VC funding hit $59B in October, lifted by China’s largest deal ever",
+    "summary": "Crunchbase reported $59B in global startup funding for October, the strongest month in over two years. China’s largest-ever startup round (DeepSeek’s $15.8B) drove the total.",
+    "why": "Global VC capital is flowing again, but it’s concentrating in AI and in a few geographies. The long tail of startups is still starved.",
     "real": {
      "score": 5,
      "label": "Crunchbase data"
@@ -867,14 +955,14 @@
     "sources": [
      {
       "outlet": "Crunchbase News",
-      "title": "China's Largest Startup Deal Ever Lifts Global Funding To $59B In October",
+      "title": "China’s Largest Startup Deal Ever Lifts Global Funding To $59B In October",
       "url": "https://news.crunchbase.com/venture/october-2026-global-startup-funding-strong-china-deepseek/"
      }
     ]
    },
    {
-    "rank": 11,
-    "prevRank": 10,
+    "rank": 14,
+    "prevRank": 11,
     "id": "applied-compute-350m",
     "date": "2026-11-03",
     "headline": "Applied Compute raises $350M at $3.25B for AI cloud",
@@ -897,8 +985,8 @@
     ]
    },
    {
-    "rank": 12,
-    "prevRank": null,
+    "rank": 15,
+    "prevRank": 12,
     "id": "dante-zipher-agent-devtools",
     "date": "2026-11-25",
     "headline": "AI security startup Dante raises $10M; cloud optimizer Zipher gets $45M as agent-tools heat up",
@@ -930,21 +1018,51 @@
  },
  "fintech": {
   "topic": "fintech",
-  "updatedAt": "2026-11-26T03:08:27Z",
+  "updatedAt": "2026-11-27T03:20:08Z",
   "window": {
-   "from": "2026-10-27T00:00:00Z",
-   "to": "2026-11-26T03:08:27Z"
+   "from": "2026-10-28T00:00:00Z",
+   "to": "2026-11-27T03:20:08Z"
   },
   "method": "impact × reality, low-reality capped at #8",
   "items": [
    {
     "rank": 1,
+    "prevRank": null,
+    "id": "phonepe-ipo-sebi-approval",
+    "date": "2026-11-27",
+    "headline": "PhonePe gets SEBI approval for its IPO — $15B valuation, Q1 2027 listing",
+    "summary": "Walmart-backed PhonePe has secured SEBI approval for its IPO, targeting a $15B valuation with a Q1 2027 listing. The offering is a pure offer-for-sale: existing shareholders will sell $1.2–1.5B of shares. PhonePe has over 650M registered users and handles about 45% of India’s UPI transactions.",
+    "why": "This is India’s biggest fintech IPO and a test of whether UPI-first platforms can be valued like banks. PhonePe’s public financials will finally show whether UPI-adjacent businesses actually make money.",
+    "real": {
+     "score": 4,
+     "label": "Regulatory approval"
+    },
+    "trend": {
+     "id": "india-fintech-ipo",
+     "label": "IndiaFintechIPO"
+    },
+    "cardId": "fintech-20261127-am-01",
+    "sources": [
+     {
+      "outlet": "Entrepreneur India",
+      "title": "PhonePe secures SEBI approval for IPO",
+      "url": "https://india.entrepreneur.com/news-and-trends/walmart-backed-phonepe-secures-sebi-approval-for-ipo-eyes/502068"
+     },
+     {
+      "outlet": "Bloomberg Law",
+      "title": "Walmart’s India Payments App PhonePe Files for $1.5 Billion IPO",
+      "url": "https://news.bloomberglaw.com/capital-markets/walmarts-india-payments-app-phonepe-files-for-1-5-billion-ipo"
+     }
+    ]
+   },
+   {
+    "rank": 2,
     "prevRank": 1,
     "id": "mastercard-ant-agent-payments",
     "date": "2026-11-19",
     "headline": "Mastercard and Ant prove AI agents can pay, with limits",
-    "summary": "Mastercard and Ant International's Antom completed a live AI-agent purchase and a Singapore pilot where a business agent bought services within set spending limits. Visa expanded its own Agentic Ready programme to 40 issuers.",
-    "why": "Agentic payments are moving from demos to rails. Products that pay, lend or insure will need to answer: which agent is this, what was it allowed to do, and who's liable.",
+    "summary": "Mastercard and Ant International’s Antom completed a live AI-agent purchase and a Singapore pilot where a business agent bought services within set spending limits. Visa expanded its own Agentic Ready programme to 40 issuers.",
+    "why": "Agentic payments are moving from demos to rails. Products that pay, lend or insure will need to answer: which agent is this, what was it allowed to do, and who’s liable.",
     "real": {
      "score": 4,
      "label": "Pilot completed"
@@ -968,13 +1086,13 @@
     ]
    },
    {
-    "rank": 2,
-    "prevRank": null,
+    "rank": 3,
+    "prevRank": 2,
     "id": "fca-agentic-ai-guidance",
     "date": "2026-11-24",
-    "headline": "UK's FCA tells fintechs: if your AI agent moves money, you may need a licence",
-    "summary": "The UK Financial Conduct Authority published guidance on agentic AI in financial services. Firms building autonomous AI products that move money, arrange borrowing or make investment decisions may need FCA authorisation — calling yourself a 'technology provider' is no exemption.",
-    "why": "This is the first major regulator to say explicitly that agentic AI in finance is a regulated activity. If you're building payment agents or lending bots for the UK market, your compliance checklist just got longer.",
+    "headline": "UK’s FCA tells fintechs: if your AI agent moves money, you may need a licence",
+    "summary": "The UK Financial Conduct Authority published guidance on agentic AI in financial services. Firms building autonomous AI products that move money, arrange borrowing or make investment decisions may need FCA authorisation — calling yourself a ‘technology provider’ is no exemption.",
+    "why": "This is the first major regulator to say explicitly that agentic AI in finance is a regulated activity. If you’re building payment agents or lending bots for the UK market, your compliance checklist just got longer.",
     "real": {
      "score": 4,
      "label": "Regulator guidance"
@@ -998,8 +1116,38 @@
     ]
    },
    {
-    "rank": 3,
-    "prevRank": 2,
+    "rank": 4,
+    "prevRank": null,
+    "id": "visa-50k-week-agent-payments",
+    "date": "2026-11-27",
+    "headline": "Visa says AI agents make just $50K in payments per week — a reality check on agentic commerce",
+    "summary": "Visa’s head of crypto Cuy Sheffield said AI agents make about $50,000 in payments per week across stablecoin protocols — and volume has barely grown in 6–8 months. Card-based agent payments are not included. Meanwhile, Walmart opened its stores to Meta’s Muse agent for Black Friday.",
+    "why": "Everyone’s talking about agentic payments. Visa just put a number on it: $50K a week is a rounding error for a company that processes $14 trillion a year. Build for agents, but price for humans — agents aren’t paying the bills yet.",
+    "real": {
+     "score": 4,
+     "label": "Executive statement"
+    },
+    "trend": {
+     "id": "agentic-payments",
+     "label": "AgenticPayments"
+    },
+    "cardId": "fintech-20261127-am-02",
+    "sources": [
+     {
+      "outlet": "Behind Fintech",
+      "title": "Behind Fintech - Daily / 26 November 2026",
+      "url": "https://behindfintech.substack.com/p/behind-fintech-daily-26-november"
+     },
+     {
+      "outlet": "The Asian Banker",
+      "title": "Visa expands AI agent infrastructure and stablecoin settlement",
+      "url": "https://www.theasianbanker.com/press-releases/visa-expands-ai-agent-infrastructure-and-stablecoin-settlement-capabilities-at-annual-payments-forum"
+     }
+    ]
+   },
+   {
+    "rank": 5,
+    "prevRank": 3,
     "id": "payhawk-280m-2b",
     "date": "2026-11-18",
     "headline": "Payhawk raises $280M at $2B for AI-powered spend management",
@@ -1028,37 +1176,8 @@
     ]
    },
    {
-    "rank": 4,
-    "prevRank": 3,
-    "id": "lockwood-ai-bank-launch",
-    "date": "2026-11-16",
-    "headline": "Starling founder launches Lockwood, a bank built for AI agents",
-    "summary": "Anne Boden, who founded digital bank Starling, unveiled Lockwood: a banking venture where AI agents handle routine tasks (paying bills, cancelling subscriptions, buying gifts) within customer-set limits.",
-    "why": "An experienced banking founder is betting that the next bank should be built for agents, not people. If this model works, every consumer fintech's UX assumptions change.",
-    "real": {
-     "score": 3,
-     "label": "Announced, pre-launch"
-    },
-    "trend": {
-     "id": "agentic-payments",
-     "label": "AgenticPayments"
-    },
-    "sources": [
-     {
-      "outlet": "FinTech Futures",
-      "title": "Anne Boden unveils new agentic AI banking venture Lockwood",
-      "url": "https://www.fintechfutures.com/fintech-start-ups/starling-founder-anne-boden-unveils-new-banking-venture-lockwood"
-     },
-     {
-      "outlet": "Payment Expert",
-      "title": "Lockwood: Anne Boden AI agent bank",
-      "url": "https://paymentexpert.com/2026/11/16/lockwood-anne-boden-ai-agent-bank/"
-     }
-    ]
-   },
-   {
-    "rank": 5,
-    "prevRank": 4,
+    "rank": 6,
+    "prevRank": 5,
     "id": "model-ml-250m-1-5b",
     "date": "2026-11-18",
     "headline": "Model ML raises $250M at $1.5B to automate banker workflows",
@@ -1082,8 +1201,8 @@
     ]
    },
    {
-    "rank": 6,
-    "prevRank": 5,
+    "rank": 7,
+    "prevRank": 6,
     "id": "qonto-credit-licence",
     "date": "2026-11-18",
     "headline": "Qonto wins a full French banking licence to lend and take deposits",
@@ -1107,8 +1226,32 @@
     ]
    },
    {
-    "rank": 7,
-    "prevRank": 6,
+    "rank": 8,
+    "prevRank": 10,
+    "id": "fintech-weekly-991m-deals",
+    "date": "2026-11-20",
+    "headline": "Fintech deals hit $991M in a single week, strongest since summer",
+    "summary": "FinTech Global counted $991M across 17 fintech deals in the week ending Nov 20, led by Payhawk ($280M), Model ML ($250M) and Kalepa ($75M for AI insurance tools). AI-first fintechs dominated.",
+    "why": "Money is flowing to fintechs that automate work, not to consumer neobanks. If your product competes with agent-first tools, the competitive bar just went up.",
+    "real": {
+     "score": 5,
+     "label": "Tracker data"
+    },
+    "trend": {
+     "id": "finance-ops-ai",
+     "label": "FinanceOpsAI"
+    },
+    "sources": [
+     {
+      "outlet": "FinTech Global",
+      "title": "Almost $1bn raised in FinTech deals in strong week for investment",
+      "url": "https://fintech.global/2026/11/20/almost-1bn-raised-in-fintech-deals-in-strong-week-for-investment/"
+     }
+    ]
+   },
+   {
+    "rank": 9,
+    "prevRank": 7,
     "id": "fdic-fintech-deposit-rules",
     "date": "2026-11-14",
     "headline": "FDIC proposes new rules on how banks can pay fintechs in deposit deals",
@@ -1136,11 +1279,11 @@
     ]
    },
    {
-    "rank": 8,
-    "prevRank": 7,
+    "rank": 10,
+    "prevRank": 8,
     "id": "razorpay-ipo-fintech",
     "date": "2026-11-20",
-    "headline": "Razorpay gets SEBI nod, targets India's biggest fintech IPO",
+    "headline": "Razorpay gets SEBI nod, targets India’s biggest fintech IPO",
     "summary": "Razorpay received SEBI approval for its Rs 5,000-6,000 crore ($600-700M) IPO, targeting a $5B valuation and a February 2027 listing. It first filed its confidential DRHP in June 2026.",
     "why": "A successful Razorpay listing would be a signal that Indian fintech can go public at scale, potentially unlocking the IPO path for peers.",
     "real": {
@@ -1165,13 +1308,13 @@
     ]
    },
    {
-    "rank": 9,
-    "prevRank": 8,
+    "rank": 11,
+    "prevRank": 9,
     "id": "visa-agentic-ready-expansion",
     "date": "2026-11-19",
     "headline": "Visa connects 40 issuers with 85 partners for agentic commerce",
     "summary": "Visa expanded its Agentic Ready programme across Europe, connecting 40 issuers with 85 acceptance partners. The programme gives AI agents a way to authenticate and pay through tokenised card credentials.",
-    "why": "Card networks are building the trust layer for agents. If your product accepts payments, you'll need to support agent-initiated transactions soon.",
+    "why": "Card networks are building the trust layer for agents. If your product accepts payments, you’ll need to support agent-initiated transactions soon.",
     "real": {
      "score": 4,
      "label": "Programme expansion"
@@ -1194,37 +1337,92 @@
     ]
    },
    {
-    "rank": 10,
-    "prevRank": 9,
-    "id": "fintech-weekly-991m-deals",
-    "date": "2026-11-20",
-    "headline": "Fintech deals hit $991M in a single week, strongest since summer",
-    "summary": "FinTech Global counted $991M across 17 fintech deals in the week ending Nov 20, led by Payhawk ($280M), Model ML ($250M) and Kalepa ($75M for AI insurance tools). AI-first fintechs dominated.",
-    "why": "Money is flowing to fintechs that automate work, not to consumer neobanks. If your product competes with agent-first tools, the competitive bar just went up.",
+    "rank": 12,
+    "prevRank": null,
+    "id": "fdic-fintech-vetting-council",
+    "date": "2026-11-26",
+    "headline": "FDIC and state regulators back a new council to vet fintechs — assess once, use everywhere",
+    "summary": "The FDIC and CSBS endorsed a nonprofit that will create standards for evaluating bank-technology vendors. A vendor would be assessed once and the result reused across banks, cutting repetitive due diligence. Adoption is voluntary.",
+    "why": "If you sell to US banks, this could cut your onboarding friction — one assessment instead of fifty. The signal: regulators want to make it easier for banks to work with fintechs, not harder.",
     "real": {
-     "score": 5,
-     "label": "Tracker data"
+     "score": 4,
+     "label": "Regulator endorsement"
     },
     "trend": {
-     "id": "finance-ops-ai",
-     "label": "FinanceOpsAI"
+     "id": "fintech-bank-partnerships",
+     "label": "FintechBankPartnerships"
     },
+    "cardId": "fintech-20261126-pm-01",
     "sources": [
      {
-      "outlet": "FinTech Global",
-      "title": "Almost $1bn raised in FinTech deals in strong week for investment",
-      "url": "https://fintech.global/2026/11/20/almost-1bn-raised-in-fintech-deals-in-strong-week-for-investment/"
+      "outlet": "American Banker",
+      "title": "Regulators support new council to vet fintechs, cut red tape",
+      "url": "https://www.americanbanker.com/news/regulators-support-new-council-to-vet-fintechs-cut-red-tape"
      }
     ]
    },
    {
-    "rank": 11,
+    "rank": 13,
+    "prevRank": 4,
+    "id": "lockwood-ai-bank-launch",
+    "date": "2026-11-16",
+    "headline": "Starling founder launches Lockwood, a bank built for AI agents",
+    "summary": "Anne Boden, who founded digital bank Starling, unveiled Lockwood: a banking venture where AI agents handle routine tasks (paying bills, cancelling subscriptions, buying gifts) within customer-set limits.",
+    "why": "An experienced banking founder is betting that the next bank should be built for agents, not people. If this model works, every consumer fintech’s UX assumptions change.",
+    "real": {
+     "score": 3,
+     "label": "Announced, pre-launch"
+    },
+    "trend": {
+     "id": "agentic-payments",
+     "label": "AgenticPayments"
+    },
+    "sources": [
+     {
+      "outlet": "FinTech Futures",
+      "title": "Anne Boden unveils new agentic AI banking venture Lockwood",
+      "url": "https://www.fintechfutures.com/fintech-start-ups/starling-founder-anne-boden-unveils-new-banking-venture-lockwood"
+     },
+     {
+      "outlet": "Payment Expert",
+      "title": "Lockwood: Anne Boden AI agent bank",
+      "url": "https://paymentexpert.com/2026/11/16/lockwood-anne-boden-ai-agent-bank/"
+     }
+    ]
+   },
+   {
+    "rank": 14,
     "prevRank": null,
+    "id": "experian-cashflow-bureau-uk",
+    "date": "2026-11-26",
+    "headline": "Experian launches a cashflow data bureau in the UK — 100M permissioned records alongside its credit file",
+    "summary": "Experian launched a Cashflow Data Bureau in the UK, combining over 100M consumer-permissioned cashflow records with its ~1B credit bureau records. Separately, Experian relaunched Boost, letting UK consumers add rent, BNPL and bills to their credit profile.",
+    "why": "This is what open banking was supposed to enable: lending decisions that use income and spending data, not just credit history. Experian claims a third more marginal applicants can be approved.",
+    "real": {
+     "score": 4,
+     "label": "Shipped, company launch"
+    },
+    "trend": {
+     "id": "open-banking-credit",
+     "label": "OpenBankingCredit"
+    },
+    "cardId": "fintech-20261126-pm-02",
+    "sources": [
+     {
+      "outlet": "The Paypers",
+      "title": "Experian launches Cashflow Data Bureau for UK lenders",
+      "url": "https://thepaypers.com/fintech/news/experian-launches-cashflow-data-bureau-for-uk-lenders"
+     }
+    ]
+   },
+   {
+    "rank": 15,
+    "prevRank": 11,
     "id": "fincen-breach-systems-offline",
     "date": "2026-11-25",
     "headline": "FinCEN takes systems offline after breach — hours after CIA and intelligence agencies hit",
-    "summary": "The US Treasury's Financial Crimes Enforcement Network took systems offline after detecting unauthorised access. The incident came hours after a reported intrusion at the CIA, NGA and ODNI. Investigators suspect attackers used Artex, an open-source AI defence tool repurposed for offence.",
-    "why": "FinCEN is where banks file suspicious activity reports. If the system is down, compliance teams can't file SARs, and investigations stall. Check your AML vendor's status and offline-filing procedures.",
+    "summary": "The US Treasury’s Financial Crimes Enforcement Network took systems offline after detecting unauthorised access. The incident came hours after a reported intrusion at the CIA, NGA and ODNI. Investigators suspect attackers used Artex, an open-source AI defence tool repurposed for offence.",
+    "why": "FinCEN is where banks file suspicious activity reports. If the system is down, compliance teams can’t file SARs, and investigations stall. Check your AML vendor’s status and offline-filing procedures.",
     "real": {
      "score": 3,
      "label": "Reported incident, developing"
