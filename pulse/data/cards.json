@@ -1809,5 +1809,296 @@
    }
   ],
   "hasPager": true
+ },
+ {
+  "id": "ai-20261128-pm-01",
+  "topic": "ai",
+  "batch": "ai-20261128-pm",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-28T12:49:13Z",
+  "dedupeKey": "os-omni-benchmark-computer-use-agents-neurips-2026",
+  "headline": "OS-Omni gives computer-use agents a cross-platform exam \u2014 the best scores 68.5% against humans' 77%",
+  "what": "A multi-institution team released OS-Omni, a live benchmark that tests AI agents on real tasks across Windows, Ubuntu, macOS, iOS, Android and the web. Version 1 ships 48 tasks per platform plus 12 cross-platform workflows, graded on whether persistent services end up in the right state. The paper has been accepted at NeurIPS 2026.",
+  "why": "Computer use is the next big capability unlock. Claude Opus 5.5 leads at 68.5% but trails humans by nearly 9 points, and mobile platforms remain the weakest link (25+ points behind on iOS and macOS). For product leaders, this sets the realistic bar: agents can automate desktop workflows today, but phone-based flows still need a human in the loop.",
+  "tryThis": {
+   "text": "Map your top 10 support tickets to OS-Omni's platform categories \u2014 if most live on desktop, an agent pilot could cut volume now; if they're mobile-heavy, wait for scores to climb."
+  },
+  "trend": {
+   "id": "computer-use-agents",
+   "label": "ComputerUseAgents"
+  },
+  "real": {
+   "score": 4,
+   "label": "Confirmed \u00b7 peer-reviewed benchmark with open dataset",
+   "reason": "Accepted at NeurIPS 2026 with published dataset and reproducible results."
+  },
+  "sources": [
+   {
+    "title": "OS-Omni: A Cross-Platform Benchmark for Generalist Computer-Using Agents",
+    "outlet": "NeurIPS 2026 / arXiv",
+    "url": "https://neurips.cc/virtual/2026/poster/139359"
+   },
+   {
+    "title": "AI Daily Digest \u2014 November 28, 2026",
+    "outlet": "DEV Community",
+    "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-28-2026-claude-watermarks-draw-cancellations-os-omni-scores-computer-36bk"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "ai-20261128-pm-02",
+  "topic": "ai",
+  "batch": "ai-20261128-pm",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-28T12:49:13Z",
+  "dedupeKey": "microsoft-agent-framework-pypi-supply-chain-attack-nov-2026",
+  "headline": "Microsoft's agent-framework PyPI package hijacked with credential-stealing code",
+  "what": "Two unauthorized releases of Microsoft's agent-framework Python package (versions 1.26.1 and 1.26.2) were uploaded to PyPI containing code that exfiltrated Azure and CI credentials. Microsoft pulled both versions, temporarily locked the repo, and advised developers to pin to 1.26.0 or vetted replacements.",
+  "why": "Agent frameworks are becoming critical infrastructure \u2014 this is the first major supply-chain attack on one. If your team builds on agent-framework or any AI SDK from PyPI, this is a wake-up call to pin versions, verify package checksums, and audit your dependency chain. The attack surface for AI tooling is expanding faster than security practices.",
+  "tryThis": {
+   "text": "Audit your team's AI/agent Python dependencies today: pin every version, enable hash-checking mode in pip, and add a CI step that flags any unpinned or newly updated AI-framework package."
+  },
+  "trend": {
+   "id": "agent-security-standards",
+   "label": "AgentSecurityStandards"
+  },
+  "real": {
+   "score": 5,
+   "label": "Solid \u00b7 confirmed by Microsoft security advisory",
+   "reason": "Microsoft issued a security advisory confirming the compromise and pulled affected versions from PyPI."
+  },
+  "sources": [
+   {
+    "title": "Microsoft Agent Framework PyPI Releases Found Stealing Credentials",
+    "outlet": "SecurityWeek",
+    "url": "https://securityweek.com/microsoft-agent-framework-releases-poisoned-with-credential-stealer"
+   },
+   {
+    "title": "Microsoft Agent Framework hit by PyPI malware attack",
+    "outlet": "Computing",
+    "url": "https://www.computing.co.uk/news/2026/security/microsoft-agent-framework-hit-by-pypi-malware-attack"
+   },
+   {
+    "title": "Microsoft's agent-framework PyPI package compromised to steal credentials",
+    "outlet": "BleepingComputer",
+    "url": "https://bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "ai-20261128-pm-03",
+  "topic": "ai",
+  "batch": "ai-20261128-pm",
+  "kind": "news",
+  "order": 3,
+  "publishedAt": "2026-11-28T12:49:13Z",
+  "dedupeKey": "anthropic-claude-text-watermark-eu-ai-act-synthid-nov-2026",
+  "headline": "Anthropic details how Claude watermarks text \u2014 and some users cancel over it",
+  "what": "Anthropic published a transparency document explaining its Claude text watermarking, based on Google DeepMind's SynthID-Text method. Models released after August 2, 2026, are watermarked from day one; older models are being retrofitted. Detection is in private preview for regulators, media and researchers, with working detection required for all EU AI Act signatories by February 2027.",
+  "why": "This is the first major AI lab to ship and document always-on text watermarking for compliance. The user backlash \u2014 freelance developers worried about contract penalties for watermarked code \u2014 is a leading indicator of friction product teams will face when embedding watermarked AI output in customer-facing products. The mark survives copy-paste but not a full rewrite, so the practical impact depends on your use case.",
+  "tryThis": {
+   "text": "Check whether your product's AI-generated text passes through any watermark-sensitive workflow (legal filings, academic submissions, client deliverables) and document your policy before the February 2027 detection deadline."
+  },
+  "trend": {
+   "id": "ai-transparency-compliance",
+   "label": "AITransparencyCompliance"
+  },
+  "real": {
+   "score": 5,
+   "label": "Solid \u00b7 published by Anthropic with technical details",
+   "reason": "Anthropic published its own transparency document with technical details of the SynthID-Text implementation."
+  },
+  "sources": [
+   {
+    "title": "AI Daily Digest \u2014 November 28, 2026",
+    "outlet": "DEV Community",
+    "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-28-2026-claude-watermarks-draw-cancellations-os-omni-scores-computer-36bk"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "ai-20261128-pm-04",
+  "topic": "ai",
+  "batch": "ai-20261128-pm",
+  "kind": "news",
+  "order": 4,
+  "publishedAt": "2026-11-28T12:49:13Z",
+  "dedupeKey": "nvidia-nemotron-labs-image-30b-autoregressive-nov-2026",
+  "headline": "NVIDIA open-sources Nemotron-Labs-Image-30B \u2014 a 30B autoregressive image model that predicts pixels as code",
+  "what": "NVIDIA released weights for Nemotron-Labs-Image-30B-A3B on Hugging Face, a 30-billion parameter (3B active) autoregressive image model that predicts discrete visual tokens instead of using diffusion. It scores 97.98 on LongTextBench (vs GPT Image 2's 96.00) but trails on GenEval2 (65.43 vs 81.00). The structured-output half (SVG, HTML/CSS) is held back pending legal clearance.",
+  "why": "The 'Pixel as Code' approach \u2014 treating image generation as a token-prediction problem \u2014 could collapse the gap between language models and image generators. For product teams, this means a single model architecture might soon handle text, code and images, simplifying your inference stack. But the research-only licence and four-H100 requirement keep it out of production for now.",
+  "tryThis": {
+   "text": "If your product generates images, benchmark Nemotron against your current model on your specific use case \u2014 its LongTextBench lead suggests it handles complex prompts better, even if overall quality trails."
+  },
+  "trend": {
+   "id": "open-weight-multimodal",
+   "label": "OpenWeightMultimodal"
+  },
+  "real": {
+   "score": 4,
+   "label": "Confirmed \u00b7 weights published on Hugging Face",
+   "reason": "Model weights and benchmarks are publicly available on Hugging Face with a detailed model card."
+  },
+  "sources": [
+   {
+    "title": "AI Daily Digest \u2014 November 28, 2026",
+    "outlet": "DEV Community",
+    "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-28-2026-claude-watermarks-draw-cancellations-os-omni-scores-computer-36bk"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "startups-20261128-pm-01",
+  "topic": "startups",
+  "batch": "startups-20261128-pm",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-28T12:49:13Z",
+  "dedupeKey": "stripe-200b-valuation-employee-share-sale-2027-nov-2026",
+  "headline": "Stripe targets a valuation above $200B in its next employee share sale",
+  "what": "Stripe is discussing an employee share sale at a valuation exceeding $200 billion, up 26% from its $159 billion valuation in February 2026. The transaction is expected in early 2027. The jump is underpinned by Stripe's acquisition of AI infrastructure provider OpenRouter for $7B+ and its expansion into stablecoin payments and agentic commerce.",
+  "why": "Stripe at $200B+ would make it the world's most valuable private fintech by a wide margin. The valuation driver is telling: it's not just payments volume but Stripe's bet on AI infrastructure (OpenRouter) and agentic commerce. This signals that the payments layer is becoming the AI commerce layer \u2014 product leaders should watch how Stripe bundles these capabilities.",
+  "tryThis": {
+   "text": "Review your payment integration: if you're on Stripe, explore their agentic commerce and stablecoin APIs now \u2014 early adopters of new Stripe rails historically get the best terms and support."
+  },
+  "trend": {
+   "id": "agentic-payments",
+   "label": "AgenticPayments"
+  },
+  "real": {
+   "score": 3,
+   "label": "Credible \u00b7 reported by multiple outlets, negotiations ongoing",
+   "reason": "Multiple outlets report the discussions but the deal is not finalised and terms could change."
+  },
+  "sources": [
+   {
+    "title": "Behind Fintech \u2014 Week in Review, 28 November 2026",
+    "outlet": "Panagiotis Kriaris / Substack",
+    "url": "https://pkriaris.substack.com/p/the-week-in-review-behind-fintech-767"
+   },
+   {
+    "title": "Stripe valuation jumps to $159 billion",
+    "outlet": "Bloomberg",
+    "url": "https://www.bloomberg.com/news/articles/2026-02-24/stripe-hits-159-billion-valuation-as-payment-volume-soars"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "startups-20261128-pm-02",
+  "topic": "startups",
+  "batch": "startups-20261128-pm",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-28T12:49:13Z",
+  "dedupeKey": "global-payments-50b-pe-takeover-blackstone-warburg-apollo-nov-2026",
+  "headline": "Blackstone, Warburg Pincus and Apollo in talks to back a $50B Global Payments takeover",
+  "what": "GTCR, Global Payments' largest shareholder with a 16.35% stake, is in talks with Blackstone, Warburg Pincus and Apollo to finance a roughly $50 billion take-private deal. An earlier attempt with Clayton, Dubilier & Rice fell through. Global Payments already carries significant debt from its Worldpay acquisition.",
+  "why": "If this closes, it would be one of the largest leveraged buyouts ever and the biggest in payments history. It signals that PE firms see payment processing as an undervalued infrastructure play despite high debt. For product leaders at companies using Global Payments or Worldpay, a PE takeover typically means cost discipline and potential API/integration changes.",
+  "tryThis": {
+   "text": "If your product depends on Global Payments or Worldpay infrastructure, start documenting your integration touchpoints and negotiating contract protections \u2014 PE-owned payment processors often restructure pricing and support tiers."
+  },
+  "trend": {
+   "id": "payments-consolidation",
+   "label": "PaymentsConsolidation"
+  },
+  "real": {
+   "score": 3,
+   "label": "Credible \u00b7 talks reported, no deal signed",
+   "reason": "Talks are confirmed by multiple financial outlets but no binding agreement has been announced and an earlier attempt collapsed."
+  },
+  "sources": [
+   {
+    "title": "Behind Fintech \u2014 Week in Review, 28 November 2026",
+    "outlet": "Panagiotis Kriaris / Substack",
+    "url": "https://pkriaris.substack.com/p/the-week-in-review-behind-fintech-767"
+   },
+   {
+    "title": "GPN's $40B Takeover Buzz: Can Private Equity Revive Its Growth?",
+    "outlet": "Zacks",
+    "url": "https://zacks.com/stock/news/3021983/gpn-s-40b-takeover-buzz-can-private-equity-revive-its-growth"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "fintech-20261128-pm-01",
+  "topic": "fintech",
+  "batch": "fintech-20261128-pm",
+  "kind": "news",
+  "order": 1,
+  "publishedAt": "2026-11-28T12:49:13Z",
+  "dedupeKey": "truelayer-papa-johns-agentic-pay-by-bank-fca-sandbox-nov-2026",
+  "headline": "TrueLayer and Papa John's complete the first agentic Pay by Bank transaction in the FCA's sandbox",
+  "what": "TrueLayer executed the first agentic Pay by Bank payment to a named UK retailer \u2014 Papa John's \u2014 on November 27, inside the FCA's Supercharged Sandbox via Lloyds and NatWest. The system uses bank-held mandates that enforce spend limits, with banks declining requests that exceed them. This is the first live test of an AI agent making a payment on a consumer's behalf with real bank rails.",
+  "why": "This is the first real proof that agentic payments can work within a regulated framework. The key design choice \u2014 banks hold the mandates and enforce limits, not the agent \u2014 is a template other regulators will likely follow. Product leaders in e-commerce should watch this closely: if agents can pay, your checkout funnel may need an agent-native path.",
+  "tryThis": {
+   "text": "Talk to your payments team about what an 'agent checkout' flow would look like for your product \u2014 no cart UI, just a structured API call. TrueLayer's sandbox results will set the template."
+  },
+  "trend": {
+   "id": "agentic-payments",
+   "label": "AgenticPayments"
+  },
+  "real": {
+   "score": 4,
+   "label": "Confirmed \u00b7 announced by TrueLayer and conducted in FCA sandbox",
+   "reason": "TrueLayer confirmed the transaction in its newsroom and it took place within the FCA's regulatory sandbox with named banking partners."
+  },
+  "sources": [
+   {
+    "title": "TrueLayer selected for FCA's Supercharged Sandbox to test agentic payments",
+    "outlet": "TrueLayer",
+    "url": "https://truelayer.com/newsroom/announcements/truelayer-selected-for-fcas-supercharged-sandbox-to-test-agentic-payments/"
+   },
+   {
+    "title": "AI News \u2014 Nov 28, 2026",
+    "outlet": "RIO Rundown",
+    "url": "https://riorundown.substack.com/p/ai-news-nov-28-2026-ai-infrastructure"
+   }
+  ],
+  "hasPager": true
+ },
+ {
+  "id": "fintech-20261128-pm-02",
+  "topic": "fintech",
+  "batch": "fintech-20261128-pm",
+  "kind": "news",
+  "order": 2,
+  "publishedAt": "2026-11-28T12:49:13Z",
+  "dedupeKey": "asean-plus-3-cross-border-digital-payments-kyoto-nov-2026",
+  "headline": "ASEAN+3 creates a cross-border digital payments working group, stablecoin framework on the agenda",
+  "what": "At the ASEAN+3 Finance and Central Bank Deputies' Meeting in Kyoto on November 26, China, Japan, South Korea and the 11 ASEAN members agreed to establish a regional working group overseen by AMRO. The Cross-Border Digital Payments Program will work to connect domestic retail and wholesale payment systems and build a framework for stablecoin regulation talks.",
+  "why": "This is the first formal multilateral structure in Asia-Pacific dedicated to cross-border digital payments and stablecoin governance. It's a cooperation mechanism, not a shared payment rail or common licence \u2014 but it sets the stage for interoperability standards. For fintech product leaders targeting Southeast Asia, the regulatory direction is clear: build for interoperability now, not just domestic compliance.",
+  "tryThis": {
+   "text": "If you serve ASEAN markets, map which of your payment flows cross borders and start aligning with the AMRO framework's likely outputs \u2014 QR interoperability and stablecoin-ready compliance."
+  },
+  "trend": {
+   "id": "cross-border-payments-infra",
+   "label": "CrossBorderPaymentsInfra"
+  },
+  "real": {
+   "score": 4,
+   "label": "Confirmed \u00b7 announced at official ASEAN+3 meeting",
+   "reason": "Official government sources confirm the agreement from the Kyoto meeting on November 26, 2026."
+  },
+  "sources": [
+   {
+    "title": "ASEAN+3 Creates Digital Payments Group, but No Shared Crypto License Yet",
+    "outlet": "FinanceFeeds",
+    "url": "https://financefeeds.com/asean3-creates-digital-payments-group-but-no-shared-crypto-license-yet"
+   },
+   {
+    "title": "Asean+3 to prioritise digital cross-border payment co-operation",
+    "outlet": "Central Banking",
+    "url": "https://www.centralbanking.com/central-banks/economics/macroeconomics/7975791/asean3-to-prioritise-digital-cross-border-payment-co-operation"
+   }
+  ],
+  "hasPager": true
  }
 ]

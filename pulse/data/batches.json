@@ -1,5 +1,29 @@
 [
  {
+  "id": "ai-20261128-pm",
+  "topic": "ai",
+  "edition": "Evening",
+  "at": "2026-11-28T12:49:49Z",
+  "blurb": "OS-Omni benchmarks computer-use agents across six platforms, Microsoft's agent-framework gets hijacked on PyPI, Anthropic ships always-on text watermarking for the EU AI Act, and NVIDIA open-sources a 30B autoregressive image model.",
+  "count": 4
+ },
+ {
+  "id": "startups-20261128-pm",
+  "topic": "startups",
+  "edition": "Evening",
+  "at": "2026-11-28T12:49:49Z",
+  "blurb": "Stripe targets a $200B+ valuation in its next employee share sale, and Blackstone, Warburg Pincus and Apollo circle a $50B Global Payments takeover.",
+  "count": 2
+ },
+ {
+  "id": "fintech-20261128-pm",
+  "topic": "fintech",
+  "edition": "Evening",
+  "at": "2026-11-28T12:49:49Z",
+  "blurb": "TrueLayer and Papa John's complete the first agentic Pay by Bank transaction in the FCA sandbox, and ASEAN+3 creates a cross-border digital payments working group.",
+  "count": 2
+ },
+ {
   "id": "ai-20261128-am",
   "topic": "ai",
   "edition": "Morning",

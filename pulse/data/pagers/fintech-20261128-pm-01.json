@@ -1,0 +1,43 @@
+{
+ "tldr": "TrueLayer and Papa John's completed the first agentic Pay by Bank transaction in the FCA's Supercharged Sandbox, with Lloyds and NatWest as banking partners. Banks hold the spend mandates and enforce limits \u2014 a template for how agentic payments could work in regulated markets.",
+ "context": "On November 27, TrueLayer executed the first agentic Pay by Bank payment to a named UK retailer \u2014 Papa John's \u2014 inside the Financial Conduct Authority's Supercharged Sandbox. The transaction ran through Lloyds and NatWest as banking partners.\n\nThe architecture is significant: rather than giving the AI agent direct access to payment credentials, the system uses bank-held mandates. The consumer sets spending rules (amounts, categories, frequency), the bank stores them, and when an agent requests a payment, the bank checks it against the mandate and either approves or declines. This means the agent never touches the consumer's money directly \u2014 the bank remains the gatekeeper.\n\nThis is the culmination of months of work. TrueLayer was selected for the FCA's Supercharged Sandbox earlier in 2026, specifically to test how Pay by Bank (the UK's open banking payment method) could work with AI agents. Papa John's was already a TrueLayer partner for traditional Pay by Bank, making it a natural test case.\n\nThe FCA's involvement is crucial. By running this inside a regulatory sandbox, TrueLayer and its banking partners get explicit FCA guidance on what's permissible, and the FCA gets real-world data on how agentic payments behave. The results will likely inform the FCA's broader guidance on agentic AI in financial services.\n\nTrueLayer has also published a framework defining three levels of agentic payment autonomy, from 'agent suggests, human confirms' to 'agent acts within pre-set rules' to 'fully autonomous within broad mandates.'",
+ "numbers": [
+  {
+   "v": "1st",
+   "k": "First agentic Pay by Bank to a named UK retailer"
+  },
+  {
+   "v": "2",
+   "k": "Banking partners (Lloyds, NatWest)"
+  },
+  {
+   "v": "3",
+   "k": "Levels of agentic payment autonomy defined"
+  }
+ ],
+ "whyPM": "This is the most concrete proof point yet that agentic payments can work within existing financial regulation. The bank-held mandate model is elegant: it gives consumers control, keeps banks in their regulatory role, and lets agents operate without handling credentials. Product leaders should expect this pattern to become the default for regulated agentic transactions.\n\nIf you're building an e-commerce or marketplace product, the implication is that you need an agent-native checkout path alongside your human one. No cart UI, no form fields \u2014 just a structured API endpoint that an agent can call with a mandate reference. TrueLayer's sandbox results will set the template for how this works.\n\nThe FCA's Supercharged Sandbox is also a model for how regulators worldwide will likely approach agentic payments: test it in a controlled environment, learn from real transactions, then issue guidance. This means the UK will likely be first to have clear rules, giving UK-based fintechs a regulatory head start.",
+ "bull": "The FCA sandbox results are strong enough that agentic Pay by Bank exits sandbox and goes live in mid-2027, the UK becomes the global standard-setter for agentic payments regulation, and TrueLayer captures the market.",
+ "bear": "Real-world edge cases (disputed charges, fraud, mandate conflicts) prove harder to resolve than the sandbox suggests, and the FCA delays guidance, leaving agentic payments in regulatory limbo through 2027.",
+ "unknowns": [
+  "What happens when an agent-initiated payment is disputed \u2014 who is liable?",
+  "Will other UK banks beyond Lloyds and NatWest join the sandbox?",
+  "How will the mandate system handle complex purchases (subscriptions, variable pricing, multi-merchant carts)?"
+ ],
+ "watch": [
+  "FCA sandbox results report (expected H1 2027)",
+  "Whether Mastercard or Visa launch competing agentic payment frameworks",
+  "TrueLayer's expansion of agentic Pay by Bank beyond the sandbox"
+ ],
+ "deeper": [
+  {
+   "label": "TrueLayer FCA sandbox announcement",
+   "note": "Official announcement with technical details",
+   "url": "https://truelayer.com/newsroom/announcements/truelayer-selected-for-fcas-supercharged-sandbox-to-test-agentic-payments/"
+  },
+  {
+   "label": "TrueLayer's agentic payment autonomy framework",
+   "note": "Three levels of agent autonomy in payments",
+   "url": "https://truelayer.com/blog/payments/the-three-levels-of-agentic-autonomy-and-how-pay-by-bank-fits/"
+  }
+ ]
+}

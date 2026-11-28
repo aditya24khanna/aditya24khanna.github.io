@@ -1,0 +1,48 @@
+{
+ "tldr": "Attackers hijacked Microsoft's agent-framework Python package on PyPI, injecting credential-stealing code into two releases. Microsoft confirmed the compromise and pulled the affected versions, exposing a new class of supply-chain risk in AI tooling.",
+ "context": "On November 25, Microsoft issued a security advisory confirming that two unauthorised releases of its agent-framework Python package \u2014 versions 1.26.1 and 1.26.2 \u2014 had been uploaded to PyPI containing malicious code designed to exfiltrate Azure credentials, CI tokens and environment variables.\n\nThe attack is notable for its target: agent-framework is Microsoft's official SDK for building AI agents, and it runs in production at thousands of organisations. The malicious code was designed to blend in with legitimate telemetry, making it harder to detect through casual code review. Microsoft pulled both versions, temporarily locked the GitHub repository, and advised all users to pin to version 1.26.0 or use vetted replacement packages.\n\nThis is not the first PyPI supply-chain attack, but it is the first to target a major AI agent framework specifically. The attack surface is expanding: AI frameworks are becoming critical infrastructure, they often run with elevated permissions (to call APIs, access databases, execute code), and their dependency chains are deep and fast-moving.\n\nSecurity researchers noted that the attack exploited PyPI's trust model \u2014 once a maintainer account is compromised, there is no secondary verification before a new version goes live. The incident has reignited calls for mandatory two-factor authentication, build provenance verification, and sandboxed execution for AI frameworks.",
+ "numbers": [
+  {
+   "v": "2",
+   "k": "Poisoned package versions"
+  },
+  {
+   "v": "1.26.0",
+   "k": "Safe version to pin to"
+  },
+  {
+   "v": "~24h",
+   "k": "Time malicious versions were live"
+  }
+ ],
+ "whyPM": "If your product uses AI agents in production, this attack should trigger an immediate security review. Agent frameworks typically run with broad permissions \u2014 API keys, database access, code execution \u2014 which means a compromised framework can exfiltrate far more than a compromised utility library.\n\nThe practical implication is that AI dependency management needs the same rigour as your core application dependencies, if not more. Pin versions, verify checksums, and run agents in sandboxed environments with minimal permissions. The era of 'pip install and trust' for AI frameworks is over.\n\nFor product leaders, the strategic question is governance: who in your organisation is responsible for vetting AI framework updates before they reach production? If the answer is 'no one specifically,' this incident is your forcing function to fix that.",
+ "bull": "The incident accelerates adoption of signed packages and build provenance for AI frameworks, and PyPI implements mandatory attestation for high-impact packages within six months, making this class of attack much harder.",
+ "bear": "Copycat attacks target other AI frameworks (LangChain, CrewAI, Pydantic AI), and the discovery that agent-framework ran with elevated permissions in many environments leads to a wave of credential rotations and production incidents.",
+ "unknowns": [
+  "How many organisations actually installed the poisoned versions before they were pulled?",
+  "What credentials were exfiltrated and to whom?",
+  "Will PyPI implement mandatory build provenance for high-download packages?"
+ ],
+ "watch": [
+  "Microsoft's post-incident report (expected within weeks)",
+  "PyPI security policy changes",
+  "Whether similar attacks target other AI agent frameworks"
+ ],
+ "deeper": [
+  {
+   "label": "Microsoft security advisory",
+   "note": "Official confirmation and remediation steps",
+   "url": "https://securityweek.com/microsoft-agent-framework-releases-poisoned-with-credential-stealer"
+  },
+  {
+   "label": "BleepingComputer analysis",
+   "note": "Technical breakdown of the malicious code",
+   "url": "https://bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials"
+  },
+  {
+   "label": "CSO Online report",
+   "note": "Coverage of Azure and CI credential theft",
+   "url": "https://www.csoonline.com/article/4250156/attackers-hijack-microsofts-agent-framework-package-to-steal-azure-and-ci-credentials.html"
+  }
+ ]
+}

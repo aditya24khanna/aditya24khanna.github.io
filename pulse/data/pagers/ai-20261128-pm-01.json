@@ -1,0 +1,47 @@
+{
+ "tldr": "OS-Omni is the first cross-platform benchmark for computer-use agents, testing them on real tasks across six operating systems. Claude Opus 5.5 leads at 68.5% but humans still score 77.3%, with mobile platforms remaining the biggest gap.",
+ "context": "Computer-use agents \u2014 AI systems that can operate software by seeing the screen and clicking, typing and scrolling like a human \u2014 have been one of the fastest-moving frontiers in AI. Anthropic, OpenAI, Google and several open-source teams have shipped models that can navigate desktops and browsers, but until now there was no standardised way to compare them across platforms.\n\nOS-Omni fills that gap. Built by a multi-institution collaboration, it runs agents against 48 real tasks on each of six platforms (Windows, Ubuntu, macOS, iOS, Android, Web) plus 12 workflows that span multiple platforms. Tasks are graded on the final state of persistent services \u2014 did the email actually send, did the file actually save \u2014 not on whether the agent took the 'right' steps.\n\nThe results reveal a clear hierarchy: agents already match or beat humans on Linux (where most were trained) but fall more than 25 points behind on iOS and macOS. Cross-platform workflows \u2014 'download this attachment from email on your phone, then edit it on your laptop' \u2014 remain the hardest category. The paper has been accepted at NeurIPS 2026, and the team plans versioned waves of 300 tasks to track progress over time.\n\nFor product teams, the benchmark provides the first apples-to-apples comparison of which agent to choose for which platform, and a clear signal on where automation is production-ready versus where human oversight is still needed.",
+ "numbers": [
+  {
+   "v": "68.5%",
+   "k": "Best agent score (Claude Opus 5.5)"
+  },
+  {
+   "v": "77.3%",
+   "k": "Human reference score"
+  },
+  {
+   "v": "6",
+   "k": "Platforms tested"
+  },
+  {
+   "v": "300",
+   "k": "Tasks per versioned wave"
+  }
+ ],
+ "whyPM": "Computer use is the enabler for the next generation of product automation. If your product has a web or desktop interface, an agent that scores 68.5% on general tasks can already handle a meaningful chunk of repetitive workflows \u2014 customer onboarding steps, data entry, report generation.\n\nThe platform gap matters most: if your users are on mobile, the current generation of agents will frustrate them. If they're on desktop or web, the technology is approaching viability for supervised automation. The benchmark gives you a data-driven way to decide where to invest.\n\nThe NeurIPS acceptance and planned versioned waves mean this will become the standard scoreboard for computer-use agents. Product leaders should track it the way they track browser compatibility matrices \u2014 it tells you what's safe to automate and what isn't, platform by platform.",
+ "bull": "Agent scores climb to 85%+ within two waves as models are fine-tuned specifically on OS-Omni tasks, making supervised desktop automation production-ready for most enterprise workflows by mid-2027.",
+ "bear": "Mobile and cross-platform scores plateau, the benchmark reveals fundamental architectural limitations in current agent designs, and product teams discover that the last 10% of reliability is as expensive as the first 90%.",
+ "unknowns": [
+  "How well do benchmark scores predict real-world reliability on messy, edge-case-heavy production tasks?",
+  "Will Apple and Google tighten OS-level restrictions on automated input that could limit agent performance on mobile?",
+  "How much does task complexity beyond the benchmark's 48-task-per-platform sample affect agent success rates?"
+ ],
+ "watch": [
+  "OS-Omni Wave 2 scores (expected H1 2027)",
+  "Apple's response to agent-driven iOS automation",
+  "Enterprise pilot results from teams deploying computer-use agents in production"
+ ],
+ "deeper": [
+  {
+   "label": "OS-Omni paper at NeurIPS",
+   "note": "Full paper with methodology and results",
+   "url": "https://neurips.cc/virtual/2026/poster/139359"
+  },
+  {
+   "label": "Computer-use agents hit 85% on OSWorld",
+   "note": "Related benchmark progress",
+   "url": "https://cryptobriefing.com/computer-use-agents-85-percent-osworld-benchmark/"
+  }
+ ]
+}

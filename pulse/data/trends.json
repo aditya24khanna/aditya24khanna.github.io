@@ -73,12 +73,13 @@
   "topic": "ai",
   "label": "Computer-use agents go mainstream",
   "status": "rising",
-  "mentions": 1,
+  "mentions": 2,
   "firstSeen": "2026-11-21T17:35:00Z",
-  "lastSeen": "2026-11-21T17:35:00Z",
-  "summary": "All four big labs now ship agents that operate a computer through its screen. The race has moved to reliability, background operation and trust controls such as scoped access and approvals.",
+  "lastSeen": "2026-11-28T12:49:49Z",
+  "summary": "Cross-platform benchmark for computer-use agents establishes standardised evaluation across six operating systems",
   "cardIds": [
-   "ai-20261121-pm-03"
+   "ai-20261121-pm-03",
+   "ai-20261128-pm-01"
   ]
  },
  {
@@ -126,15 +127,17 @@
   "topic": "fintech",
   "label": "Agentic payments",
   "status": "rising",
-  "mentions": 4,
+  "mentions": 6,
   "firstSeen": "2026-11-21T19:20:00Z",
-  "lastSeen": "2026-11-27T12:47:58Z",
-  "summary": "Agentic payments are moving from demos to rails. Products that pay, lend or insure will need to answer: which agent is this, what was it allowed to do, and who's liable if it goes wrong.",
+  "lastSeen": "2026-11-28T12:49:49Z",
+  "summary": "AI agents making payments on behalf of consumers, with payment processors and regulators building the rails",
   "cardIds": [
    "fintech-20261121-pm-01",
    "fintech-20261126-am-01",
    "fintech-20261127-am-02",
-   "fintech-20261127-pm-02"
+   "fintech-20261127-pm-02",
+   "startups-20261128-pm-01",
+   "fintech-20261128-pm-01"
   ]
  },
  {
@@ -248,12 +251,13 @@
   "topic": "ai",
   "label": "Agent security standards",
   "status": "new",
-  "mentions": 1,
+  "mentions": 2,
   "firstSeen": "2026-11-26T12:45:00Z",
-  "lastSeen": "2026-11-26T12:45:00Z",
-  "summary": "Platforms are mandating specific security protocols for AI agents. Google's MCP requirement for Workspace is the first major enforcement, setting a precedent for how agents access enterprise data.",
+  "lastSeen": "2026-11-28T12:49:49Z",
+  "summary": "Supply-chain attacks targeting AI agent frameworks highlight security gaps in the rapidly growing agent tooling ecosystem",
   "cardIds": [
-   "ai-20261126-pm-01"
+   "ai-20261126-pm-01",
+   "ai-20261128-pm-02"
   ]
  },
  {
@@ -478,6 +482,54 @@
   "summary": "The RBI is progressively tightening digital payment security, extending tokenisation mandates to recurring and offline transactions. Each round creates compliance work for payment products but raises the security baseline.",
   "cardIds": [
    "fintech-20261128-am-02"
+  ]
+ },
+ {
+  "id": "ai-transparency-compliance",
+  "label": "AITransparencyCompliance",
+  "mentions": 1,
+  "status": "new",
+  "firstSeen": "2026-11-28T12:49:49Z",
+  "lastSeen": "2026-11-28T12:49:49Z",
+  "summary": "AI labs implementing always-on content watermarking to comply with EU AI Act transparency requirements",
+  "cardIds": [
+   "ai-20261128-pm-03"
+  ]
+ },
+ {
+  "id": "open-weight-multimodal",
+  "label": "OpenWeightMultimodal",
+  "mentions": 1,
+  "status": "new",
+  "firstSeen": "2026-11-28T12:49:49Z",
+  "lastSeen": "2026-11-28T12:49:49Z",
+  "summary": "Open-weight multimodal models expanding from text to image generation using autoregressive architectures",
+  "cardIds": [
+   "ai-20261128-pm-04"
+  ]
+ },
+ {
+  "id": "payments-consolidation",
+  "label": "PaymentsConsolidation",
+  "mentions": 1,
+  "status": "new",
+  "firstSeen": "2026-11-28T12:49:49Z",
+  "lastSeen": "2026-11-28T12:49:49Z",
+  "summary": "PE-driven consolidation in payment processing as firms seek to extract margin from high-volume infrastructure",
+  "cardIds": [
+   "startups-20261128-pm-02"
+  ]
+ },
+ {
+  "id": "cross-border-payments-infra",
+  "label": "CrossBorderPaymentsInfra",
+  "mentions": 1,
+  "status": "new",
+  "firstSeen": "2026-11-28T12:49:49Z",
+  "lastSeen": "2026-11-28T12:49:49Z",
+  "summary": "Multilateral frameworks for cross-border digital payment interoperability and stablecoin regulation in Asia-Pacific",
+  "cardIds": [
+   "fintech-20261128-pm-02"
   ]
  }
 ]

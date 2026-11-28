@@ -1,0 +1,38 @@
+{
+ "tldr": "Anthropic published how Claude's text watermarking works \u2014 a SynthID-Text implementation required by the EU AI Act. All models after August 2026 are watermarked, detection is in private preview, and some users are cancelling over concerns about watermarked code.",
+ "context": "Anthropic has published a detailed transparency document explaining how its Claude text watermarking system works. The method is based on Google DeepMind's SynthID-Text, published in Nature in 2024, which uses watermark keys to nudge choices between near-equal word alternatives during generation. No hidden characters or extra tokens are added.\n\nThe rollout has three phases: models released after August 2, 2026, are watermarked from day one; older models are being retrofitted; and all EU AI Act signatories need working detection capabilities by February 2027. Detection is currently in private preview for regulators, law enforcement, media organisations, fact-checkers, researchers and enterprises.\n\nThe watermark survives copy-paste and light editing but not a full rewrite. Code is watermarked more weakly, though code comments can carry the mark. Text that is only proofread by Claude carries almost no mark.\n\nThe user backlash has been swift if small-scale. Business Insider interviewed four users who cancelled their subscriptions, including a freelance developer who worried about contract penalties if clients discovered their code contained AI watermarks. Anthropic says it has not seen a material increase in cancellations.\n\nThis matters because Anthropic is the first major AI lab to ship and document always-on text watermarking for regulatory compliance. OpenAI and Google have watermarking capabilities but have not made them always-on or published comparable transparency documents.",
+ "numbers": [
+  {
+   "v": "Aug 2, 2026",
+   "k": "Watermarking start date for new models"
+  },
+  {
+   "v": "Feb 2027",
+   "k": "EU AI Act detection deadline"
+  },
+  {
+   "v": "4",
+   "k": "Users interviewed who cancelled"
+  }
+ ],
+ "whyPM": "If your product uses Claude to generate customer-facing text \u2014 marketing copy, documentation, support responses \u2014 that text now carries a detectable watermark. This is not a problem today (detection is in private preview), but by February 2027 anyone with detection access could verify whether your content is AI-generated.\n\nThe product implications depend on your use case. For internal tools and drafts that humans edit substantially, the watermark degrades naturally. For high-volume automated content (product descriptions, automated reports, generated emails), the watermark persists. Product leaders need to decide: is AI-generated content something you disclose, something you obscure through editing, or something you accept as the new normal?\n\nThe code watermarking angle matters for developer tools. If your product generates code for users, those users may face the same freelancer concern \u2014 contracts or clients that penalise AI-generated code. Consider whether your product needs a 'clean output' option or clearer disclosure.",
+ "bull": "Watermarking becomes an industry standard that actually reduces misinformation and builds public trust in AI-generated content, making it easier for products to be transparent about AI use without stigma.",
+ "bear": "Competing labs delay or weaken their watermarking, giving them a competitive advantage with users who want unmarked output. Anthropic loses developer market share to labs that don't watermark code.",
+ "unknowns": [
+  "Will OpenAI and Google match Anthropic's always-on approach or take a softer line?",
+  "How robust is the watermark against paraphrasing tools specifically designed to remove it?",
+  "Will enterprise contracts start including AI watermark clauses?"
+ ],
+ "watch": [
+  "OpenAI and Google's watermarking announcements",
+  "Enterprise adoption of detection tools",
+  "Whether contract language around AI-generated content becomes standard"
+ ],
+ "deeper": [
+  {
+   "label": "AI Daily Digest coverage",
+   "note": "Technical details of the SynthID-Text implementation",
+   "url": "https://dev.to/hiroki-ii-ai/ai-daily-digest-november-28-2026-claude-watermarks-draw-cancellations-os-omni-scores-computer-36bk"
+  }
+ ]
+}

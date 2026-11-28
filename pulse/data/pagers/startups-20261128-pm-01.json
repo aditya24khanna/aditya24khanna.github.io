@@ -1,0 +1,47 @@
+{
+ "tldr": "Stripe is in discussions for an employee share sale at a valuation exceeding $200 billion, up 26% from $159 billion in February 2026. The jump reflects its OpenRouter acquisition, stablecoin push, and expansion into agentic commerce.",
+ "context": "Stripe, the payments infrastructure giant, is discussing an employee share sale that would value the company above $200 billion, according to multiple reports. This would represent a 26% increase from the $159 billion valuation set in its February 2026 tender offer, which itself was a 70% jump from the previous round.\n\nThe valuation surge is driven by three strategic bets that have panned out. First, Stripe's acquisition of OpenRouter \u2014 the AI model routing and inference platform \u2014 for more than $7 billion, which positioned Stripe as infrastructure not just for payments but for AI commerce. Second, its expansion into stablecoin payments, allowing merchants to accept and settle in stablecoins alongside traditional currencies. Third, its push into agentic commerce, building the rails for AI agents to make purchases on behalf of consumers.\n\nThe employee share sale is expected in early 2027. Stripe has not filed for an IPO and has repeatedly said it is in no hurry to go public, though at $200B+ it would be the most valuable company to ever list if it eventually does.\n\nFor context, Stripe processed over $1 trillion in total payment volume in 2025 and its revenue growth has consistently exceeded 25% year-over-year. The company employs roughly 10,000 people globally.",
+ "numbers": [
+  {
+   "v": "$200B+",
+   "k": "Target valuation"
+  },
+  {
+   "v": "$159B",
+   "k": "Previous valuation (Feb 2026)"
+  },
+  {
+   "v": "26%",
+   "k": "Valuation increase"
+  },
+  {
+   "v": "$7B+",
+   "k": "OpenRouter acquisition price"
+  }
+ ],
+ "whyPM": "Stripe's valuation trajectory tells you where the payments industry thinks the money is heading: AI infrastructure and agentic commerce, not just traditional checkout. The OpenRouter acquisition means Stripe is becoming the default backend for AI-powered transactions \u2014 if your product uses AI to generate revenue (recommendations, automated purchasing, agent workflows), Stripe wants to be the payment layer.\n\nFor product leaders, the strategic question is whether to build on Stripe's expanding platform or diversify. Stripe's agentic commerce APIs and stablecoin support are advantages no other payment processor offers at scale. But a $200B Stripe also means higher pricing power and platform risk.\n\nThe continued avoidance of an IPO matters too. As a private company, Stripe can make long-term bets (like a $7B acquisition) without quarterly earnings pressure. This means its product roadmap is likely more ambitious and less predictable than public competitors.",
+ "bull": "Stripe's AI commerce bet pays off massively as agent-driven transactions grow 10x in 2027, the IPO eventually happens at $300B+, and being on Stripe becomes as default as being on AWS.",
+ "bear": "The $200B valuation is peak hype, agentic commerce grows slower than expected, and the OpenRouter acquisition proves overpriced as AI model routing commoditises.",
+ "unknowns": [
+  "Will the employee share sale actually close at $200B+ or is this an aspirational target?",
+  "Is Stripe closer to an IPO filing than it's letting on?",
+  "How much of Stripe's growth is coming from AI-related commerce vs traditional payments?"
+ ],
+ "watch": [
+  "Employee share sale completion and final valuation (expected early 2027)",
+  "Stripe's agentic commerce API adoption metrics",
+  "Whether Stripe files S-1 paperwork in 2027"
+ ],
+ "deeper": [
+  {
+   "label": "Behind Fintech week in review",
+   "note": "Coverage of the $200B discussions",
+   "url": "https://pkriaris.substack.com/p/the-week-in-review-behind-fintech-767"
+  },
+  {
+   "label": "Bloomberg on Stripe's $159B valuation",
+   "note": "Previous tender offer context",
+   "url": "https://www.bloomberg.com/news/articles/2026-02-24/stripe-hits-159-billion-valuation-as-payment-volume-soars"
+  }
+ ]
+}
