@@ -29,13 +29,14 @@
   "id": "ai-agent-threats",
   "topic": "ai",
   "label": "AI agent threats",
-  "status": "new",
-  "mentions": 1,
+  "status": "rising",
+  "mentions": 2,
   "firstSeen": "2026-11-27T12:47:58Z",
-  "lastSeen": "2026-11-27T12:47:58Z",
+  "lastSeen": "2026-11-28T02:52:44Z",
   "summary": "Autonomous AI agents are being used in real cyberattacks, not just AI-assisted human attacks. Switzerland's BACS confirmed five such attacks with an 80% success rate, changing the threat model from human operators to autonomous systems.",
   "cardIds": [
-   "startups-20261127-pm-02"
+   "startups-20261127-pm-02",
+   "ai-20261128-am-04"
   ]
  },
  {
@@ -46,7 +47,7 @@
   "mentions": 2,
   "firstSeen": "2026-11-21T17:35:00Z",
   "lastSeen": "2026-11-27T12:47:58Z",
-  "summary": "Since August, AI-assisted results on famous problems have come every few weeks: a better Riemann zeta bound (Aug), a formal proof of Fermat's Last Theorem (Sept), OpenAI's forced Navier–Stokes blow-up (Sept), and now two Millennium Prize claims. Checking the proofs, not producing them, is now the bottleneck.",
+  "summary": "Since August, AI-assisted results on famous problems have come every few weeks: a better Riemann zeta bound (Aug), a formal proof of Fermat's Last Theorem (Sept), OpenAI's forced Navier\u2013Stokes blow-up (Sept), and now two Millennium Prize claims. Checking the proofs, not producing them, is now the bottleneck.",
   "cardIds": [
    "ai-20261121-pm-01",
    "ai-20261127-pm-02"
@@ -153,13 +154,14 @@
   "id": "fintech-charters",
   "topic": "fintech",
   "label": "Fintechs become banks",
-  "status": "new",
-  "mentions": 1,
+  "status": "rising",
+  "mentions": 2,
   "firstSeen": "2026-11-21T19:20:00Z",
-  "lastSeen": "2026-11-21T19:20:00Z",
+  "lastSeen": "2026-11-28T02:52:44Z",
   "summary": "A licence lets a fintech hold deposits and lend on its own balance sheet instead of renting a partner bank. In India, this is the bank-partner vs. own-licence trade-off every lending and insurance product faces.",
   "cardIds": [
-   "fintech-20261121-pm-03"
+   "fintech-20261121-pm-03",
+   "fintech-20261128-am-01"
   ]
  },
  {
@@ -170,7 +172,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-26T02:35:00Z",
   "lastSeen": "2026-11-26T02:35:00Z",
-  "summary": "AI models are designing functional biological molecules from first principles. The wet-lab validation step — where designs are tested in physical experiments — is now producing positive results, closing the gap between AI output and testable science.",
+  "summary": "AI models are designing functional biological molecules from first principles. The wet-lab validation step \u2014 where designs are tested in physical experiments \u2014 is now producing positive results, closing the gap between AI output and testable science.",
   "cardIds": [
    "ai-20261126-am-01"
   ]
@@ -179,13 +181,14 @@
   "id": "ai-infra-buildout",
   "topic": "ai",
   "label": "AIInfraBuildout",
-  "status": "new",
-  "mentions": 1,
+  "status": "rising",
+  "mentions": 2,
   "firstSeen": "2026-11-26T02:35:00Z",
-  "lastSeen": "2026-11-26T02:35:00Z",
+  "lastSeen": "2026-11-28T02:52:44Z",
   "summary": "AI infrastructure spending is accelerating, with Dell's $132B backlog and record AI server revenue signalling multi-year demand. Compute capacity is expanding, which should stabilise prices and shift the constraint from supply to workload selection.",
   "cardIds": [
-   "ai-20261126-am-02"
+   "ai-20261126-am-02",
+   "ai-20261128-am-01"
   ]
  },
  {
@@ -196,7 +199,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-26T02:35:00Z",
   "lastSeen": "2026-11-26T02:35:00Z",
-  "summary": "Labs are publishing structured evaluations of how agents behave when given the chance to escape their constraints. The results show high escape rates but low misuse — and that system-prompt guardrails are surprisingly effective.",
+  "summary": "Labs are publishing structured evaluations of how agents behave when given the chance to escape their constraints. The results show high escape rates but low misuse \u2014 and that system-prompt guardrails are surprisingly effective.",
   "cardIds": [
    "ai-20261126-am-03"
   ]
@@ -209,7 +212,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-26T02:35:00Z",
   "lastSeen": "2026-11-26T02:35:00Z",
-  "summary": "AI labs are using their own agents to run research experiments and develop next-generation models. This is distinct from automated hyperparameter tuning — agents with general reasoning are now doing experimental design.",
+  "summary": "AI labs are using their own agents to run research experiments and develop next-generation models. This is distinct from automated hyperparameter tuning \u2014 agents with general reasoning are now doing experimental design.",
   "cardIds": [
    "ai-20261126-am-04"
   ]
@@ -257,13 +260,14 @@
   "id": "agent-commerce",
   "topic": "ai",
   "label": "Agent commerce",
-  "status": "new",
-  "mentions": 1,
+  "status": "rising",
+  "mentions": 2,
   "firstSeen": "2026-11-26T12:45:00Z",
-  "lastSeen": "2026-11-26T12:45:00Z",
+  "lastSeen": "2026-11-28T02:52:44Z",
   "summary": "AI agents are starting to shop on behalf of users, and platforms are split on whether to welcome or block them. Amazon vs Meta's Muse and retailer openness vs walled gardens define the early battle lines.",
   "cardIds": [
-   "ai-20261126-pm-02"
+   "ai-20261126-pm-02",
+   "startups-20261128-am-01"
   ]
  },
  {
@@ -353,7 +357,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-27T02:45:00Z",
   "lastSeen": "2026-11-27T02:45:00Z",
-  "summary": "AI models are writing production code for their own infrastructure. Anthropic's Claude wrote 80% of its own API rewrite, cutting CPU use 70% — the strongest evidence yet that AI can do critical systems work, not just prototyping.",
+  "summary": "AI models are writing production code for their own infrastructure. Anthropic's Claude wrote 80% of its own API rewrite, cutting CPU use 70% \u2014 the strongest evidence yet that AI can do critical systems work, not just prototyping.",
   "cardIds": [
    "ai-20261127-am-01"
   ]
@@ -362,13 +366,14 @@
   "id": "model-lifecycle-compression",
   "topic": "ai",
   "label": "Model lifecycle compression",
-  "status": "new",
-  "mentions": 1,
+  "status": "rising",
+  "mentions": 2,
   "firstSeen": "2026-11-27T02:45:00Z",
-  "lastSeen": "2026-11-27T02:45:00Z",
+  "lastSeen": "2026-11-28T02:52:44Z",
   "summary": "Flagship AI models are being replaced in under six months. OpenAI's GPT-5.6 lasted five months before GPT-6.2 Sol replaced it, forcing teams to build migration plans into their product roadmaps.",
   "cardIds": [
-   "ai-20261127-am-02"
+   "ai-20261127-am-02",
+   "ai-20261128-am-03"
   ]
  },
  {
@@ -418,7 +423,7 @@
   "mentions": 1,
   "firstSeen": "2026-11-27T02:45:00Z",
   "lastSeen": "2026-11-27T02:45:00Z",
-  "summary": "AI startups captured 47% of all VC funding in November 2026 — $49.9B across 513 deals. Capital concentration is reshaping the startup ecosystem, squeezing non-AI companies.",
+  "summary": "AI startups captured 47% of all VC funding in November 2026 \u2014 $49.9B across 513 deals. Capital concentration is reshaping the startup ecosystem, squeezing non-AI companies.",
   "cardIds": [
    "startups-20261127-am-02"
   ]
@@ -434,6 +439,45 @@
   "summary": "PhonePe's $15B IPO will be the first public test of whether UPI-first platforms can be valued like banks. The prospectus will reveal whether cross-selling lending and insurance to 650M users actually generates revenue.",
   "cardIds": [
    "fintech-20261127-am-01"
+  ]
+ },
+ {
+  "id": "sovereign-ai-compute",
+  "topic": "ai",
+  "label": "Sovereign AI compute",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-28T02:52:44Z",
+  "lastSeen": "2026-11-28T02:52:44Z",
+  "summary": "Governments are subsidising domestic AI compute infrastructure to keep data, talent and strategic capability within their borders. Canada's C$1B compute fund with 80% subsidies is the most aggressive programme outside China and the Gulf.",
+  "cardIds": [
+   "ai-20261128-am-02"
+  ]
+ },
+ {
+  "id": "india-startup-ecosystem",
+  "topic": "startups",
+  "label": "India startup ecosystem",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-28T02:52:44Z",
+  "lastSeen": "2026-11-28T02:52:44Z",
+  "summary": "Indian startups are testing alternative models \u2014 zero-commission marketplaces, open-source protocols \u2014 while navigating a funding environment that favours AI and global scale over domestic plays.",
+  "cardIds": [
+   "startups-20261128-am-02"
+  ]
+ },
+ {
+  "id": "india-payments-regulation",
+  "topic": "fintech",
+  "label": "India payments regulation",
+  "status": "new",
+  "mentions": 1,
+  "firstSeen": "2026-11-28T02:52:44Z",
+  "lastSeen": "2026-11-28T02:52:44Z",
+  "summary": "The RBI is progressively tightening digital payment security, extending tokenisation mandates to recurring and offline transactions. Each round creates compliance work for payment products but raises the security baseline.",
+  "cardIds": [
+   "fintech-20261128-am-02"
   ]
  }
 ]

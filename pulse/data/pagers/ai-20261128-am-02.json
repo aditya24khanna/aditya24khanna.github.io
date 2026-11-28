@@ -1,0 +1,18 @@
+{
+ "id": "ai-20261128-am-02",
+ "headline": "Canada adds C$700M to its AI compute fund, bringing the total to C$1B",
+ "sections": [
+  {
+   "heading": "What happened",
+   "body": "The Canadian government announced an additional C$700 million for its AI Compute Access Fund, tripling the original C$300 million allocated in Budget 2024 and bringing the total to C$1 billion. The fund subsidises up to 80% of compute costs for eligible Canadian researchers, startups, and public-sector AI projects, with the requirement that all subsidised compute runs on sovereign (Canadian-hosted) infrastructure. The top-up was motivated by talent retention concerns and the desire to keep training data within Canadian jurisdiction."
+  },
+  {
+   "heading": "Why it matters",
+   "body": "At C$1 billion with an 80% subsidy rate, this is the most generous sovereign AI compute programme outside China and the Gulf states. It makes Canadian-hosted compute genuinely price-competitive with US hyperscalers for training runs, which could attract AI startups and research groups that might otherwise default to US cloud. The sovereignty requirement is the strategic play: by tying subsidies to domestic infrastructure, Canada ensures that training data, model weights, and compute telemetry stay within its borders."
+  },
+  {
+   "heading": "What to watch",
+   "body": "Monitor whether other middle-power countries (UK, Australia, Japan, South Korea) follow with similar subsidy programmes \u2014 a compute subsidy race could reshape where AI development happens. Track which Canadian AI companies and research labs apply and whether the fund's capacity matches demand. Watch for tensions with US cloud providers who may lobby against sovereignty requirements that exclude their infrastructure."
+  }
+ ]
+}

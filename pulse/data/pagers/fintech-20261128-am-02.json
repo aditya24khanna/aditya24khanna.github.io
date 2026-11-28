@@ -1,0 +1,18 @@
+{
+ "id": "fintech-20261128-am-02",
+ "headline": "RBI tightens card tokenisation rules for recurring and offline payments",
+ "sections": [
+  {
+   "heading": "What happened",
+   "body": "The Reserve Bank of India issued updated directions on security in card-based digital payments, extending tokenisation requirements to recurring payments and offline transactions. The circular sets a Q2 2027 compliance deadline for payment aggregators and merchants handling stored card data to migrate to compliant token vaults. The directions also introduce stricter transaction authentication requirements for card-not-present transactions above \u20b95,000 and mandate real-time fraud monitoring for all tokenised transactions."
+  },
+  {
+   "heading": "Why it matters",
+   "body": "India's original tokenisation mandate (2022) already reshaped how every card payment works, but left gaps in recurring billing and offline transactions \u2014 exactly the flows where card data was most likely to be stored insecurely. This closure affects subscription businesses, insurance premium collection, EMI payments and any merchant using offline-capable POS terminals. The Q2 2027 deadline is tight for companies that built their recurring payment logic around raw card storage and retry mechanisms."
+  },
+  {
+   "heading": "What to watch",
+   "body": "Monitor whether payment aggregators like Razorpay, PayU and Cashfree announce migration tools or timeline extensions. Track the impact on subscription businesses' payment success rates \u2014 the original tokenisation mandate caused a temporary dip in success rates before the ecosystem adapted. Watch for any RBI relaxation of the timeline if industry compliance runs behind schedule."
+  }
+ ]
+}

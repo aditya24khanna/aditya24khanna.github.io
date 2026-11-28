@@ -1,0 +1,22 @@
+{
+ "id": "fintech-20261128-am-01",
+ "headline": "Highnote applies for a national bank charter with the OCC and FDIC",
+ "sections": [
+  {
+   "heading": "What happened",
+   "body": "Highnote, a card-issuing infrastructure platform, filed applications with the Office of the Comptroller of the Currency (OCC) and the Federal Deposit Insurance Corporation (FDIC) for a national bank charter. If approved, Highnote would be able to hold deposits and issue cards directly on its own balance sheet, eliminating its dependence on partner banks. The application joins a growing queue: Mercury, Dave, Mission Lane and Upstart all filed for bank charters earlier in 2026, driven by regulatory pressure on bank-fintech partnerships and the desire for direct control over their financial products."
+  },
+  {
+   "heading": "Why it matters",
+   "body": "The 2026 charter wave is the most significant structural shift in US fintech since the OCC first opened the special-purpose bank charter to fintechs in 2018. Each fintech that gets its own licence is one fewer customer for banking-as-a-service (BaaS) providers and one more direct competitor for traditional banks. For infrastructure platforms like Highnote, a charter means they can offer their clients (other fintechs) a fully integrated stack instead of a middleware layer that depends on a partner bank."
+  },
+  {
+   "heading": "Counterpoint",
+   "body": "Bank charters come with capital requirements, regulatory examinations and compliance costs that many fintechs underestimate. Several earlier fintech charter attempts (Varo's profitability struggles, Figure's application withdrawal) show that having a charter doesn't solve the business model. The OCC approval process typically takes 12\u201318 months and can require significant changes to governance and risk management."
+  },
+  {
+   "heading": "What to watch",
+   "body": "Track the OCC's response timeline and any conditions imposed. Watch whether BaaS providers like Unit, Treasury Prime and Synapse (or its successors) adjust their pricing or strategy in response to client defections. Monitor whether the FDIC's stance on fintech charters softens or tightens under its current leadership."
+  }
+ ]
+}

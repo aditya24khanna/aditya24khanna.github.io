@@ -1,0 +1,18 @@
+{
+ "id": "ai-20261128-am-03",
+ "headline": "OpenAI patches a GPT-6.2 billing error affecting Astra and Sol tiers",
+ "sections": [
+  {
+   "heading": "What happened",
+   "body": "OpenAI disclosed and patched a billing error that caused GPT-6.2 rate limits to be consumed faster than published rates. Astra-tier limits were consumed approximately 40% faster and Sol-tier limits approximately 25% faster than they should have been. The bug was traced to a token-counting mismatch in the structured-output pipeline, where system tokens were being double-counted against rate limits. OpenAI is resetting extra usage for eligible subscribers and offering Business-tier customers free Fast Mode access through the end of 2026."
+  },
+  {
+   "heading": "Why it matters",
+   "body": "LLM billing is complex and still maturing. Token counting varies by endpoint (chat vs. completion vs. structured output), pricing tiers have different multipliers, and rate limits interact with usage caps in non-obvious ways. This bug shows that even the largest provider can get it wrong \u2014 and that customers may not notice overspending for weeks. For teams running production workloads on GPT-6.2, the 40% overcharge on Astra is material: a $10K/month bill could have been $14K."
+  },
+  {
+   "heading": "What to watch",
+   "body": "Check whether OpenAI's credit reset covers your actual overage \u2014 some customers report needing to file support tickets to trigger the adjustment. More broadly, consider adding independent token-counting validation to your LLM pipeline. If your provider's billing can be wrong by 40%, you need your own instrumentation to catch it."
+  }
+ ]
+}

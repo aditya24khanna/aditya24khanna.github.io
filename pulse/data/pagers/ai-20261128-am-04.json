@@ -1,0 +1,22 @@
+{
+ "id": "ai-20261128-am-04",
+ "headline": "Microsoft details ARTEX, the AI agent framework used by state-backed hackers",
+ "sections": [
+  {
+   "heading": "What happened",
+   "body": "Microsoft's threat intelligence team published a detailed report on ARTEX, a modular AI agent framework that state-sponsored hacking groups have been using since at least July 2026. The framework allows attackers to deploy autonomous agents capable of reconnaissance, lateral movement and data exfiltration with minimal human oversight. Microsoft identified campaigns by groups linked to Russia (Midnight Blizzard), China (Volt Typhoon) and Iran (Peach Sandstorm) using ARTEX or similar agent toolkits. The framework's modular architecture lets attackers swap in new capabilities \u2014 including LLM-powered social engineering \u2014 as plugins."
+  },
+  {
+   "heading": "Why it matters",
+   "body": "This confirms that offensive AI agents have moved from theoretical risk to deployed capability. The key shift is from AI-assisted attacks (a human using an LLM to write phishing emails) to AI-directed attacks (an autonomous agent conducting the entire kill chain). Traditional security tools are designed to detect human-speed, human-pattern attacks; autonomous agents operate at machine speed with adaptive tactics, which breaks most detection heuristics."
+  },
+  {
+   "heading": "Counterpoint",
+   "body": "Microsoft has commercial incentives to highlight sophisticated threats that require its security products. Some researchers note that the distinction between 'AI-assisted' and 'AI-directed' attacks is fuzzy in practice, and that most of the ARTEX campaigns could have been conducted with traditional automation. The 'agent' framing may be more marketing than a step change in capability."
+  },
+  {
+   "heading": "What to watch",
+   "body": "Track whether CISA or ENISA issue advisories referencing ARTEX specifically \u2014 that would confirm the threat assessment independently. Watch for defensive AI agent products from security vendors like CrowdStrike, Palo Alto and SentinelOne. If your organisation runs its own AI agents, review their permissions and network access with this threat model in mind."
+  }
+ ]
+}

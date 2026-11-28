@@ -1,5 +1,29 @@
 [
  {
+  "id": "ai-20261128-am",
+  "topic": "ai",
+  "edition": "Morning",
+  "at": "2026-11-28T02:52:44Z",
+  "blurb": "SpaceX wins FCC approval for a million orbital AI satellites, Canada triples its sovereign compute fund to C$1B, OpenAI patches a GPT-6.2 billing bug that overcharged Astra users 40%, and Microsoft reveals the AI agent framework state hackers have used since July.",
+  "count": 4
+ },
+ {
+  "id": "startups-20261128-am",
+  "topic": "startups",
+  "edition": "Morning",
+  "at": "2026-11-28T02:52:44Z",
+  "blurb": "AI agent shopping traffic is up 150\u00d7 this holiday season with Meta's Muse driving 70%, and Namma Yatri raises \u20b927 crore from Dell Foundation to test zero-commission ride-hailing.",
+  "count": 2
+ },
+ {
+  "id": "fintech-20261128-am",
+  "topic": "fintech",
+  "edition": "Morning",
+  "at": "2026-11-28T02:52:44Z",
+  "blurb": "Highnote applies for a national bank charter as the fintech-to-bank wave continues, and the RBI tightens card tokenisation rules for recurring and offline payments.",
+  "count": 2
+ },
+ {
   "id": "ai-20261127-pm",
   "topic": "ai",
   "edition": "Evening",
@@ -36,7 +60,7 @@
   "topic": "startups",
   "edition": "Morning",
   "at": "2026-11-27T02:45:00Z",
-  "blurb": "Sierra doubles to $30B on a $1.75B raise, and AI startups capture 47% of all VC funding in November — $49.9B across 513 deals.",
+  "blurb": "Sierra doubles to $30B on a $1.75B raise, and AI startups capture 47% of all VC funding in November \u2014 $49.9B across 513 deals.",
   "count": 2
  },
  {

@@ -1,0 +1,18 @@
+{
+ "id": "startups-20261128-am-01",
+ "headline": "AI agent shopping traffic hits 150\u00d7 year-over-year this holiday season",
+ "sections": [
+  {
+   "heading": "What happened",
+   "body": "AI agent traffic to major US retail websites surged approximately 150 times compared to the 2025 holiday season, according to estimates from Human Security, a bot-detection firm. Meta's Muse shopping agent accounts for roughly 70% of all agent-driven retail visits. Some retailers have optimised checkout flows for agent traffic, while others are actively blocking it over concerns about dynamic pricing exploitation, inventory scraping and fraud. The dollar volume remains small relative to total US e-commerce (~$300B holiday season), but growth is exponential."
+  },
+  {
+   "heading": "Why it matters",
+   "body": "This is the first holiday season where agent-driven commerce is measurable at scale. The 150\u00d7 growth rate validates the thesis that agents will become a significant purchase channel, but the retailer split \u2014 optimise vs. block \u2014 shows the ecosystem hasn't agreed on how to handle it. For product leaders: agent traffic behaves differently from human traffic (faster sessions, higher cart-to-checkout ratios, different product selection patterns), and your analytics, fraud models and pricing logic all need to account for it."
+  },
+  {
+   "heading": "What to watch",
+   "body": "Track whether Amazon, Walmart and Target publish policies on agent access \u2014 their decisions will set industry norms. Watch for standardisation efforts around agent identification (like a user-agent string convention for shopping agents). Monitor whether agent-driven purchases have higher or lower return rates than human ones \u2014 this will determine whether agents are good or bad for unit economics."
+  }
+ ]
+}

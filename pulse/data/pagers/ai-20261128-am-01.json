@@ -1,0 +1,22 @@
+{
+ "id": "ai-20261128-am-01",
+ "headline": "SpaceX wins FCC approval for up to 1 million orbital AI data-centre satellites",
+ "sections": [
+  {
+   "heading": "What happened",
+   "body": "The FCC granted SpaceX conditional approval for Starmind, a proposed constellation of up to one million small satellites designed to run AI workloads in low Earth orbit. FCC Chairman Brendan Carr described it as 'a bold new idea for processing data in space.' The conditional licence sets a 2033 deployment deadline and requires SpaceX to meet orbital debris mitigation requirements. The proposal envisions satellites with on-board GPUs handling latency-tolerant AI training and batch inference, with data uplinked and results downlinked via SpaceX's existing Starlink ground stations."
+  },
+  {
+   "heading": "Why it matters",
+   "body": "AI data centres are constrained by power, cooling, land and permitting. Orbital compute sidesteps all four \u2014 solar power is abundant, radiative cooling is free, there's no NIMBY and no grid interconnect. If even 1% of Starmind deploys, it could meaningfully expand global AI compute supply. The bigger signal is strategic: SpaceX already dominates launch and LEO connectivity; adding compute would make it an integrated space-cloud platform competing with terrestrial hyperscalers on training workloads that can tolerate 50\u2013100ms of extra latency."
+  },
+  {
+   "heading": "Counterpoint",
+   "body": "Critic Adam Becker called the plan 'wildly irresponsible' given existing debris risks from 10,000+ Starlink satellites. A million more objects in LEO would dramatically increase collision probability and could trigger Kessler syndrome. The economics are also unproven \u2014 launching, maintaining and replacing compute satellites at scale has never been done, and the per-FLOP cost would need to beat rapidly falling terrestrial GPU prices. The 2033 deadline is aggressive even for SpaceX."
+  },
+  {
+   "heading": "What to watch",
+   "body": "Track whether SpaceX files technical specifications for the satellite compute hardware, which would signal serious intent vs. spectrum reservation. Watch for reactions from AWS, Google Cloud and Azure \u2014 if they start partnering with launch providers, orbital compute is real. Monitor the debris debate: if the FAA or international bodies push back, the timeline could slip significantly."
+  }
+ ]
+}

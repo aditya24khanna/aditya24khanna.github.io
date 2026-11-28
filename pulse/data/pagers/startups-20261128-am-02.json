@@ -1,0 +1,18 @@
+{
+ "id": "startups-20261128-am-02",
+ "headline": "Namma Yatri raises \u20b927.25 crore from Dell Foundation",
+ "sections": [
+  {
+   "heading": "What happened",
+   "body": "Namma Yatri, the open-source ride-hailing platform backed by payment infrastructure company Juspay, raised \u20b927.25 crore (~$3.2M) from Dell Foundation in a pre-Series A round. The company operates a zero-commission model for drivers, charging only a small subscription fee. It reported FY26 revenue of \u20b937.5 crore and a net loss of \u20b943.8 crore. Namma Yatri is built on the open-source Beckn protocol and operates across several Indian cities including Bengaluru, Delhi and Hyderabad."
+  },
+  {
+   "heading": "Why it matters",
+   "body": "Namma Yatri is the highest-profile test of whether a zero-commission, open-source marketplace can compete with VC-backed incumbents like Uber and Ola. The Dell Foundation investment (philanthropic, not venture capital) signals that impact investors see the model as viable, but the numbers tell a different story: the company is losing more than its entire revenue. The question is whether the zero-commission model can achieve enough driver supply density to compete on reliability \u2014 the metric that actually determines rider retention."
+  },
+  {
+   "heading": "What to watch",
+   "body": "Track Namma Yatri's driver count and ride completion rates in Bengaluru, its strongest market. If the zero-commission model can reach supply density parity with Uber in one city, it proves the model; if not, the losses will mount. Watch whether Juspay's backing translates to payment infrastructure advantages and whether other cities adopt the Beckn protocol for mobility."
+  }
+ ]
+}
